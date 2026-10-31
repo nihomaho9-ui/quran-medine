@@ -111,8 +111,8 @@
       .line.stack .basmala { font-size: 0.72em; }
       @media (orientation: portrait) and (max-width: 520px) {
         .page:not(.mid) { justify-content: center; }
-        .page:not(.mid) .line { flex: 0 1 calc(100% / 17.2); }
-        .page:not(.mid) .line.stack { flex: 0 1 calc(175% / 17.2); }
+        .page:not(.mid) .line { flex: 0 1 calc(100% / 16.7); }
+        .page:not(.mid) .line.stack { flex: 0 1 calc(175% / 16.7); }
       }
       @media (orientation: landscape) and (max-height: 520px) {
         header { display: none; }
@@ -281,7 +281,7 @@
             size *= (w / widest) * 0.94;
           }
           const phonePort = matchMedia("(orientation: portrait) and (max-width: 520px)").matches;
-          board.style.fontSize = size * (phonePort ? 0.97 : 0.9) + "px";
+          board.style.fontSize = size * (phonePort ? 1 : 0.9) + "px";
         } else {
           const w = board.clientWidth - 22;
           let size = w / 8;
