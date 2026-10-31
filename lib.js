@@ -343,7 +343,7 @@
   /* ---------- fullscreen reader: every ayah of the current mushaf page + tafsir / translation ---------- */
   const fsEl = el("div", "qm-full"); fsEl.hidden = true; document.body.appendChild(fsEl);
   let fsState = null;
-  async function openFull(kind, focusKey, pageN) {
+  async function openFull(kind, focusKey, pageN, enterFrom) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
     const pg = window.QM_PAGE(pageN); if (!pg) return;
     fsState = { kind, n: pg.n }; quranFont();
@@ -380,15 +380,29 @@
         }
         body.append(blk);
       }
-      const nav = el("div", "qm-full-nav");
-      const pv = el("button", "qm-step", "‹ " + T("Əvvəlki səhifə")), nx = el("button", "qm-step", T("Növbəti səhifə") + " ›");
-      pv.disabled = pg.n <= 1; nx.disabled = pg.n >= 604;
-      pv.onclick = () => openFull(kind, null, pg.n - 1); nx.onclick = () => openFull(kind, null, pg.n + 1);
-      nav.append(pv, nx); body.append(nav);
+
     }
-    let sx = null, sy = 0;
-    body.onpointerdown = (ev) => { if (ev.target.closest("button")) return; sx = ev.clientX; sy = ev.clientY; };
-    body.onpointerup = (ev) => { if (sx == null) return; const dx = ev.clientX - sx, dy = ev.clientY - sy; sx = null; if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 2) { const n = pg.n + (dx > 0 ? 1 : -1); if (n >= 1 && n <= 604) openFull(kind, null, n); } };
+    // page change by finger swipe only (same direction as the mushaf: swipe right = next page); the page follows the finger
+    let d = null;
+    const W = () => body.clientWidth || 360;
+    const slideTo = (x, ms) => { body.style.transition = ms ? "transform " + ms + "ms cubic-bezier(.22,1,.36,1)" : "none"; body.style.transform = x ? "translate3d(" + x + "px,0,0)" : ""; };
+    body.onpointerdown = (ev) => { if (ev.target.closest("button")) return; d = { x: ev.clientX, y: ev.clientY, t: performance.now(), mode: null, dx: 0 }; };
+    body.onpointermove = (ev) => {
+      if (!d) return; const dx = ev.clientX - d.x, dy = ev.clientY - d.y;
+      if (!d.mode) { if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return; d.mode = Math.abs(dx) > Math.abs(dy) * 1.2 ? "x" : "y"; if (d.mode === "x") try { body.setPointerCapture(ev.pointerId); } catch (e) {} }
+      if (d.mode !== "x") return;
+      const n = pg.n + (dx > 0 ? 1 : -1); d.dx = n < 1 || n > 604 ? dx * 0.25 : dx; slideTo(d.dx, 0);
+    };
+    const end = () => {
+      const g = d; d = null; if (!g || g.mode !== "x") return;
+      const v = g.dx / Math.max(1, performance.now() - g.t), n = pg.n + (g.dx > 0 ? 1 : -1);
+      if ((Math.abs(g.dx) > W() * 0.25 || Math.abs(v) > 0.6) && n >= 1 && n <= 604) {
+        const dir = g.dx > 0 ? 1 : -1; slideTo(dir * W(), 220);
+        setTimeout(() => openFull(kind, null, n, -dir), 220);
+      } else slideTo(0, 220);
+    };
+    body.onpointerup = end; body.onpointercancel = () => { if (d && d.mode === "x") slideTo(0, 220); d = null; };
+    if (enterFrom) { slideTo(enterFrom * W(), 0); requestAnimationFrame(() => requestAnimationFrame(() => slideTo(0, 260))); }
     fsEl.hidden = false;
     const target = focusKey && body.querySelector('[data-k="' + focusKey + '"]');
     if (target) { target.classList.add("cur"); target.scrollIntoView({ block: "start" }); } else body.scrollTop = 0;
