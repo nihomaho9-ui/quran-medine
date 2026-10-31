@@ -280,7 +280,8 @@
             if (widest <= w || widest === 0) break;
             size *= (w / widest) * 0.94;
           }
-          board.style.fontSize = size * 0.9 + "px";
+          const phonePort = matchMedia("(orientation: portrait) and (max-width: 520px)").matches;
+          board.style.fontSize = size * (phonePort ? 0.93 : 0.9) + "px";
         } else {
           const w = board.clientWidth - 22;
           let size = w / 8;
