@@ -109,6 +109,11 @@
       .line.stack { flex: 1.75 1 0; flex-direction: column; justify-content: center; }
       .line.stack .shead { height: 52%; width: 90%; }
       .line.stack .basmala { font-size: 0.72em; }
+      @media (orientation: portrait) and (max-width: 520px) {
+        .page:not(.mid) { justify-content: center; }
+        .page:not(.mid) .line { flex: 0 1 calc(100% / 15.8); }
+        .page:not(.mid) .line.stack { flex: 0 1 calc(175% / 15.8); }
+      }
       @media (orientation: landscape) and (max-height: 520px) {
         header { display: none; }
         .num { display: none; }
