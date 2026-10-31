@@ -8,7 +8,8 @@
     <title>Yazı formaları</title>
     <style>
       * { box-sizing: border-box; }
-      html, body { margin: 0; height: 100%; }
+      html, body { margin: 0; height: 100%; -webkit-tap-highlight-color: transparent; }
+      #page, #page * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
       body {
         background: #fffaf0;
         color: #1a1612;
@@ -490,6 +491,30 @@
         }
       }
 
+      // Geometric hit-test (does not rely on elementFromPoint, which differs between mobile browsers and
+      // misses the gaps between the thin QCF text boxes): the nearest text line wins, then the nearest glyph run on it.
+      function pickAyah(x, y) {
+        const lines = [];
+        for (const line of board.querySelectorAll(".line")) {
+          const spans = [...line.querySelectorAll(".ay")].filter((sp) => sp.dataset.k);
+          if (!spans.length) continue;
+          const rects = spans.map((sp) => [...sp.getClientRects()].filter((r) => r.width > 0));
+          const all = rects.flat(); if (!all.length) continue;
+          const top = Math.min(...all.map((r) => r.top)), bottom = Math.max(...all.map((r) => r.bottom));
+          lines.push({ spans, rects, top, bottom, cy: (top + bottom) / 2 });
+        }
+        if (!lines.length) return null;
+        let ln = null, best = Infinity;
+        for (const l of lines) { const d = y < l.top ? l.top - y : y > l.bottom ? y - l.bottom : 0; if (d < best) { best = d; ln = l; } }
+        const h = ln.bottom - ln.top;
+        if (best > Math.max(h * 1.5, 40)) return null; // far from any text (margins, surah frame)
+        let pick = null, bd = Infinity;
+        ln.spans.forEach((sp, i) => { for (const r of ln.rects[i]) { const d = x < r.left ? r.left - x : x > r.right ? x - r.right : 0; if (d < bd) { bd = d; pick = sp; } } });
+        if (bd > Math.max(h * 2, 48)) return null;
+        return pick;
+      }
+      window.QM_PICK = pickAyah;
+
       let startX = null;
       // long-press (~450 ms) on an ayah opens its tafsir / translation; moving the finger cancels it
       let holdT = 0, holdXY = null, held = false;
@@ -499,9 +524,8 @@
         held = false; holdXY = [e.clientX, e.clientY]; cancelHold();
         holdT = setTimeout(() => {
           holdT = 0;
-          const hit = document.elementFromPoint(holdXY[0], holdXY[1]);
-          const ay = hit && hit.closest && hit.closest(".ay");
-          if (!ay || !ay.dataset.k) return;
+          const ay = pickAyah(holdXY[0], holdXY[1]);
+          if (!ay) return;
           held = true; startX = null;
           if (navigator.vibrate) try { navigator.vibrate(15); } catch (err) {}
           if (QM.selecting()) { QM.tapAyah(ay.dataset.k); return; }
@@ -514,16 +538,15 @@
         try { board.setPointerCapture(e.pointerId); } catch (err) {}
       });
       board.addEventListener("pointermove", (e) => {
-        if (holdT && holdXY && Math.hypot(e.clientX - holdXY[0], e.clientY - holdXY[1]) > 10) cancelHold();
+        if (holdT && holdXY && Math.hypot(e.clientX - holdXY[0], e.clientY - holdXY[1]) > 12) cancelHold();
       });
       board.addEventListener("pointerup", (e) => {
         cancelHold();
         if (held || startX == null) { startX = null; return; }
-        if (Math.abs(e.clientX - startX) < 8 && QM.selecting()) {
-          const hit = document.elementFromPoint(e.clientX, e.clientY);
-          const ay = hit && hit.closest && hit.closest(".ay");
+        if (Math.abs(e.clientX - startX) < 12 && QM.selecting()) {
+          const ay = pickAyah(e.clientX, e.clientY);
           startX = null;
-          if (ay && ay.dataset.k) QM.tapAyah(ay.dataset.k);
+          if (ay) QM.tapAyah(ay.dataset.k);
           return;
         }
         const dx = e.clientX - startX;
