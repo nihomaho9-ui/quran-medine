@@ -246,6 +246,14 @@
       .qm-body p { margin: 0 0 0.6rem; white-space: pre-line; }
       .qm-src { display: block; font-size: 0.8rem; color: #5c675f; font-family: "Segoe UI", sans-serif; margin-bottom: 0.3rem; }
       .qm-fn { font-size: 0.82em; color: #5c675f; border-top: 1px solid rgba(26, 51, 48, 0.12); padding-top: 0.4rem; }
+      .qm-icons { display: flex; align-items: center; gap: 0.35rem; padding: 0 0.2rem 0.45rem; margin-bottom: 0.35rem; border-bottom: 1px solid rgba(196, 165, 110, 0.45); }
+      .qm-ic { width: 2.3rem; height: 2.3rem; display: grid; place-items: center; border: 1px solid rgba(196, 165, 110, 0.7); border-radius: 999px; background: #fbf6ec; color: #1a3330; cursor: pointer; padding: 0; }
+      .qm-ic svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+      .qm-ic.on { background: #f3e7d0; color: #8a6a2e; }
+      .qm-ic.on svg { fill: #c4a56e; stroke: #8a6a2e; }
+      .qm-ic.end { margin-inline-start: auto; border-color: transparent; background: none; }
+      .qm-toast { position: fixed; left: 50%; top: calc(3rem + env(safe-area-inset-top)); transform: translateX(-50%); z-index: 40; background: #1a3330; color: #f3e7d0; padding: 0.5rem 1rem; border-radius: 999px; font: 600 0.88rem "Segoe UI", sans-serif; }
+      .qm-toast[hidden] { display: none; }
       .qm-empty { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 0.8rem 0; color: #5c675f; }
     </style>
   </head>

@@ -93,6 +93,23 @@
     return li;
   }
 
+  /* ---------- ayah text, bookmarks, toast ---------- */
+  let textP = null;
+  const ayahText = (s, a) => (textP ||= fetch("./quran-uthmani.txt").then((r) => r.text()).then((t) => { const m = {}; for (const l of t.split("\n")) { const [x, y, z] = l.split("|"); if (z) m[x + ":" + y] = z.trim(); } return m; })).then((m) => m[s + ":" + a] || "");
+  const marks = () => { try { return JSON.parse(localStorage.getItem("qm.bookmarks") || "[]"); } catch (e) { return []; } };
+  const toggleMark = (k) => { const m = marks(); const i = m.indexOf(k); i >= 0 ? m.splice(i, 1) : m.push(k); localStorage.setItem("qm.bookmarks", JSON.stringify(m)); return i < 0; };
+  const toastEl = el("div", "qm-toast"); toastEl.hidden = true; document.body.appendChild(toastEl);
+  let toastT = 0;
+  const toast = (t) => { toastEl.textContent = t; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (toastEl.hidden = true), 1800); };
+  async function copyText(t) { try { await navigator.clipboard.writeText(t); return true; } catch (e) { const ta = el("textarea"); ta.value = t; document.body.append(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok; } }
+  const SVG = {
+    share: '<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 12v7.5h14V12"/>',
+    copy: '<rect x="8" y="8" width="11.5" height="11.5" rx="2"/><path d="M15.5 8V5.5A1.5 1.5 0 0 0 14 4H5.5A1.5 1.5 0 0 0 4 5.5V14a1.5 1.5 0 0 0 1.5 1.5H8"/>',
+    mark: '<path d="M6.5 3.5h11v17L12 16.5l-5.5 4z"/>',
+    close: '<path d="M6 6l12 12M18 6 6 18"/>',
+  };
+  const icon = (name, label, filled) => { const b = el("button", "qm-ic" + (filled ? " on" : "")); b.type = "button"; b.setAttribute("aria-label", label); b.title = label; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + SVG[name] + "</svg>"; return b; };
+
   /* ---------- Ayah sheet ---------- */
   let cur = null;
   async function openAyah(s, a) {
@@ -105,6 +122,22 @@
     const fn = r && r.k === "tr" ? ((await get(r.id + ":f:" + s)) || [])[a - 1] : "";
     if (!cur || cur.s !== s || cur.a !== a) return;
     sheet.className = "qm-sheet qm-ayah"; sheet.replaceChildren();
+    const ref = NAMES[s - 1] + " " + s + ":" + a;
+    const bar = el("div", "qm-icons");
+    const shareB = icon("share", "Paylaş"), copyB = icon("copy", "Kopyala"), markB = icon("mark", "Əlfəcin", marks().includes(s + ":" + a)), closeB = icon("close", "Bağla");
+    shareB.onclick = async () => {
+      const ar = await ayahText(s, a);
+      let ex = e && e.text ? plain(e.text) : ""; if (ex.length > 600) ex = ex.slice(0, 600).trim() + "…";
+      const text = ar + "\n— " + ref + (ex ? "\n\n" + (r ? (r.k === "tr" ? r.by : r.name) + ":\n" : "") + ex : "");
+      if (navigator.share) { try { await navigator.share({ title: ref, text }); return; } catch (err) { if (err && err.name === "AbortError") return; } }
+      toast((await copyText(text)) ? "Kopyalandı" : "Alınmadı");
+    };
+    copyB.onclick = async () => toast((await copyText((await ayahText(s, a)) + "\n— " + ref)) ? "Kopyalandı" : "Alınmadı");
+    markB.onclick = () => { const on = toggleMark(s + ":" + a); markB.classList.toggle("on", on); toast(on ? "Əlfəcinə əlavə olundu" : "Əlfəcindən silindi"); };
+    closeB.onclick = () => { cur = null; window.QM_HL && window.QM_HL(null); closeAll(); };
+    closeB.classList.add("end");
+    bar.append(shareB, copyB, markB, closeB);
+    sheet.append(bar);
     const head = el("div", "qm-head");
     head.append(el("h2", "", NAMES[s - 1] + " · " + (e && e.from !== e.to ? e.from + "–" + e.to : a)));
     const nav = el("span", "qm-nav");
@@ -114,7 +147,6 @@
     pv.onclick = () => { const f = e ? e.from : a; f > 1 ? openAyah(s, f - 1) : openAyah(s - 1, AYAHS[s - 2]); };
     nx.onclick = () => { const t = e ? e.to : a; t < max ? openAyah(s, t + 1) : openAyah(s + 1, 1); };
     nav.append(pv, nx); head.append(nav);
-    const x = el("button", "qm-close", "Bağla"); x.onclick = () => { cur = null; window.QM_HL && window.QM_HL(null); closeAll(); }; head.append(x);
     sheet.append(head);
     const tabs = el("div", "qm-tabs");
     for (const k of ["tf", "tr"]) { const t = el("button", "qm-tab" + (k === kind ? " on" : ""), k === "tf" ? "Təfsirlər" : "Tərcümələr"); t.onclick = () => { setPrefs({ tab: k }); openAyah(s, a); }; tabs.append(t); }
