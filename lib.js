@@ -4,7 +4,7 @@
   const NAMES = window.QM_NAMES;
   let LIST = [];
   const LANGS = [["az", "Azərbaycan"], ["tr", "Türkçe"], ["en", "English"], ["ar", "العربية"], ["ru", "Русский"]];
-  const DICT = {"Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"]};
+  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"]};
   const uiLang = () => localStorage.getItem("qm.lang") || "az";
   const T = (k) => { const i = ["tr", "en", "ar", "ru"].indexOf(uiLang()); return i < 0 || !DICT[k] ? k : DICT[k][i]; };
 
@@ -18,6 +18,7 @@
   const status = async (id) => (await get(id + ":n")) || 0;
   const running = {};
   async function download(r, prog) {
+    ayahText(1, 1); quranFont();
     const ctl = (running[r.id] = { stop: false });
     try {
       if (r.k === "tr" && !r.per) {
@@ -128,7 +129,18 @@
 
   /* ---------- ayah text, bookmarks, toast ---------- */
   let textP = null;
-  const ayahText = (s, a) => (textP ||= fetch("./quran-uthmani.txt").then((r) => r.text()).then((t) => { const m = {}; for (const l of t.split("\n")) { const [x, y, z] = l.split("|"); if (z) m[x + ":" + y] = z.trim(); } return m; })).then((m) => m[s + ":" + a] || "");
+  // Arabic text: kept in IndexedDB after the first load so share / copy / full screen work offline
+  // Tanzil puts the 4-word basmala before ayah 1 of every surah except 1 and 9: it is not part of the ayah
+  const forFont = (t) => t.replace(/\u06DF/g, "\u06E0"); // the Hafs font has no glyph for U+06DF (small high rounded zero)
+  const parseText = (t) => { const m = {}; for (const l of t.split("\n")) { const [x, y, z] = l.split("|"); if (z) m[x + ":" + y] = (y === "1" && x !== "1" && x !== "9" ? z.trim().split(/\s+/).slice(4).join(" ") : z).trim(); } return m; };
+  const loadText = async () => {
+    const saved = await get("quran:txt").catch(() => null);
+    if (saved) return parseText(saved);
+    const t = await (await fetch("./quran-uthmani.txt")).text();
+    put("quran:txt", t).catch(() => {});
+    return parseText(t);
+  };
+  const ayahText = (s, a) => (textP ||= loadText().catch((e) => { textP = null; return {}; })).then((m) => m[s + ":" + a] || "");
   const marks = () => { try { return JSON.parse(localStorage.getItem("qm.bookmarks") || "[]"); } catch (e) { return []; } };
   const toggleMark = (k) => { const m = marks(); const i = m.indexOf(k); i >= 0 ? m.splice(i, 1) : m.push(k); localStorage.setItem("qm.bookmarks", JSON.stringify(m)); return i < 0; };
   const toastEl = el("div", "qm-toast"); toastEl.hidden = true; document.body.appendChild(toastEl);
@@ -140,6 +152,7 @@
     copy: '<rect x="8" y="8" width="11.5" height="11.5" rx="2"/><path d="M15.5 8V5.5A1.5 1.5 0 0 0 14 4H5.5A1.5 1.5 0 0 0 4 5.5V14a1.5 1.5 0 0 0 1.5 1.5H8"/>',
     mark: '<path d="M6.5 3.5h11v17L12 16.5l-5.5 4z"/>',
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
+    full: '<path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>',
     plus: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8.5v7M8.5 12h7"/>',
   };
   const icon = (name, label, filled) => { const b = el("button", "qm-ic" + (filled ? " on" : "")); b.type = "button"; b.setAttribute("aria-label", label); b.title = label; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + SVG[name] + "</svg>"; return b; };
@@ -167,7 +180,9 @@
     markB.onclick = () => { const on = toggleMark(s + ":" + a); markB.classList.toggle("on", on); toast(on ? T("Əlfəcinə əlavə olundu") : T("Əlfəcindən silindi")); };
     closeB.onclick = () => { cur = null; window.QM_HL && window.QM_HL(null); closeAll(); };
     closeB.classList.add("end");
-    bar.append(shareB, copyB, markB, selB, closeB);
+    const fullB = icon("full", T("Tam ekran"));
+    fullB.onclick = () => openFull(kind, s + ":" + a);
+    bar.append(shareB, copyB, markB, selB, fullB, closeB);
     sheet.append(bar);
     const head = el("div", "qm-head");
     head.append(el("h2", "", NAMES[s - 1] + " · " + (e && e.from !== e.to ? e.from + "–" + e.to : a)));
@@ -256,7 +271,7 @@
     await quranFont();
     const W = 1080, P = 90, inner = W - P * 2 - 40;
     const ks = sortKeys(keys); const parts = [];
-    for (const [s, a] of ks) parts.push((await ayahText(s, a)) + " " + AR_DIG(a)); // this font draws the digits as the ayah-end circle
+    for (const [s, a] of ks) parts.push(forFont(await ayahText(s, a)) + " " + AR_DIG(a)); // this font draws the digits as the ayah-end circle
     const tr = await trFor(keys);
     const c = document.createElement("canvas"); const ctx = c.getContext("2d");
     let arSize = 58; ctx.font = arSize + "px QMHafs, serif"; ctx.direction = "rtl";
@@ -324,5 +339,59 @@
   }
   function startSelect(k) { sel = [k]; closeAll(); drawSel(); toast(T("Başqa ayələrə toxunun")); }
   function tapAyah(k) { if (!sel) return; const i = sel.indexOf(k); i >= 0 ? sel.splice(i, 1) : sel.push(k); drawSel(); }
-  window.QM = { openSettings, openAyah, selecting: () => !!sel, tapAyah };
+
+  /* ---------- fullscreen reader: every ayah of the current mushaf page + tafsir / translation ---------- */
+  const fsEl = el("div", "qm-full"); fsEl.hidden = true; document.body.appendChild(fsEl);
+  let fsState = null;
+  async function openFull(kind, focusKey, pageN) {
+    if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
+    const pg = window.QM_PAGE(pageN); if (!pg) return;
+    fsState = { kind, n: pg.n }; quranFont();
+    const p = prefs();
+    const have = []; for (const r of LIST) if (r.k === kind && (await status(r.id)) >= 114) have.push(r);
+    const r = have.find((x) => x.id === p[kind]) || have[0];
+    if (!fsState || fsState.n !== pg.n || fsState.kind !== kind) return;
+    fsEl.replaceChildren(); fsEl.dir = uiLang() === "ar" ? "rtl" : "ltr";
+    const head = el("div", "qm-full-h");
+    const [s0] = pg.keys[0].split(":").map(Number);
+    const ttl = el("div", "qm-full-t"); ttl.append(el("b", "", NAMES[s0 - 1]), el("small", "", T("Səhifə") + " " + pg.n));
+    const sw = el("div", "qm-switch");
+    for (const k of ["tr", "tf"]) { const b = el("button", k === kind ? "on" : "", k === "tf" ? T("Təfsir") : T("Tərcümə")); b.onclick = () => { setPrefs({ tab: k }); openFull(k, null, pg.n); }; sw.append(b); }
+    const x = icon("close", T("Bağla")); x.onclick = () => { fsEl.hidden = true; fsState = null; };
+    head.append(ttl, sw, x); fsEl.append(head);
+    const body = el("div", "qm-full-b"); fsEl.append(body);
+    if (!r) {
+      const box = el("div", "qm-empty"); box.append(el("p", "", T("Hələ endirilməyib.")));
+      const b = el("button", "qm-rb main", T("Ayarlarda endir")); b.onclick = () => { fsEl.hidden = true; openSettings(kind); }; box.append(b); body.append(box);
+    } else {
+      body.append(el("p", "qm-full-src", (r.k === "tr" ? r.by + " · " : "") + r.name));
+      let last = "";
+      for (const key of pg.keys) {
+        const [s, a] = key.split(":").map(Number);
+        const blk = el("article", "qm-blk"); blk.dataset.k = key;
+        if (a === 1) blk.append(el("h4", "qm-blk-s", NAMES[s - 1]));
+        const ar = el("p", "qm-ar", forFont(await ayahText(s, a)) + " " + AR_DIG(a)); ar.dir = "rtl"; ar.lang = "ar"; ar.style.fontSize = 1.45 * p.fs + "rem"; blk.append(ar);
+        const e = await entry(r.id, s, a);
+        if (e && e.text && last !== s + ":" + e.from) { // a shared tafsir entry is shown once
+          const t = el("div", "qm-tx2"); t.dir = r.dir; t.lang = r.lang; t.style.fontSize = (r.lang === "ar" ? 1.12 : 1) * p.fs + "rem";
+          if (e.from !== e.to) t.append(el("small", "qm-range", s + ":" + e.from + "–" + e.to));
+          for (const para of plain(e.text).split(/\n{2,}/)) t.append(el("p", "", para));
+          blk.append(t); last = s + ":" + e.from;
+        }
+        body.append(blk);
+      }
+      const nav = el("div", "qm-full-nav");
+      const pv = el("button", "qm-step", "‹ " + T("Əvvəlki səhifə")), nx = el("button", "qm-step", T("Növbəti səhifə") + " ›");
+      pv.disabled = pg.n <= 1; nx.disabled = pg.n >= 604;
+      pv.onclick = () => openFull(kind, null, pg.n - 1); nx.onclick = () => openFull(kind, null, pg.n + 1);
+      nav.append(pv, nx); body.append(nav);
+    }
+    let sx = null, sy = 0;
+    body.onpointerdown = (ev) => { if (ev.target.closest("button")) return; sx = ev.clientX; sy = ev.clientY; };
+    body.onpointerup = (ev) => { if (sx == null) return; const dx = ev.clientX - sx, dy = ev.clientY - sy; sx = null; if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 2) { const n = pg.n + (dx > 0 ? 1 : -1); if (n >= 1 && n <= 604) openFull(kind, null, n); } };
+    fsEl.hidden = false;
+    const target = focusKey && body.querySelector('[data-k="' + focusKey + '"]');
+    if (target) { target.classList.add("cur"); target.scrollIntoView({ block: "start" }); } else body.scrollTop = 0;
+  }
+  window.QM = { openSettings, openFull, openAyah, selecting: () => !!sel, tapAyah };
 })();
