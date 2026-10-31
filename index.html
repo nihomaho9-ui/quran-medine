@@ -54,6 +54,8 @@
         overflow: hidden;
         touch-action: none;
         user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
       }
       .page.mid { justify-content: center; position: relative; }
       .page.mid .line { flex: 0 0 calc(100% / var(--rows)); }
@@ -449,24 +451,38 @@
       }
 
       let startX = null;
+      // long-press (~450 ms) on an ayah opens its tafsir / translation; moving the finger cancels it
+      let holdT = 0, holdXY = null, held = false;
+      const cancelHold = () => { clearTimeout(holdT); holdT = 0; };
+      board.addEventListener("contextmenu", (e) => e.preventDefault());
       board.addEventListener("pointerdown", (e) => {
+        held = false; holdXY = [e.clientX, e.clientY]; cancelHold();
+        holdT = setTimeout(() => {
+          holdT = 0;
+          const hit = document.elementFromPoint(holdXY[0], holdXY[1]);
+          const ay = hit && hit.closest && hit.closest(".ay");
+          if (!ay || !ay.dataset.k) return;
+          held = true; startX = null;
+          const [s, a] = ay.dataset.k.split(":").map(Number);
+          paintHl(ay.dataset.k);
+          if (navigator.vibrate) try { navigator.vibrate(15); } catch (err) {}
+          QM.openAyah(s, a);
+        }, 450);
         startX = e.clientX;
         try { board.setPointerCapture(e.pointerId); } catch (err) {}
       });
+      board.addEventListener("pointermove", (e) => {
+        if (holdT && holdXY && Math.hypot(e.clientX - holdXY[0], e.clientY - holdXY[1]) > 10) cancelHold();
+      });
       board.addEventListener("pointerup", (e) => {
-        if (startX == null) return;
+        cancelHold();
+        if (held || startX == null) { startX = null; return; }
         const dx = e.clientX - startX;
         startX = null;
-        if (Math.abs(dx) < 8) {
-          const hit = document.elementFromPoint(e.clientX, e.clientY);
-          const ay = hit && hit.closest && hit.closest(".ay");
-          if (ay && ay.dataset.k) { const [s, a] = ay.dataset.k.split(":").map(Number); QM.openAyah(s, a); }
-          return;
-        }
         if (dx > 36) show(pageNo + 1);
         else if (dx < -36) show(pageNo - 1);
       });
-      board.addEventListener("pointercancel", () => { startX = null; });
+      board.addEventListener("pointercancel", () => { startX = null; cancelHold(); });
       window.addEventListener("resize", fit);
       const AYAHS = "7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6".split(",").map(Number);
       const MADANI = new Set([2, 3, 4, 5, 8, 9, 13, 22, 24, 33, 47, 48, 49, 55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 76, 98, 99, 110]);
