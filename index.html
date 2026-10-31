@@ -41,6 +41,7 @@
         background: #fffaf0;
       }
       .page {
+        --rows: 15;
         flex: 1;
         min-height: 0;
         margin: 0;
@@ -54,15 +55,15 @@
         user-select: none;
       }
       .page.mid { justify-content: center; position: relative; }
-      .page.mid .line { flex: 0 0 calc(100% / 15); }
+      .page.mid .line { flex: 0 0 calc(100% / var(--rows)); }
       .page.mid .line:not(.surah) { transform: translateY(calc(var(--up, 0px) * -1)); }
       .page.mid .line.surah {
         position: absolute;
         left: 0;
         right: 0;
-        height: calc(100% / 15);
+        height: calc(100% / var(--rows));
         flex: none;
-        top: calc(50% - var(--up, 0px) - var(--half, 3.5) * 100% / 15 - 155% / 15);
+        top: calc(50% - var(--up, 0px) - var(--half, 3.5) * 100% / var(--rows) - 155% / var(--rows));
       }
       .line {
         flex: 1 1 0;
@@ -107,6 +108,11 @@
       .line.stack { flex: 1.75 1 0; flex-direction: column; justify-content: center; }
       .line.stack .shead { height: 52%; width: 90%; }
       .line.stack .basmala { font-size: 0.72em; }
+      @media (orientation: portrait) and (max-width: 520px) {
+        .page { --rows: 20; justify-content: center; }
+        .line { flex: 0 0 calc(100% / var(--rows)); }
+        .line.stack { flex: 0 0 calc(175% / var(--rows)); }
+      }
       @media (orientation: landscape) and (max-height: 520px) {
         header { display: none; }
         .num { display: none; }
