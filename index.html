@@ -440,9 +440,15 @@
         if (id !== job) return;
         board.style.fontFamily = name + ", serif";
         const marks = { ...(heads[pageNo] || {}) };
-        const bis = bisLines[pageNo] || {};
-        const stack = stackLines[pageNo] || {};
+        const bis = { ...(bisLines[pageNo] || {}) };
+        const stack = { ...(stackLines[pageNo] || {}) };
         const pageLines = pages[String(pageNo)];
+        // Madinah layout: when a surah starts on line 2 of a page and the previous page's last line is empty,
+        // the surah banner sits on that last line and this page's first line is only the basmala
+        const lastEmpty = (n) => { const l = pages[String(n)]; return !!l && !l[14]; };
+        if (stack[0] && lastEmpty(pageNo - 1)) { delete marks[0]; delete stack[0]; bis[0] = true; }
+        const nextStack = stackLines[pageNo + 1] || {};
+        if (nextStack[0] && !pageLines[14] && !marks[14]) marks[14] = heads[pageNo + 1][0];
         board.classList.toggle("mid", pageNo === 1 || pageNo === 2);
         board.replaceChildren();
         let last = pageLines.length - 1;
