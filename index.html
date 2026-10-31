@@ -77,6 +77,7 @@
         justify-content: center;
         line-height: 1;
         white-space: nowrap;
+        direction: rtl; /* the ayah runs are flex items: lay them out right-to-left like the text inside them */
       }
       .line.surah { color: #1a1612; }
       .shead {
@@ -200,7 +201,7 @@
         font-size: 0.92rem;
       }
       .ay { border-radius: 0; }
-      .ay.hl { background: rgba(196, 165, 110, 0.36); box-shadow: 0 0 0 0.06em rgba(196, 165, 110, 0.36); }
+      .ay.hl { background: rgba(196, 165, 110, 0.36); }
       .gear { margin-inline-start: auto; background: none; border: 0; color: #8a7d68; padding: 0.15rem; line-height: 0; cursor: pointer; }
       .gear svg { width: 1.15rem; height: 1.15rem; }
       .idx-head { position: relative; }
@@ -456,15 +457,20 @@
         };
         // ayah of every glyph on this page (QCF V2 codes matched to Quran.com words: yazi-ayahs.json)
         const runs = (ayahMap && ayahMap[String(pageNo)]) || [];
+        // assign keys over ALL stored lines in order (some stored lines are drawn as a surah banner), so the
+        // glyph counter never drifts when a line is skipped
         let ri = 0, left = runs[0] ? runs[0][1] : 0;
-        const addAyahs = (row, text) => {
-          let span = null;
-          for (const ch of text) {
-            if (ch !== " ") { while (left === 0 && ri < runs.length - 1) { ri++; left = runs[ri][1]; } left--; }
-            const key = runs[ri] ? runs[ri][0] : "";
+        const lineKeys = pageLines.map((text) => [...text].map((ch) => {
+          if (ch !== " ") { while (left === 0 && ri < runs.length - 1) { ri++; left = runs[ri][1]; } left--; }
+          return runs[ri] ? runs[ri][0] : "";
+        }));
+        const addAyahs = (row, text, i) => {
+          let span = null; const ks = lineKeys[i];
+          [...text].forEach((ch, j) => {
+            const key = ks[j] || "";
             if (!span || span.dataset.k !== key) { span = document.createElement("span"); span.className = "ay"; span.dataset.k = key; row.appendChild(span); }
             span.textContent += ch;
-          }
+          });
         };
         pageLines.forEach((text, i) => {
           if (i > last) return;
@@ -490,7 +496,7 @@
             row.appendChild(head);
             if (stack[i]) addBasmala(row);
           } else if (bis[i]) addBasmala(row);
-          else addAyahs(row, text);
+          else addAyahs(row, text, i);
           board.appendChild(row);
         });
         pos.textContent = String(pageNo);
