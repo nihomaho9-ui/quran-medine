@@ -109,9 +109,9 @@
       .line.stack .shead { height: 52%; width: 90%; }
       .line.stack .basmala { font-size: 0.72em; }
       @media (orientation: portrait) and (max-width: 520px) {
-        .page { --rows: 20; justify-content: center; }
-        .line { flex: 0 0 calc(100% / var(--rows)); }
-        .line.stack { flex: 0 0 calc(175% / var(--rows)); }
+        .page:not(.mid) { justify-content: flex-start; }
+        .page:not(.mid) .line { flex: 0 0 auto; height: 1.3em; }
+        .page:not(.mid) .line.stack { flex: 0 0 auto; height: 2.3em; }
       }
       @media (orientation: landscape) and (max-height: 520px) {
         header { display: none; }
