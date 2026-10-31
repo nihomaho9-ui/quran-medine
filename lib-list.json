@@ -1,0 +1,362 @@
+[
+{
+"id": "saadi",
+"k": "tf",
+"name": "تيسير الكريم الرحمن",
+"by": "السعدي",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 6
+},
+{
+"id": "muyassar",
+"k": "tf",
+"name": "التفسير الميسر",
+"by": "مجمع الملك فهد",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 2
+},
+{
+"id": "mukhtasar",
+"k": "tf",
+"name": "المختصر في تفسير القرآن الكريم",
+"by": "مركز تفسير",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 1.9
+},
+{
+"id": "ibnkathir",
+"k": "tf",
+"name": "تفسير ابن كثير",
+"by": "ابن كثير",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 15
+},
+{
+"id": "baghawi",
+"k": "tf",
+"name": "معالم التنزيل (تفسير البغوي)",
+"by": "البغوي",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 14.5
+},
+{
+"id": "samani",
+"k": "tf",
+"name": "تفسير السمعاني",
+"by": "أبو المظفر السمعاني",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 7
+},
+{
+"id": "aysar",
+"k": "tf",
+"name": "أيسر التفاسير",
+"by": "أبو بكر الجزائري",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 6.8
+},
+{
+"id": "tabari",
+"k": "tf",
+"name": "جامع البيان (تفسير الطبري)",
+"by": "الطبري",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 37
+},
+{
+"id": "irab_muyassar",
+"k": "tf",
+"name": "الإعراب الميسر",
+"by": "مركز تفسير",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 6.3
+},
+{
+"id": "irab_darwish",
+"k": "tf",
+"name": "إعراب القرآن وبيانه",
+"by": "محيي الدين درويش",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 11.5
+},
+{
+"id": "jadwal",
+"k": "tf",
+"name": "الجدول في إعراب القرآن",
+"by": "محمود صافي",
+"lang": "ar",
+"dir": "rtl",
+"per": true,
+"mb": 10.7
+},
+{
+"id": "az.musayev",
+"k": "tr",
+"name": "Əlixan Musayev",
+"by": "Azərbaycanca",
+"lang": "az",
+"dir": "ltr",
+"per": false,
+"mb": 0.9
+},
+{
+"id": "ru.kuliev",
+"k": "tr",
+"name": "Эльмир Кулиев",
+"by": "Русский",
+"lang": "ru",
+"dir": "ltr",
+"per": false,
+"mb": 1.4
+},
+{
+"id": "turkish_shahin",
+"k": "tr",
+"name": "Ali Özek ve diğerleri",
+"by": "Türkçe",
+"lang": "tr",
+"dir": "ltr",
+"per": true,
+"mb": 0.9
+},
+{
+"id": "turkish_rwwad",
+"k": "tr",
+"name": "Rowwad Tercüme Merkezi",
+"by": "Türkçe",
+"lang": "tr",
+"dir": "ltr",
+"per": true,
+"mb": 0.9
+},
+{
+"id": "english_saheeh",
+"k": "tr",
+"name": "Saheeh International",
+"by": "English",
+"lang": "en",
+"dir": "ltr",
+"per": true,
+"mb": 1.1
+},
+{
+"id": "english_hilali_khan",
+"k": "tr",
+"name": "Muhammad Taqi-ud-Din al-Hilali, Muhammad Muhsin Khan",
+"by": "English",
+"lang": "en",
+"dir": "ltr",
+"per": true,
+"mb": 1.6
+},
+{
+"id": "english_rwwad",
+"k": "tr",
+"name": "Rowwad Translation Center",
+"by": "English",
+"lang": "en",
+"dir": "ltr",
+"per": true,
+"mb": 1.1
+},
+{
+"id": "urdu_junagarhi",
+"k": "tr",
+"name": "محمد جوناگڑھی",
+"by": "اردو",
+"lang": "ur",
+"dir": "rtl",
+"per": true,
+"mb": 5.8
+},
+{
+"id": "persian_ih",
+"k": "tr",
+"name": "مرکز ترجمه رواد",
+"by": "فارسی",
+"lang": "fa",
+"dir": "rtl",
+"per": true,
+"mb": 1.6
+},
+{
+"id": "uzbek_mansour",
+"k": "tr",
+"name": "Алоуддин Мансур",
+"by": "Oʻzbekcha",
+"lang": "uz",
+"dir": "ltr",
+"per": true,
+"mb": 2.5
+},
+{
+"id": "tajik_arifi",
+"k": "tr",
+"name": "Маркази тарҷумаи Равод",
+"by": "Тоҷикӣ",
+"lang": "tg",
+"dir": "ltr",
+"per": true,
+"mb": 1.8
+},
+{
+"id": "kyrgyz_hakimov",
+"k": "tr",
+"name": "Шамсуддин Хакимов",
+"by": "Кыргызча",
+"lang": "ky",
+"dir": "ltr",
+"per": true,
+"mb": 2.4
+},
+{
+"id": "uyghur_saleh",
+"k": "tr",
+"name": "مۇھەممەد سالىھ",
+"by": "ئۇيغۇرچە",
+"lang": "ug",
+"dir": "rtl",
+"per": true,
+"mb": 2.1
+},
+{
+"id": "pashto_rwwad",
+"k": "tr",
+"name": "د رواد د ژباړې مرکز",
+"by": "پښتو",
+"lang": "ps",
+"dir": "rtl",
+"per": true,
+"mb": 1.4
+},
+{
+"id": "kurdish_bamoki",
+"k": "tr",
+"name": "محمد صالح بامۆکی",
+"by": "Kurdî",
+"lang": "ku",
+"dir": "rtl",
+"per": true,
+"mb": 1.7
+},
+{
+"id": "hindi_omari",
+"k": "tr",
+"name": "अज़ीज़ुल-हक़ उमरी",
+"by": "हिन्दी",
+"lang": "hi",
+"dir": "ltr",
+"per": true,
+"mb": 3.2
+},
+{
+"id": "tamil_omar",
+"k": "tr",
+"name": "உமர் ஷரீஃப்",
+"by": "தமிழ்",
+"lang": "ta",
+"dir": "ltr",
+"per": true,
+"mb": 3.5
+},
+{
+"id": "french_rashid",
+"k": "tr",
+"name": "Rachid Maach",
+"by": "Français",
+"lang": "fr",
+"dir": "ltr",
+"per": true,
+"mb": 1.2
+},
+{
+"id": "german_bubenheim",
+"k": "tr",
+"name": "Frank Bubenheim, Nadeem Elyas",
+"by": "Deutsch",
+"lang": "de",
+"dir": "ltr",
+"per": true,
+"mb": 1.0
+},
+{
+"id": "dutch_center",
+"k": "tr",
+"name": "Rowwad Vertaalcentrum",
+"by": "Nederlands",
+"lang": "nl",
+"dir": "ltr",
+"per": true,
+"mb": 1.1
+},
+{
+"id": "spanish_garcia",
+"k": "tr",
+"name": "Isa García",
+"by": "Español",
+"lang": "es",
+"dir": "ltr",
+"per": true,
+"mb": 1.2
+},
+{
+"id": "portuguese_nasr",
+"k": "tr",
+"name": "Helmi Nasr",
+"by": "Português",
+"lang": "pt",
+"dir": "ltr",
+"per": true,
+"mb": 1.2
+},
+{
+"id": "hausa_gummi",
+"k": "tr",
+"name": "Abubakar Mahmoud Gumi",
+"by": "Hausa",
+"lang": "ha",
+"dir": "ltr",
+"per": true,
+"mb": 1.2
+},
+{
+"id": "somali_yacob",
+"k": "tr",
+"name": "Cabdullaahi Xasan Yacquub",
+"by": "Soomaali",
+"lang": "so",
+"dir": "ltr",
+"per": true,
+"mb": 1.1
+},
+{
+"id": "japanese_saeedsato",
+"k": "tr",
+"name": "サイード佐藤",
+"by": "日本語",
+"lang": "ja",
+"dir": "ltr",
+"per": true,
+"mb": 2.6
+}
+]
