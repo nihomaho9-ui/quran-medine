@@ -271,6 +271,21 @@
       .qm-list > .qm-grp:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
       .qm-grp + .qm-res { border-top: 0 !important; }
       .qm-set .qm-note { text-align: center; margin: 0.2rem 0 0.3rem; }
+      .qm-step { border: 1px solid #c4a56e; border-radius: 999px; background: #1a3330; color: #f3e7d0; font: 600 0.82rem "Segoe UI", sans-serif; padding: 0.38rem 0.75rem; cursor: pointer; }
+      .qm-step:disabled { opacity: 0.3; }
+      .qm-ayah .qm-head h2 { font-size: 0.98rem; }
+      .qm-menu { position: fixed; inset: 0; z-index: 35; display: flex; align-items: center; justify-content: center; background: rgba(16, 34, 32, 0.45); padding: 1rem; font-family: "Segoe UI", sans-serif; }
+      .qm-menu[hidden] { display: none; }
+      .qm-menu-box { width: min(100%, 20rem); background: #fffaf0; border: 1.5px solid #c4a56e; border-radius: 1.1rem; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); }
+      .qm-menu-box > b { color: #1a3330; font-size: 0.95rem; margin-bottom: 0.2rem; text-align: center; }
+      .qm-opt { border: 1px solid rgba(196, 165, 110, 0.7); border-radius: 0.8rem; background: #fbf6ec; padding: 0.75rem; font: 600 1rem "Segoe UI", sans-serif; color: #1a3330; text-align: start; cursor: pointer; }
+      .qm-opt.ghost { border-color: transparent; background: none; text-align: center; color: #5c675f; font-size: 0.9rem; }
+      .qm-prev { width: min(100%, 24rem); max-height: 92vh; }
+      .qm-prev img { width: 100%; min-height: 0; flex: 1; object-fit: contain; border-radius: 0.5rem; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12); }
+      .qm-prev-row { display: flex; gap: 0.4rem; justify-content: center; }
+      .qm-selbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(2rem + env(safe-area-inset-bottom)); z-index: 25; display: flex; align-items: center; gap: 0.4rem; background: #fffaf0; border: 1.5px solid #c4a56e; border-radius: 999px; padding: 0.4rem 0.45rem 0.4rem 0.9rem; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); font-family: "Segoe UI", sans-serif; white-space: nowrap; }
+      .qm-selbar[hidden] { display: none; }
+      .qm-count { font-weight: 650; font-size: 0.86rem; color: #1a3330; margin-inline-end: 0.2rem; }
       .qm-empty { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 0.8rem 0; color: #5c675f; }
     </style>
   </head>
@@ -488,6 +503,8 @@
           const ay = hit && hit.closest && hit.closest(".ay");
           if (!ay || !ay.dataset.k) return;
           held = true; startX = null;
+          if (navigator.vibrate) try { navigator.vibrate(15); } catch (err) {}
+          if (QM.selecting()) { QM.tapAyah(ay.dataset.k); return; }
           const [s, a] = ay.dataset.k.split(":").map(Number);
           paintHl(ay.dataset.k);
           if (navigator.vibrate) try { navigator.vibrate(15); } catch (err) {}
@@ -502,6 +519,13 @@
       board.addEventListener("pointerup", (e) => {
         cancelHold();
         if (held || startX == null) { startX = null; return; }
+        if (Math.abs(e.clientX - startX) < 8 && QM.selecting()) {
+          const hit = document.elementFromPoint(e.clientX, e.clientY);
+          const ay = hit && hit.closest && hit.closest(".ay");
+          startX = null;
+          if (ay && ay.dataset.k) QM.tapAyah(ay.dataset.k);
+          return;
+        }
         const dx = e.clientX - startX;
         startX = null;
         if (dx > 36) show(pageNo + 1);
@@ -552,9 +576,19 @@
       let ayahMap = null, hlKey = null;
       function paintHl(k) {
         hlKey = k;
+        const keys = !k ? [] : Array.isArray(k) ? k : [k];
         board.querySelectorAll(".ay.hl").forEach((x) => x.classList.remove("hl"));
-        if (k) board.querySelectorAll('.ay[data-k="' + k + '"]').forEach((x) => x.classList.add("hl"));
+        for (const key of keys) board.querySelectorAll('.ay[data-k="' + key + '"]').forEach((x) => x.classList.add("hl"));
       }
+      // page of an ayah (from yazi-ayahs.json); turns the mushaf page when the ayah is elsewhere
+      function pageOf(key) {
+        if (!ayahMap) return pageNo;
+        const cur = ayahMap[String(pageNo)] || [];
+        if (cur.some((r) => r[0] === key)) return pageNo;
+        for (let n = 1; n <= LAST; n++) if ((ayahMap[String(n)] || []).some((r) => r[0] === key)) return n;
+        return pageNo;
+      }
+      window.QM_GOTO = (key, keys) => { const n = pageOf(key); hlKey = keys || key; if (n !== pageNo) show(n); else paintHl(hlKey); };
       window.QM_HL = paintHl;
       window.QM_AYAHS = AYAHS;
       window.QM_NAMES = NAMES;

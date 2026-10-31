@@ -4,7 +4,7 @@
   const NAMES = window.QM_NAMES;
   let LIST = [];
   const LANGS = [["az", "Azərbaycan"], ["tr", "Türkçe"], ["en", "English"], ["ar", "العربية"], ["ru", "Русский"]];
-  const DICT = {"Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"]};
+  const DICT = {"Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"]};
   const uiLang = () => localStorage.getItem("qm.lang") || "az";
   const T = (k) => { const i = ["tr", "en", "ar", "ru"].indexOf(uiLang()); return i < 0 || !DICT[k] ? k : DICT[k][i]; };
 
@@ -53,7 +53,7 @@
   const sheet = el("div", "qm-sheet qm-set"); back.appendChild(sheet);
   back.addEventListener("click", (e) => { if (e.target === back) closeAll(); });
   document.body.appendChild(back);
-  function closeAll() { back.hidden = true; cur = null; window.QM_HL && window.QM_HL(null); sheet.replaceChildren(); }
+  function closeAll() { back.hidden = true; cur = null; window.QM_HL && window.QM_HL(sel ? sel.slice() : null); sheet.replaceChildren(); }
   const ICON = {
     lang: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/>',
     size: '<path d="M4 18 8.5 6 13 18M5.6 14h5.8M15 18l3-7.5 3 7.5M15.9 16h4.2"/>',
@@ -69,6 +69,7 @@
   }
   async function openSettings(focus) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
+    sheet.onpointerdown = sheet.onpointerup = null;
     sheet.className = "qm-sheet qm-set"; sheet.replaceChildren();
     sheet.dir = uiLang() === "ar" ? "rtl" : "ltr";
     const head = el("div", "qm-head"); head.append(el("h2", "", T("Ayarlar"))); const x = el("button", "qm-close", T("Bağla")); x.onclick = closeAll; head.append(x); sheet.append(head);
@@ -139,6 +140,7 @@
     copy: '<rect x="8" y="8" width="11.5" height="11.5" rx="2"/><path d="M15.5 8V5.5A1.5 1.5 0 0 0 14 4H5.5A1.5 1.5 0 0 0 4 5.5V14a1.5 1.5 0 0 0 1.5 1.5H8"/>',
     mark: '<path d="M6.5 3.5h11v17L12 16.5l-5.5 4z"/>',
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
+    plus: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8.5v7M8.5 12h7"/>',
   };
   const icon = (name, label, filled) => { const b = el("button", "qm-ic" + (filled ? " on" : "")); b.type = "button"; b.setAttribute("aria-label", label); b.title = label; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + SVG[name] + "</svg>"; return b; };
 
@@ -146,38 +148,39 @@
   let cur = null;
   async function openAyah(s, a) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
-    cur = { s, a }; window.QM_HL && window.QM_HL(s + ":" + a);
+    cur = { s, a }; window.QM_GOTO ? window.QM_GOTO(s + ":" + a) : window.QM_HL && window.QM_HL(s + ":" + a);
     const p = prefs(); const kind = p.tab;
     const have = []; for (const r of LIST) if (r.k === kind && (await status(r.id)) >= 114) have.push(r);
     const r = have.find((x) => x.id === p[kind]) || have[0];
     const e = r ? await entry(r.id, s, a) : null;
     const fn = r && r.k === "tr" ? ((await get(r.id + ":f:" + s)) || [])[a - 1] : "";
     if (!cur || cur.s !== s || cur.a !== a) return;
+    sheet.onpointerdown = sheet.onpointerup = null;
     sheet.className = "qm-sheet qm-ayah"; sheet.replaceChildren(); sheet.dir = uiLang() === "ar" ? "rtl" : "ltr";
     const ref = NAMES[s - 1] + " " + s + ":" + a;
     const bar = el("div", "qm-icons");
     const shareB = icon("share", T("Paylaş")), copyB = icon("copy", T("Kopyala")), markB = icon("mark", T("Əlfəcin"), marks().includes(s + ":" + a)), closeB = icon("close", T("Bağla"));
-    shareB.onclick = async () => {
-      const ar = await ayahText(s, a);
-      let ex = e && e.text ? plain(e.text) : ""; if (ex.length > 600) ex = ex.slice(0, 600).trim() + "…";
-      const text = ar + "\n— " + ref + (ex ? "\n\n" + (r ? (r.k === "tr" ? r.by : r.name) + ":\n" : "") + ex : "");
-      if (navigator.share) { try { await navigator.share({ title: ref, text }); return; } catch (err) { if (err && err.name === "AbortError") return; } }
-      toast((await copyText(text)) ? T("Kopyalandı") : T("Alınmadı"));
-    };
-    copyB.onclick = async () => toast((await copyText((await ayahText(s, a)) + "\n— " + ref)) ? T("Kopyalandı") : T("Alınmadı"));
+    shareB.onclick = () => shareMenu([s + ":" + a]);
+    copyB.onclick = async () => toast((await copyText(await buildText([s + ":" + a], false))) ? T("Kopyalandı") : T("Alınmadı"));
+    const selB = icon("plus", T("Bir neçə ayə seç"));
+    selB.onclick = () => { startSelect(s + ":" + a); };
     markB.onclick = () => { const on = toggleMark(s + ":" + a); markB.classList.toggle("on", on); toast(on ? T("Əlfəcinə əlavə olundu") : T("Əlfəcindən silindi")); };
     closeB.onclick = () => { cur = null; window.QM_HL && window.QM_HL(null); closeAll(); };
     closeB.classList.add("end");
-    bar.append(shareB, copyB, markB, closeB);
+    bar.append(shareB, copyB, markB, selB, closeB);
     sheet.append(bar);
     const head = el("div", "qm-head");
     head.append(el("h2", "", NAMES[s - 1] + " · " + (e && e.from !== e.to ? e.from + "–" + e.to : a)));
     const nav = el("span", "qm-nav");
     const max = AYAHS[s - 1];
-    const pv = el("button", "qm-rb", "‹"), nx = el("button", "qm-rb", "›");
+    const pv = el("button", "qm-step", "‹ " + T("Əvvəlki")), nx = el("button", "qm-step", T("Növbəti") + " ›");
     pv.disabled = s === 1 && a === 1; nx.disabled = s === 114 && a === max;
-    pv.onclick = () => { const f = e ? e.from : a; f > 1 ? openAyah(s, f - 1) : openAyah(s - 1, AYAHS[s - 2]); };
-    nx.onclick = () => { const t = e ? e.to : a; t < max ? openAyah(s, t + 1) : openAyah(s + 1, 1); };
+    const goPrev = () => { if (pv.disabled) return; const f = e ? e.from : a; f > 1 ? openAyah(s, f - 1) : openAyah(s - 1, AYAHS[s - 2]); };
+    const goNext = () => { if (nx.disabled) return; const t = e ? e.to : a; t < max ? openAyah(s, t + 1) : openAyah(s + 1, 1); };
+    pv.onclick = goPrev; nx.onclick = goNext;
+    let sx = null, sy = 0;
+    sheet.onpointerdown = (ev) => { if (ev.target.closest("button, select")) return; sx = ev.clientX; sy = ev.clientY; };
+    sheet.onpointerup = (ev) => { if (sx == null) return; const dx = ev.clientX - sx, dy = ev.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx > 0 ? goNext : goPrev)(); };
     nav.append(pv, nx); head.append(nav);
     sheet.append(head);
     const tabs = el("div", "qm-tabs");
@@ -201,5 +204,125 @@
     }
     back.hidden = false;
   }
-  window.QM = { openSettings, openAyah };
+
+  /* ---------- several ayahs: text, image, selection ---------- */
+  const sortKeys = (keys) => [...new Set(keys)].map((k) => k.split(":").map(Number)).sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+  function refOf(keys) {
+    const ks = sortKeys(keys);
+    const [s0, a0] = ks[0], [s1, a1] = ks[ks.length - 1];
+    const contiguous = ks.every((k, i) => i === 0 || (k[0] === ks[i - 1][0] && k[1] === ks[i - 1][1] + 1));
+    if (ks.length === 1) return NAMES[s0 - 1] + " " + s0 + ":" + a0;
+    if (s0 === s1 && contiguous) return NAMES[s0 - 1] + " " + s0 + ":" + a0 + "–" + a1;
+    return ks.map((k) => k[0] + ":" + k[1]).join(", ");
+  }
+  const AR_DIG = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+  async function trFor(keys) {
+    const p = prefs(); if (!p.tr || (await status(p.tr)) < 114) return null;
+    const r = (LIST.length ? LIST : (LIST = await (await fetch("./lib-list.json")).json())).find((x) => x.id === p.tr);
+    const out = []; for (const [s, a] of sortKeys(keys)) { const e = await entry(p.tr, s, a); if (e && e.text) out.push(plain(e.text).replace(/\[\d+\]/g, "")); }
+    return r && out.length ? { name: r.by + " · " + r.name, text: [...new Set(out)].join(" ") } : null;
+  }
+  async function buildText(keys, withTr) {
+    const ks = sortKeys(keys); const parts = [];
+    for (const [s, a] of ks) parts.push((await ayahText(s, a)) + (ks.length > 1 ? " ﴿" + AR_DIG(a) + "﴾" : ""));
+    let t = parts.join(" ") + "\n— " + refOf(keys);
+    if (withTr) { const tr = await trFor(keys); if (tr) t += "\n\n" + tr.name + ":\n" + (tr.text.length > 900 ? tr.text.slice(0, 900).trim() + "…" : tr.text); }
+    return t;
+  }
+  async function shareText(keys) {
+    const text = await buildText(keys, true);
+    if (navigator.share) { try { await navigator.share({ title: refOf(keys), text }); return; } catch (err) { if (err && err.name === "AbortError") return; } }
+    toast((await copyText(text)) ? T("Kopyalandı") : T("Alınmadı"));
+  }
+  const menu = el("div", "qm-menu"); menu.hidden = true; document.body.appendChild(menu);
+  menu.addEventListener("click", (ev) => { if (ev.target === menu) menu.hidden = true; });
+  function shareMenu(keys) {
+    menu.replaceChildren(); const box = el("div", "qm-menu-box");
+    box.append(el("b", "", T("Paylaş") + " · " + refOf(keys)));
+    const tb = el("button", "qm-opt", "📝  " + T("Mətn")), ib = el("button", "qm-opt", "🖼  " + T("Şəkil")), cb = el("button", "qm-opt ghost", T("Ləğv"));
+    tb.onclick = () => { menu.hidden = true; shareText(keys); };
+    ib.onclick = () => { menu.hidden = true; imagePreview(keys); };
+    cb.onclick = () => (menu.hidden = true);
+    box.append(tb, ib, cb); menu.append(box); menu.hidden = false;
+  }
+  let fontP = null;
+  const quranFont = () => (fontP ||= new FontFace("QMHafs", "url(./yazi-fonts/uthmanic-hafs.woff2)").load().then((f) => (document.fonts.add(f), f)).catch(() => null));
+  function wrap(ctx, text, max) {
+    const words = text.split(/\s+/).filter(Boolean); const lines = []; let line = "";
+    for (const w of words) { const t = line ? line + " " + w : w; if (ctx.measureText(t).width > max && line) { lines.push(line); line = w; } else line = t; }
+    if (line) lines.push(line); return lines;
+  }
+  async function makeImage(keys) {
+    await quranFont();
+    const W = 1080, P = 90, inner = W - P * 2 - 40;
+    const ks = sortKeys(keys); const parts = [];
+    for (const [s, a] of ks) parts.push((await ayahText(s, a)) + " " + AR_DIG(a)); // this font draws the digits as the ayah-end circle
+    const tr = await trFor(keys);
+    const c = document.createElement("canvas"); const ctx = c.getContext("2d");
+    let arSize = 58; ctx.font = arSize + "px QMHafs, serif"; ctx.direction = "rtl";
+    let arLines = wrap(ctx, parts.join(" "), inner);
+    while (arLines.length > 16 && arSize > 34) { arSize -= 4; ctx.font = arSize + "px QMHafs, serif"; arLines = wrap(ctx, parts.join(" "), inner); }
+    const arLH = arSize * 1.95;
+    ctx.font = "32px 'Segoe UI', sans-serif"; ctx.direction = "ltr";
+    let trText = tr ? tr.text : ""; if (trText.length > 700) trText = trText.slice(0, 700).trim() + "…";
+    const trLines = tr ? wrap(ctx, trText, inner) : [];
+    const content = 180 + 110 + arLines.length * arLH + (tr ? 70 + trLines.length * 46 + 40 : 0) + 160;
+    const H = Math.max(1080, content), off = (H - content) / 2; // short ayahs sit in the middle of a square card
+    c.width = W; c.height = H;
+    ctx.fillStyle = "#fffaf0"; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "#c4a56e"; ctx.lineWidth = 6; ctx.strokeRect(34, 34, W - 68, H - 68);
+    ctx.lineWidth = 2; ctx.strokeRect(50, 50, W - 100, H - 100);
+    for (const [x, y] of [[50, 50], [W - 50, 50], [50, H - 50], [W - 50, H - 50]]) { ctx.save(); ctx.translate(x, y); ctx.rotate(Math.PI / 4); ctx.fillStyle = "#c4a56e"; ctx.fillRect(-11, -11, 22, 22); ctx.fillStyle = "#1a3330"; ctx.fillRect(-5, -5, 10, 10); ctx.restore(); }
+    // header pill
+    const ref = refOf(keys);
+    ctx.font = "600 36px 'Segoe UI', sans-serif"; ctx.direction = "ltr"; ctx.textAlign = "center";
+    const tw = ctx.measureText(ref).width + 80;
+    ctx.fillStyle = "#1a3330"; ctx.beginPath(); ctx.roundRect(W / 2 - tw / 2, 110 + off, tw, 70, 35); ctx.fill();
+    ctx.strokeStyle = "#c4a56e"; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = "#e4c98a"; ctx.fillText(ref, W / 2, 157 + off);
+    let y = 290 + off;
+    ctx.fillStyle = "#1a1612"; ctx.font = arSize + "px QMHafs, serif"; ctx.direction = "rtl";
+    for (const l of arLines) { ctx.fillText(l, W / 2, y); y += arLH; }
+    if (tr) {
+      y += 10; ctx.strokeStyle = "#c4a56e"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(W / 2 - 120, y); ctx.lineTo(W / 2 + 120, y); ctx.stroke(); y += 70;
+      ctx.direction = "ltr"; ctx.fillStyle = "#3d4a44"; ctx.font = "32px 'Segoe UI', sans-serif";
+      for (const l of trLines) { ctx.fillText(l, W / 2, y); y += 46; }
+      ctx.fillStyle = "#8a7d68"; ctx.font = "italic 24px 'Segoe UI', sans-serif"; ctx.fillText(tr.name, W / 2, y + 10);
+    }
+    ctx.direction = "ltr"; ctx.fillStyle = "#8a7d68"; ctx.font = "600 26px 'Segoe UI', sans-serif"; ctx.fillText("Qurani-Kərim · Mədinə məshəfi", W / 2, H - 92);
+    return new Promise((ok) => c.toBlob((b) => ok(b), "image/png"));
+  }
+  async function imagePreview(keys) {
+    toast(T("Hazırlanır…"));
+    const blob = await makeImage(keys); const url = URL.createObjectURL(blob);
+    const name = "quran-" + sortKeys(keys).map((k) => k.join("-")).filter((_, i, l) => i === 0 || i === l.length - 1).join("_") + ".png";
+    const file = new File([blob], name, { type: "image/png" });
+    toastEl.hidden = true;
+    menu.replaceChildren(); const box = el("div", "qm-menu-box qm-prev");
+    const img = el("img"); img.src = url; img.alt = refOf(keys); box.append(img);
+    const row = el("div", "qm-prev-row");
+    const sb = el("button", "qm-rb main", T("Paylaş")), db = el("button", "qm-rb", T("Yadda saxla")), xb = el("button", "qm-rb ghost", T("Bağla"));
+    const save = () => { const a = el("a"); a.href = url; a.download = name; document.body.append(a); a.click(); a.remove(); };
+    sb.onclick = async () => { if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: refOf(keys) }); return; } catch (err) { if (err && err.name === "AbortError") return; } } save(); };
+    db.onclick = save; xb.onclick = () => { menu.hidden = true; URL.revokeObjectURL(url); };
+    row.append(sb, db, xb); box.append(row); menu.append(box); menu.hidden = false;
+  }
+  // selection mode: tap (or hold) ayahs on the page to add / remove them
+  let sel = null;
+  const selBar = el("div", "qm-selbar"); selBar.hidden = true; document.body.appendChild(selBar);
+  function drawSel() {
+    if (!sel) { selBar.hidden = true; window.QM_HL && window.QM_HL(null); return; }
+    window.QM_HL && window.QM_HL(sel.slice());
+    selBar.replaceChildren();
+    const chip = el("span", "qm-count", T("N ayə seçilib").replace("N", sel.length)); chip.title = sel.length ? refOf(sel) : "";
+    const sb = el("button", "qm-rb main", T("Paylaş")), cb = el("button", "qm-rb", T("Kopyala")), xb = el("button", "qm-rb ghost", T("Ləğv"));
+    sb.disabled = cb.disabled = !sel.length;
+    sb.onclick = () => shareMenu(sel.slice());
+    cb.onclick = async () => toast((await copyText(await buildText(sel, false))) ? T("Kopyalandı") : T("Alınmadı"));
+    xb.onclick = () => { sel = null; drawSel(); };
+    selBar.append(chip, sb, cb, xb); selBar.hidden = false;
+  }
+  function startSelect(k) { sel = [k]; closeAll(); drawSel(); toast(T("Başqa ayələrə toxunun")); }
+  function tapAyah(k) { if (!sel) return; const i = sel.indexOf(k); i >= 0 ? sel.splice(i, 1) : sel.push(k); drawSel(); }
+  window.QM = { openSettings, openAyah, selecting: () => !!sel, tapAyah };
 })();
