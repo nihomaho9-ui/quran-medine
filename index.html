@@ -176,28 +176,23 @@
       .brand-tx { text-align: start; min-width: 0; }
       .brand-tx strong { display: block; font-size: 1.28rem; font-weight: 680; letter-spacing: -0.02em; color: #12352c; }
       .brand-tx span { display: block; margin-top: 0.05rem; font-size: 0.78rem; font-weight: 550; color: #6d6456; }
-      .home-bar { display: flex; align-items: stretch; gap: 0.4rem; margin-top: 0.7rem; text-align: start; }
-      .home-set { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.28rem; }
-      .set-line {
-        display: flex; align-items: center; gap: 0.4rem; width: 100%;
-        min-height: 2.05rem; padding: 0.26rem 0.55rem;
-        border-radius: 0.72rem; border: 1px solid rgba(196, 165, 110, 0.72);
-        background: #fffaf0; color: #1a3330;
-        font: 600 0.84rem "Segoe UI", sans-serif; text-align: start; cursor: pointer;
+      .home-bar { display: flex; align-items: stretch; gap: 0.45rem; margin-top: 0.75rem; }
+      .home-ico, .home-search {
+        border: 0; border-radius: 0.95rem; cursor: pointer; padding: 0;
+        display: grid; place-items: center;
       }
-      .set-line:disabled { cursor: default; }
-      .set-line .k {
-        flex: 0 0 4.5rem; font-size: 0.66rem; font-weight: 750;
-        letter-spacing: 0.06em; text-transform: uppercase; color: #8a6a2e;
+      .home-ico {
+        flex: 1; min-height: 3.15rem;
+        background: #fffaf0; color: #12352c;
+        border: 1px solid rgba(196, 165, 110, 0.8);
       }
-      .set-line .v { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 640; }
-      .set-line .chev { color: #a08a58; font-size: 0.72rem; }
+      .home-ico svg { width: 1.55rem; height: 1.55rem; }
       .home-search {
-        width: 2.7rem; flex: 0 0 auto; border: 0; border-radius: 0.85rem;
-        background: #12352c; color: #e4c98a; display: grid; place-items: center; cursor: pointer;
+        width: 3.15rem; flex: 0 0 auto; min-height: 3.15rem;
+        background: #12352c; color: #e4c98a;
         box-shadow: 0 2px 8px rgba(18, 53, 44, 0.18);
       }
-      .home-search svg { width: 1.2rem; height: 1.2rem; }
+      .home-search svg { width: 1.25rem; height: 1.25rem; }
       .home-search.on { background: #c4a56e; color: #12352c; }
       .home-q { margin-top: 0.42rem; }
       .home-q[hidden] { display: none; }
@@ -223,6 +218,20 @@
       .qm-pop .lang-opt.on { background: #12352c; color: #e4c98a; }
       .qm-pop .qm-res { padding: 0.42rem 0.4rem; }
       .qm-pop .qm-list { padding: 0.1rem; }
+      .qm-set .home-set { display: flex; flex-direction: column; gap: 0.28rem; }
+      .set-line {
+        display: flex; align-items: center; gap: 0.4rem; width: 100%;
+        min-height: 2.05rem; padding: 0.26rem 0.55rem;
+        border-radius: 0.72rem; border: 1px solid rgba(196, 165, 110, 0.72);
+        background: #fffaf0; color: #1a3330;
+        font: 600 0.84rem "Segoe UI", sans-serif; text-align: start; cursor: pointer;
+      }
+      .set-line .k {
+        flex: 0 0 4.5rem; font-size: 0.66rem; font-weight: 750;
+        letter-spacing: 0.06em; text-transform: uppercase; color: #8a6a2e;
+      }
+      .set-line .v { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 640; }
+      .set-line .chev { color: #a08a58; font-size: 0.72rem; }
       .qm-size-row {
         display: flex; align-items: center; gap: 0.55rem; margin-top: 0.65rem;
         padding: 0.45rem 0.55rem; border-radius: 0.75rem; background: #fffaf0;
@@ -337,7 +346,33 @@
       .qm-grp { margin: 0.5rem 0 0.1rem; padding-top: 0.45rem; border-top: 1px solid rgba(196, 165, 110, 0.35); font-size: 0.74rem; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: #8a6a2e; list-style: none; }
       .qm-list > .qm-grp:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
       .qm-grp + .qm-res { border-top: 0 !important; }
-      .qm-set .qm-note { text-align: center; margin: 0.2rem 0 0.3rem; }
+      .qm-back.qm-page { align-items: stretch; justify-content: stretch; background: #f6f1e4; z-index: 40; }
+      .qm-back.qm-page .qm-set {
+        width: 100%; height: 100%; max-height: none; border: 0; border-radius: 0;
+        padding: 0; background: #f6f1e4;
+      }
+      .qm-page-bar {
+        display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0;
+        min-height: 3.1rem; padding: calc(0.2rem + env(safe-area-inset-top)) 0.35rem 0.2rem;
+        background: #fffaf0; border-bottom: 1px solid rgba(26, 51, 48, 0.1);
+      }
+      .qm-page-bar h2 { margin: 0; flex: 1; text-align: center; font-size: 1.08rem; font-weight: 650; color: #12352c; }
+      .qm-page-back {
+        width: 2.5rem; height: 2.5rem; border: 0; background: none; color: #12352c;
+        font-size: 1.9rem; line-height: 1; cursor: pointer; padding: 0;
+      }
+      .qm-page-sp { width: 2.5rem; flex-shrink: 0; }
+      .qm-back.qm-page .qm-scroll { padding: 0.9rem 0.9rem calc(1rem + env(safe-area-inset-bottom)); }
+      .qm-back.qm-page .home-set { gap: 0.5rem; }
+      .qm-page-list { display: flex; flex-direction: column; gap: 0.4rem; }
+      .qm-page-list .lang-opt {
+        display: flex; width: 100%; border: 1px solid rgba(196, 165, 110, 0.72);
+        background: #fffaf0; border-radius: 0.75rem; padding: 0.72rem 0.85rem;
+        font: 640 0.98rem "Segoe UI", sans-serif; color: #1a3330; text-align: start; cursor: pointer;
+      }
+      .qm-page-list .lang-opt.on { background: #12352c; color: #e4c98a; border-color: #12352c; }
+      .qm-set .qm-note { text-align: center; margin: 0.85rem 0 0.3rem; }
+      [dir="rtl"] .set-line .chev { display: inline-block; transform: scaleX(-1); }
       .qm-step { border: 1px solid #c4a56e; border-radius: 999px; background: #1a3330; color: #f3e7d0; font: 600 0.82rem "Segoe UI", sans-serif; padding: 0.38rem 0.75rem; cursor: pointer; }
       .qm-step:disabled { opacity: 0.3; }
       .qm-ayah .qm-head h2 { font-size: 0.98rem; }
@@ -384,11 +419,7 @@
           <div class="brand-tx"><strong>Mushafuk</strong><span>Mədinə məshəfi</span></div>
         </div>
         <div class="home-bar">
-          <div id="home-set" class="home-set">
-            <button type="button" class="set-line" disabled><span class="k">Dil</span><span class="v">Azərbaycan</span><span class="chev">▾</span></button>
-            <button type="button" class="set-line" disabled><span class="k">Təfsir</span><span class="v">Seçilməyib</span><span class="chev">▾</span></button>
-            <button type="button" class="set-line" disabled><span class="k">Tərcümə</span><span class="v">Seçilməyib</span><span class="chev">▾</span></button>
-          </div>
+          <button type="button" class="home-ico" id="menu-btn" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></button>
           <button type="button" class="home-search" id="search-btn" aria-label="Axtarış"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16.5 20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
         </div>
         <div class="home-q" id="search-wrap" hidden>
@@ -407,6 +438,7 @@
     <div class="num" id="pos">1</div>
     <script>
       const NAMES = "Fatihə,Bəqərə,Ali-İmran,Nisa,Maidə,Ənam,Əraf,Ənfal,Tövbə,Yunus,Hud,Yusuf,Rəd,İbrahim,Hicr,Nəhl,İsra,Kəhf,Məryəm,Taha,Ənbiya,Həcc,Muminun,Nur,Furqan,Şuəra,Nəml,Qəsəs,Ankəbut,Rum,Loğman,Səcdə,Əhzab,Səba,Fatir,Yasin,Saffat,Sad,Zumər,Ğafir,Fussilət,Şura,Zuxruf,Duxan,Casiyə,Əhqaf,Muhəmməd,Fəth,Hucurat,Qaf,Zariyat,Tur,Nəcm,Qəmər,Rəhman,Vaqiə,Hədid,Mucadələ,Həşr,Mumtəhinə,Saff,Cumə,Munafiqun,Təğabun,Talaq,Təhrim,Mulk,Qələm,Haqqə,Məaric,Nuh,Cin,Muzzəmmil,Muddəssir,Qiyamə,İnsan,Mursəlat,Nəbə,Naziat,Əbəsə,Təkvir,İnfitar,Mutəffifin,İnşiqaq,Buruc,Tariq,Əla,Ğaşiyə,Fəcr,Bələd,Şəms,Leyl,Duha,İnşirah,Tin,Ələq,Qədr,Bəyyinə,Zəlzələ,Adiyat,Qariə,Təkasur,Əsr,Huməzə,Fil,Qureyş,Maun,Kövsər,Kafirun,Nəsr,Məsəd,İxlas,Fələq,Nas".split(",");
+      const ARNAMES = "الفاتحة,البقرة,آل عمران,النساء,المائدة,الأنعام,الأعراف,الأنفال,التوبة,يونس,هود,يوسف,الرعد,إبراهيم,الحجر,النحل,الإسراء,الكهف,مريم,طه,الأنبياء,الحج,المؤمنون,النور,الفرقان,الشعراء,النمل,القصص,العنكبوت,الروم,لقمان,السجدة,الأحزاب,سبأ,فاطر,يس,الصافات,ص,الزمر,غافر,فصلت,الشورى,الزخرف,الدخان,الجاثية,الأحقاف,محمد,الفتح,الحجرات,ق,الذاريات,الطور,النجم,القمر,الرحمن,الواقعة,الحديد,المجادلة,الحشر,الممتحنة,الصف,الجمعة,المنافقون,التغابن,الطلاق,التحريم,الملك,القلم,الحاقة,المعارج,نوح,الجن,المزمل,المدثر,القيامة,الإنسان,المرسلات,النبأ,النازعات,عبس,التكوير,الانفطار,المطففين,الانشقاق,البروج,الطارق,الأعلى,الغاشية,الفجر,البلد,الشمس,الليل,الضحى,الشرح,التين,العلق,القدر,البينة,الزلزلة,العاديات,القارعة,التكاثر,العصر,الهمزة,الفيل,قريش,الماعون,الكوثر,الكافرون,النصر,المسد,الإخلاص,الفلق,الناس".split(",");
       const sure = document.getElementById("sure");
       function surahTitle(page) {
         const starts = STARTS.split(",").map((item) => item.split(":").map(Number));
@@ -713,6 +745,7 @@
           } else {
             btn.className = "srow";
             btn.dataset.name = item.name;
+            btn.dataset.ar = ARNAMES[item.n - 1];
             btn.dataset.ayahs = String(item.ayahs);
             btn.dataset.where = MADANI.has(item.n) ? "mad" : "mak";
             const where = MADANI.has(item.n) ? "Mədinə" : "Məkkə";
@@ -726,17 +759,33 @@
       const searchWrap = document.getElementById("search-wrap");
       const searchBtn = document.getElementById("search-btn");
       const emptyEl = document.getElementById("empty");
-      const fold = (s) => s.toLocaleLowerCase("tr").replace(/ə/g, "e").replace(/ı/g, "i").replace(/i̇/g, "i").replace(/ö/g, "o").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ç/g, "c").replace(/ğ/g, "g").replace(/â/g, "a").replace(/î/g, "i").replace(/û/g, "u");
+      // hərfkəsiz / hərəkəsiz: ə=a=e, ş=s, ç=c, ğ=g, ö=o, ü=u, q=k, x=h, ərəb hərəkələri atılır
+      function fold(s) {
+        const ar = /[\u0600-\u06FF]/.test(s);
+        if (ar) {
+          return s.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "")
+            .replace(/[أإآٱ]/g, "ا").replace(/ؤ/g, "و").replace(/[ئىیي]/g, "ي").replace(/[ةەه]/g, "ه").replace(/ك/g, "ك").replace(/ک/g, "ك")
+            .replace(/[^\u0600-\u06FF]/g, "").replace(/^ال/, "");
+        }
+        return s.toLocaleLowerCase("tr")
+          .replace(/sh/g, "s").replace(/ch/g, "c").replace(/kh/g, "h").replace(/gh/g, "g")
+          .replace(/ə/g, "a").replace(/[âà]/g, "a").replace(/[ıî]/g, "i").replace(/i̇/g, "i")
+          .replace(/[öô]/g, "o").replace(/[üû]/g, "u").replace(/ş/g, "s").replace(/ç/g, "c")
+          .replace(/ğ/g, "g").replace(/q/g, "k").replace(/x/g, "h").replace(/w/g, "v")
+          .replace(/e/g, "a").replace(/[^a-z0-9]/g, "");
+      }
       function applyFilter() {
         const raw = qInput.value.trim();
         const nq = fold(raw);
+        const alt = nq.length > 4 && nq.startsWith("al") ? nq.slice(2) : "";
         let shown = 0;
         for (const btn of rows.children) {
           if (!nq) { btn.hidden = false; shown++; continue; }
           if (btn.dataset.kind === "j") { btn.hidden = true; continue; }
           const name = fold(btn.dataset.name || "");
+          const ar = fold(btn.dataset.ar || "");
           const num = btn.dataset.n || "";
-          const ok = name.includes(nq) || num === raw;
+          const ok = name.includes(nq) || ar.includes(nq) || (alt && (name.includes(alt) || ar.includes(alt))) || num === raw;
           btn.hidden = !ok;
           if (ok) shown++;
         }
@@ -785,6 +834,6 @@
       fetch("./yazi-ayahs.json").then((r) => r.json()).then((j) => { ayahMap = j; if (pages && !gate.hidden === false) show(pageNo); });
       fetch("./yazi-pages.json").then((r) => r.json()).then((json) => { pages = json; loadNames(); });
     </script>
-    <script src="./lib.js"></script>
+    <script src="./lib.js?v=5"></script>
   </body>
 </html>

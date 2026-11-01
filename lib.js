@@ -52,9 +52,28 @@
   /* ---------- Settings ---------- */
   const back = el("div", "qm-back"); back.hidden = true;
   const sheet = el("div", "qm-sheet qm-set"); back.appendChild(sheet);
-  back.addEventListener("click", (e) => { if (e.target === back) closeAll(); });
+  back.addEventListener("click", (e) => { if (e.target === back && !back.classList.contains("qm-page")) closeAll(); });
   document.body.appendChild(back);
-  function closeAll() { back.hidden = true; cur = null; closePop(); window.QM_HL && window.QM_HL(sel ? sel.slice() : null); sheet.replaceChildren(); }
+  let setView = "menu";
+  let setHist = false;
+  function closeSettingsPage() {
+    setHist = false;
+    setView = "menu";
+    back.classList.remove("qm-page");
+    back.hidden = true;
+    closePop();
+    sheet.replaceChildren();
+  }
+  function closeAll() {
+    if (back.classList.contains("qm-page")) {
+      if (setView !== "menu") { setView = "menu"; paintSettings(); return; }
+      if (setHist && history.state && history.state.qmSet) { history.back(); return; }
+      closeSettingsPage();
+      return;
+    }
+    back.hidden = true; cur = null; closePop(); window.QM_HL && window.QM_HL(sel ? sel.slice() : null); sheet.replaceChildren();
+  }
+  window.addEventListener("popstate", () => { if (back.classList.contains("qm-page")) closeSettingsPage(); });
   const ICON = {
     lang: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/>',
     size: '<path d="M4 18 8.5 6 13 18M5.6 14h5.8M15 18l3-7.5 3 7.5M15.9 16h4.2"/>',
@@ -105,7 +124,7 @@
     b.type = "button";
     b.dataset.k = key;
     const v = el("span", "v", value); v.dir = "auto";
-    b.append(el("span", "k", label), v, el("span", "chev", "▾"));
+    b.append(el("span", "k", label), v, el("span", "chev", "›"));
     b.onclick = () => onClick(b);
     return b;
   }
@@ -133,34 +152,56 @@
     });
   }
   function renderHome() {
-    const host = document.getElementById("home-set");
-    if (!host) return;
     const head = document.querySelector(".idx-head");
     if (head) head.dir = uiLang() === "ar" ? "rtl" : "ltr";
-    host.replaceChildren(
-      setLine("lang", T("Dil"), langName(), openLangPop),
-      setLine("tf", T("Təfsir"), resLabel("tf"), (b) => openResPop("tf", b)),
-      setLine("tr", T("Tərcümə"), resLabel("tr"), (b) => openResPop("tr", b)),
-    );
   }
   function refreshUi() {
     renderHome();
     if (!back.hidden && sheet.classList.contains("qm-set")) openSettings();
     window.dispatchEvent(new CustomEvent("qm-ui"));
   }
-  async function openSettings(focus) {
-    if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
-    closePop();
-    sheet.onpointerdown = sheet.onpointerup = null;
-    sheet.className = "qm-sheet qm-set"; sheet.replaceChildren();
+  function paintSettings() {
+    sheet.replaceChildren();
     sheet.dir = uiLang() === "ar" ? "rtl" : "ltr";
-    const head = el("div", "qm-head"); head.append(el("h2", "", T("Ayarlar"))); const x = el("button", "qm-close", T("Bağla")); x.onclick = closeAll; head.append(x); sheet.append(head);
-    const body = el("div", "qm-scroll"); sheet.append(body);
+    const titles = { menu: T("Ayarlar"), lang: T("Dil"), tf: T("Təfsir"), tr: T("Tərcümə") };
+    const bar = el("div", "qm-page-bar");
+    const bk = el("button", "qm-page-back", "‹");
+    bk.type = "button";
+    bk.setAttribute("aria-label", T("Əvvəlki"));
+    bk.onclick = () => closeAll();
+    bar.append(bk, el("h2", "", titles[setView] || T("Ayarlar")), el("span", "qm-page-sp"));
+    const body = el("div", "qm-scroll");
+    sheet.append(bar, body);
+    if (setView === "lang") {
+      const list = el("div", "qm-page-list");
+      for (const [id, nm] of LANGS) {
+        const b = el("button", "lang-opt" + (id === uiLang() ? " on" : ""), nm);
+        b.type = "button";
+        b.onclick = () => { localStorage.setItem("qm.lang", id); setView = "menu"; refreshUi(); };
+        list.append(b);
+      }
+      body.append(list);
+      return;
+    }
+    if (setView === "tf" || setView === "tr") {
+      const items = LIST.filter((r) => r.k === setView);
+      const sorted = setView === "tr" ? [...items].sort((a, b) => a.by.localeCompare(b.by) || a.name.localeCompare(b.name)) : items;
+      const ul = el("ul", "qm-list");
+      let grp = null;
+      for (const r of sorted) {
+        if (setView === "tr" && r.by !== grp) { grp = r.by; const g = el("li", "qm-grp", grp); g.dir = "auto"; ul.append(g); }
+        ul.append(resRow(r));
+      }
+      body.append(ul);
+      return;
+    }
     const stack = el("div", "home-set");
-    const langB = setLine("lang", T("Dil"), langName(), openLangPop);
-    const tfB = setLine("tf", T("Təfsir"), resLabel("tf"), (b) => openResPop("tf", b));
-    const trB = setLine("tr", T("Tərcümə"), resLabel("tr"), (b) => openResPop("tr", b));
-    stack.append(langB, tfB, trB); body.append(stack);
+    stack.append(
+      setLine("lang", T("Dil"), langName(), () => { setView = "lang"; paintSettings(); }),
+      setLine("tf", T("Təfsir"), resLabel("tf"), () => { setView = "tf"; paintSettings(); }),
+      setLine("tr", T("Tərcümə"), resLabel("tr"), () => { setView = "tr"; paintSettings(); }),
+    );
+    body.append(stack);
     const sc = el("div", "qm-size-row");
     sc.append(el("span", "k", T("Mətn ölçüsü")));
     const row = el("div", "qm-size"); const minus = el("button", "qm-chip", "A−"), val = el("b", "", ""), plus = el("button", "qm-chip", "A+");
@@ -169,10 +210,19 @@
     plus.onclick = () => { setPrefs({ fs: Math.round((prefs().fs + 0.1) * 10) / 10 }); upd(); };
     upd(); row.append(minus, val, plus); sc.append(row); body.append(sc);
     body.append(el("p", "qm-note", T("Endirilənlər cihazda qalır, internetsiz işləyir.")));
+  }
+  async function openSettings(focus) {
+    if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
+    closePop();
+    const already = back.classList.contains("qm-page") && !back.hidden;
+    sheet.onpointerdown = sheet.onpointerup = null;
+    sheet.className = "qm-sheet qm-set";
+    back.classList.add("qm-page");
+    if (focus === "tf" || focus === "tr") setView = focus;
+    else if (!already || setView === "lang") setView = "menu";
+    paintSettings();
     back.hidden = false;
-    renderHome();
-    if (focus === "tf") openResPop("tf", tfB);
-    else if (focus === "tr") openResPop("tr", trB);
+    if (!already) { history.pushState({ qmSet: 1 }, ""); setHist = true; }
   }
   function resRow(r) {
     const li = el("li", "qm-res"); li.dataset.id = r.id;
