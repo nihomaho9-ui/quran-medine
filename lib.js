@@ -4,7 +4,7 @@
   const NAMES = window.QM_NAMES;
   let LIST = [];
   const LANGS = [["az", "Azərbaycan"], ["tr", "Türkçe"], ["en", "English"], ["ar", "العربية"], ["ru", "Русский"]];
-  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"], "Seçilməyib": ["Seçilmedi", "None", "غير محدد", "Не выбрано"], "Axtarış": ["Ara", "Search", "بحث", "Поиск"], "Surə və ya ərəbcə söz…": ["Sure veya Arapça söz…", "Surah or an Arabic word…", "سورة أو كلمة…", "Сура или арабское слово…"], "Cüz": ["Cüz", "Juz", "الجزء", "Джуз"], "Mədinə": ["Medine", "Medinan", "مدنية", "Мединская"], "Məkkə": ["Mekke", "Meccan", "مكية", "Мекканская"], "ayə": ["ayet", "ayahs", "آية", "аятов"], "Tapılmadı": ["Bulunamadı", "No matches", "لا نتائج", "Ничего не найдено"]};
+  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"], "Seçilməyib": ["Seçilmedi", "None", "غير محدد", "Не выбрано"], "Axtarış": ["Ara", "Search", "بحث", "Поиск"], "Surə və ya ərəbcə söz…": ["Sure veya Arapça söz…", "Surah or an Arabic word…", "سورة أو كلمة…", "Сура или арабское слово…"], "Cüz": ["Cüz", "Juz", "الجزء", "Джуз"], "Mədinə": ["Medine", "Medinan", "مدنية", "Мединская"], "Məkkə": ["Mekke", "Meccan", "مكية", "Мекканская"], "ayə": ["ayet", "ayahs", "آية", "аятов"], "Tapılmadı": ["Bulunamadı", "No matches", "لا نتائج", "Ничего не найдено"], "Oxuma": ["Okuma", "Reading", "القراءة", "Чтение"], "Tətbiq": ["Uygulama", "App", "التطبيق", "Приложение"], "Məxfilik siyasəti": ["Gizlilik politikası", "Privacy policy", "سياسة الخصوصية", "Политика конфиденциальности"], "İstifadə şərtləri": ["Kullanım şartları", "Terms of use", "شروط الاستخدام", "Условия использования"], "Məlumat təhlükəsizliyi": ["Veri güvenliği", "Data safety", "أمان البيانات", "Безопасность данных"], "İcazələr": ["İzinler", "Permissions", "الأذونات", "Разрешения"], "Tətbiq haqqında": ["Uygulama hakkında", "About", "حول التطبيق", "О приложении"], "Əlaqə": ["İletişim", "Contact", "التواصل", "Контакт"], "Mənbələr": ["Kaynaklar", "Sources", "المصادر", "Источники"], "Məlumat toplanmır": ["Veri toplanmaz", "No data collected", "لا نجمع بيانات", "Данные не собираются"], "Oxuma qaydaları": ["Okuma kuralları", "How you may use it", "قواعد الاستخدام", "Правила чтения"], "Reklam və izləmə yoxdur": ["Reklam ve izleme yok", "No ads or tracking", "بلا إعلانات ولا تتبّع", "Без рекламы и слежки"], "Yalnız endirmə üçün internet": ["Yalnızca indirme için internet", "Internet only for downloads", "الإنترنت للتنزيل فقط", "Интернет только для загрузок"], "Mədinə məshəfi": ["Medine mushafı", "Madinah mushaf", "مصحف المدينة", "Мусхаф Медины"]};
   const uiLang = () => localStorage.getItem("qm.lang") || "az";
   const T = (k) => { const i = ["tr", "en", "ar", "ru"].indexOf(uiLang()); return i < 0 || !DICT[k] ? k : DICT[k][i]; };
 
@@ -160,6 +160,77 @@
     if (!back.hidden && sheet.classList.contains("qm-set")) openSettings();
     window.dispatchEvent(new CustomEvent("qm-ui"));
   }
+
+  const LI = { az: 0, tr: 1, en: 2, ar: 3, ru: 4 };
+  const L = (row) => row[LI[uiLang()]] ?? row[0];
+  const IC = {
+    lang: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.2 2.6 3.4 5.6 3.4 9s-1.2 6.4-3.4 9c-2.2-2.6-3.4-5.6-3.4-9s1.2-6.4 3.4-9z"/>',
+    book: '<path d="M5 4.5A2.5 2.5 0 0 1 7.5 2.5H20v16H7.5A2.5 2.5 0 0 0 5 21z"/><path d="M5 4.5A2.5 2.5 0 0 1 7.5 7H20"/>',
+    tr: '<path d="M4 5h7M7.5 5c.2 3.2-1.2 5.6-3.5 7.2M5.2 9.2c1 .8 2.2 1.4 3.6 1.6"/><path d="M13 20.5 16.2 11h1.6L21 20.5M14.3 17h5.4"/>',
+    size: '<path d="M4 19 8.6 6h1.5L15 19M6.2 14.2h6.2M16.5 19V9.5M16.5 9.5H19M16.5 9.5h-2"/>',
+    shield: '<path d="M12 3 5 6v6c0 4 2.7 6.9 7 8.5 4.3-1.6 7-4.5 7-8.5V6z"/><path d="m8.5 12 2.2 2.2 4.3-4.4"/>',
+    doc: '<path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h5"/>',
+    lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+    key: '<circle cx="8" cy="15" r="3"/><path d="M11 15h9M17 15v2.4M14.2 15v2"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.6h.01"/>',
+    mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m4 7 8 6 8-6"/>',
+    src: '<path d="m12 3 9 5-9 5L3 8z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/>',
+  };
+  const icEl = (name) => { const s = el("span", "ic"); s.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + IC[name] + "</svg>"; return s; };
+  function card(icon, title, hint, onClick) {
+    const b = el(onClick ? "button" : "div", "set-card" + (onClick ? "" : " static"));
+    if (onClick) b.type = "button";
+    const tx = el("span", "tx");
+    tx.append(el("b", "", title));
+    if (hint) { const sm = el("small", "", hint); sm.dir = "auto"; tx.append(sm); }
+    b.append(icEl(icon), tx);
+    if (onClick) { b.append(el("span", "chev", "›")); b.onclick = onClick; }
+    return b;
+  }
+  const openDoc = (id) => { setView = id; paintSettings(); };
+  const P5 = (...rows) => rows;
+  const DOCS = {
+    privacy: { title: P5("Məxfilik siyasəti", "Gizlilik politikası", "Privacy policy", "سياسة الخصوصية", "Политика конфиденциальности"), blocks: [
+      { p: P5("Son yenilənmə: 2 noyabr 2026. Bu mətn Play Market forması üçün də keçərlidir.", "Son güncelleme: 2 Kasım 2026. Bu metin Play Store formu için de geçerlidir.", "Last updated: 2 November 2026. This text is also what you enter in the Play Console.", "آخر تحديث: 2 نوفمبر 2026. هذا النص صالح أيضاً لنموذج بلاي.", "Обновлено: 2 ноября 2026. Этот текст подходит и для формы Play Console.") },
+      { h: P5("Kimik", "Kimiz", "Who we are", "من نحن", "Кто мы"), p: P5("Mushafuk Qurani-Kərimin Mədinə məshəfini oxumaq üçündür. Tətbiqi github.com/nihomaho9-ui dərc edir.", "Mushafuk, Kur’an-ı Kerim’in Medine mushafını okumak içindir. Uygulamayı github.com/nihomaho9-ui yayımlar.", "Mushafuk is a reader for the Madinah mushaf of the Quran. It is published by github.com/nihomaho9-ui.", "مصحفك لقراءة مصحف المدينة من القرآن الكريم. ينشره github.com/nihomaho9-ui.", "Mushafuk — чтение Медины-мусхафа Корана. Публикует github.com/nihomaho9-ui.") },
+      { h: P5("Nə toplamırıq", "Neyi toplamayız", "What we do not collect", "ما لا نجمعه", "Что мы не собираем"), p: P5("Hesab yoxdur. Ad, e-poçt, telefon, yer, kontakt, foto və cihaz identifikatoru alınmır. Reklam, analitik və izləmə yoxdur. Məlumat satılmır və heç bir şirkətlə paylaşılmır.", "Hesap yoktur. Ad, e-posta, telefon, konum, kişiler, fotoğraf ve cihaz kimliği alınmaz. Reklam, analitik ve izleme yoktur. Veri satılmaz ve kimseyle paylaşılmaz.", "There is no account. We do not take your name, email, phone, location, contacts, photos, or device id. There are no ads, analytics, or trackers. Data is not sold or shared.", "لا يوجد حساب. لا نأخذ الاسم ولا البريد ولا الهاتف ولا الموقع ولا جهات الاتصال ولا الصور ولا معرّف الجهاز. لا إعلانات ولا تحليلات ولا تتبّع. لا نبيع البيانات ولا نشاركها.", "Аккаунта нет. Имя, почта, телефон, геолокация, контакты, фото и id устройства не собираются. Нет рекламы, аналитики и трекеров. Данные не продаются и не передаются.") },
+      { h: P5("Cihazda qalanlar", "Cihazda kalanlar", "What stays on the device", "ما يبقى على الجهاز", "Что остаётся на устройстве"), p: P5("Dil, mətn ölçüsü, seçilmiş təfsir və tərcümə, əlfəcinlər və endirdiyiniz fayllar yalnız bu cihazda saxlanır. Serverə göndərilmir.", "Dil, yazı boyutu, seçilen tefsir ve meal, yer imleri ve indirdiğiniz dosyalar yalnız bu cihazda durur. Sunucuya gitmez.", "Language, text size, the tafsir and translation you pick, bookmarks, and downloaded files stay on this device only. They are not sent to a server.", "اللغة وحجم النص والتفسير والترجمة المختاران والعلامات والملفات التي تنزّلها تبقى على هذا الجهاز فقط ولا تُرسل إلى خادم.", "Язык, размер текста, выбранные тафсир и перевод, закладки и скачанные файлы хранятся только на устройстве и не уходят на сервер.") },
+      { h: P5("İnternet", "İnternet", "Internet", "الإنترنت", "Интернет"), p: P5("İnternet yalnız siz təfsir və ya tərcümə endirəndə işlənir. Yükləmə HTTPS ilə gedir. Faylı ayarlardan silə bilərsiniz.", "İnternet yalnızca siz tefsir veya meal indirince kullanılır. İndirme HTTPS iledir. Dosyayı ayarlardan silebilirsiniz.", "Internet is used only when you download a tafsir or a translation, over HTTPS. You can delete that file in Settings.", "يُستخدم الإنترنت فقط حين تنزّل تفسيراً أو ترجمة عبر HTTPS. يمكنك حذف الملف من الإعدادات.", "Интернет нужен только когда вы скачиваете тафсир или перевод, по HTTPS. Файл можно удалить в настройках.") },
+      { h: P5("Uşaqlar", "Çocuklar", "Children", "الأطفال", "Дети"), p: P5("Tətbiq 13 yaşdan kiçiklərə yönəlmir və onlardan bilərəkdən məlumat alınmır. Məzmun Qurani-Kərimdir, reklam yoxdur, hər yaşa uyğundur.", "Uygulama 13 yaşından küçüklere yönelik değildir ve onlardan bilerek veri alınmaz. İçerik Kur’an’dır, reklam yoktur, her yaşa uygundur.", "The app is not directed at children under 13 and does not knowingly collect their data. The content is the Quran, there are no ads, and it is suitable for all ages.", "التطبيق غير موجّه لمن هم دون 13 ولا نجمع بياناتهم عن قصد. المحتوى قرآن بلا إعلانات ومناسب لكل الأعمار.", "Приложение не предназначено для детей младше 13 лет и сознательно не собирает их данные. Содержание — Коран, без рекламы, для любого возраста.") },
+      { p: P5("Ünvan: https://nihomaho9-ui.github.io/quran-medine/privacy.html", "Adres: https://nihomaho9-ui.github.io/quran-medine/privacy.html", "URL: https://nihomaho9-ui.github.io/quran-medine/privacy.html", "الرابط: https://nihomaho9-ui.github.io/quran-medine/privacy.html", "Адрес: https://nihomaho9-ui.github.io/quran-medine/privacy.html") },
+    ]},
+    terms: { title: P5("İstifadə şərtləri", "Kullanım şartları", "Terms of use", "شروط الاستخدام", "Условия использования"), blocks: [
+      { p: P5("Mushafuk-u açmaqla bu şərtləri qəbul edirsiniz. Tətbiq pulsuzdur. İçində alış və reklam yoxdur.", "Mushafuk’u açarak bu şartları kabul edersiniz. Uygulama ücretsizdir. İçinde satın alma ve reklam yoktur.", "Opening Mushafuk means you accept these terms. The app is free. There are no purchases and no ads.", "بفتح مصحفك فإنك تقبل هذه الشروط. التطبيق مجاني بلا مشتريات ولا إعلانات.", "Открывая Mushafuk, вы принимаете эти условия. Приложение бесплатное, без покупок и рекламы.") },
+      { h: P5("Mətn", "Metin", "The text", "النص", "Текст"), p: P5("Ərəbcə mətn Mədinə məshəfinin rəsmidir. Biz onu dəyişmirik. Tərcümə və təfsir müəlliflərinə məxsusdur və seçdiyiniz nüsxə olduğu kimi göstərilir.", "Arapça metin Medine mushafının resmidir. Onu değiştirmeyiz. Meal ve tefsir müelliflerine aittir ve seçtiğiniz nüsha olduğu gibi gösterilir.", "The Arabic text is the Madinah mushaf. We do not change it. Translations and tafsirs belong to their authors and are shown as you downloaded them.", "النص العربي رسم مصحف المدينة ولا نغيّره. الترجمة والتفسير لمؤلّفيهما ويُعرضان كما نزّلتهما.", "Арабский текст — мединский мусхаф, мы его не меняем. Переводы и тафсиры принадлежат авторам и показываются как скачаны.") },
+      { h: P5("İstifadə", "Kullanım", "Use", "الاستخدام", "Использование"), p: P5("Şəxsi oxumaq üçündür. Tətbiqin özünü satmaq, içindəki mətnin müəllif hüququnu pozmaq və ya zərərli məqsədlə dəyişdirmək olmaz.", "Kişisel okuma içindir. Uygulamanın kendisini satmak, metnin telifini çiğnemek veya zararlı amaçla değiştirmek olmaz.", "It is for personal reading. You may not sell the app, infringe the authors’ rights, or modify it for a harmful purpose.", "هو للقراءة الشخصية. لا يجوز بيع التطبيق ولا انتهاك حقوق المؤلفين ولا تعديله لغرض ضار.", "Только для личного чтения. Нельзя продавать приложение, нарушать права авторов или менять его во вред.") },
+      { p: P5("Tətbiq olduğu kimi verilir. Tərcümənin mənası barədə son söz mətnin öz müəllifindədir.", "Uygulama olduğu gibi sunulur. Mealın anlamında son söz müellifindir.", "The app is provided as is. The author of a translation has the last word on its meaning.", "يُقدَّم التطبيق كما هو. القول الفصل في معنى الترجمة لمؤلّفها.", "Приложение даётся как есть. Последнее слово о смысле перевода — за его автором.") },
+    ]},
+    data: { title: P5("Məlumat təhlükəsizliyi", "Veri güvenliği", "Data safety", "أمان البيانات", "Безопасность данных"), blocks: [
+      { p: P5("Play Market-in məlumat forması üçün cavablar belədir.", "Play Store veri formu için cevaplar şöyledir.", "These are the answers for the Play Data safety form.", "هذه إجابات نموذج أمان البيانات في بلاي.", "Так отвечайте в форме Data safety в Play.") },
+      { p: P5("Məlumat toplanır: Xeyr. Məlumat paylaşılır: Xeyr. Məlumat satılır: Xeyr.", "Veri toplanır: Hayır. Veri paylaşılır: Hayır. Veri satılır: Hayır.", "Data collected: No. Data shared: No. Data sold: No.", "هل تُجمع بيانات: لا. هل تُشارك: لا. هل تُباع: لا.", "Данные собираются: нет. Передаются: нет. Продаются: нет.") },
+      { p: P5("Reklam yoxdur. Analitika yoxdur. Hesab yoxdur, ona görə hesab silmə də yoxdur.", "Reklam yok. Analitik yok. Hesap yok, bu yüzden hesap silme de yok.", "No ads. No analytics. No account, so there is no account deletion.", "لا إعلانات ولا تحليلات ولا حساب، لذلك لا حذف حساب.", "Нет рекламы, нет аналитики, нет аккаунта — удалять аккаунт нечего.") },
+      { p: P5("Endirmə yolda şifrələnir (HTTPS). Endirdiyiniz təfsir və tərcüməni ayarlardan silə bilərsiniz.", "İndirme yolda şifrelenir (HTTPS). İndirdiğiniz tefsir ve meali ayarlardan silebilirsiniz.", "Downloads are encrypted in transit (HTTPS). You can delete a tafsir or translation in Settings.", "التنزيل مشفّر أثناء النقل (HTTPS). يمكنك حذف التفسير أو الترجمة من الإعدادات.", "Загрузка шифруется в пути (HTTPS). Тафсир и перевод удаляются в настройках.") },
+    ]},
+    perm: { title: P5("İcazələr", "İzinler", "Permissions", "الأذونات", "Разрешения"), blocks: [
+      { p: P5("Tətbiq kamera, mikrofon, yer, kontakt, SMS, təqvim və fayl sistemindən icazə istəmir.", "Uygulama kamera, mikrofon, konum, kişiler, SMS, takvim ve dosya sistemi izni istemez.", "The app does not ask for camera, microphone, location, contacts, SMS, calendar, or file access.", "لا يطلب التطبيق الكاميرا ولا الميكروفون ولا الموقع ولا جهات الاتصال ولا الرسائل ولا التقويم ولا ملفات الجهاز.", "Приложение не просит камеру, микрофон, геолокацию, контакты, SMS, календарь и доступ к файлам.") },
+      { p: P5("İnternet yalnız sizin seçdiyiniz təfsir və ya tərcüməni endirmək üçündür. Endirməsəniz oxuma internetsiz də işləyir.", "İnternet yalnızca seçtiğiniz tefsir veya meali indirmek içindir. İndirmezseniz okuma internetsiz de çalışır.", "Internet is only for downloading the tafsir or translation you choose. Reading works offline if you do not download.", "الإنترنت فقط لتنزيل التفسير أو الترجمة التي تختارها. القراءة تعمل بلا إنترنت إن لم تنزّل.", "Интернет только чтобы скачать выбранный тафсир или перевод. Чтение работает и без сети, если ничего не качать.") },
+    ]},
+    about: { title: P5("Tətbiq haqqında", "Uygulama hakkında", "About", "حول التطبيق", "О приложении"), blocks: [
+      { p: P5("Mushafuk. Versiya 1.0.0. Mədinə məshəfi.", "Mushafuk. Sürüm 1.0.0. Medine mushafı.", "Mushafuk. Version 1.0.0. Madinah mushaf.", "مصحفك. الإصدار 1.0.0. مصحف المدينة.", "Mushafuk. Версия 1.0.0. Мусхаф Медины.") },
+      { p: P5("Səhifə səhifə ərəbcə mətn, surə siyahısı, ərəbcə söz axtarışı, təfsir və tərcümə. Dil: azərbaycan, türk, ingilis, ərəb, rus.", "Sayfa sayfa Arapça metin, sure listesi, Arapça kelime arama, tefsir ve meal. Dil: Azerbaycan, Türkçe, İngilizce, Arapça, Rusça.", "Page by page Arabic text, a surah index, Arabic word search, tafsir and translation. Languages: Azerbaijani, Turkish, English, Arabic, Russian.", "نص عربي صفحةً بصفحة، وفهرس سور، وبحث عن كلمة عربية، وتفسير وترجمة. اللغات: الأذربيجانية والتركية والإنجليزية والعربية والروسية.", "Текст по страницам, список сур, поиск арабского слова, тафсир и перевод. Языки: азербайджанский, турецкий, английский, арабский, русский.") },
+      { p: P5("Yaş: hər kəs. Kateqoriya: kitab və məlumat. Reklam yoxdur. Ödəniş yoxdur.", "Yaş: herkes. Kategori: kitaplar ve referans. Reklam yok. Ödeme yok.", "Age: everyone. Category: books and reference. No ads. No payments.", "العمر: للجميع. الفئة: كتب ومراجع. بلا إعلانات وبلا دفع.", "Возраст: для всех. Категория: книги и справочники. Без рекламы и платежей.") },
+    ]},
+    contact: { title: P5("Əlaqə", "İletişim", "Contact", "التواصل", "Контакт"), blocks: [
+      { p: P5("Dəstək və rəy üçün GitHub deposuna yazın. Ayrı e-poçt ünvanı yoxdur.", "Destek ve görüş için GitHub deposuna yazın. Ayrı bir e-posta yoktur.", "For support, write on the GitHub repository. There is no separate email address.", "للدعم اكتب في مستودع غِت هَب. لا يوجد بريد منفصل.", "Для поддержки пишите в репозиторий GitHub. Отдельной почты нет.") },
+      { p: P5("https://github.com/nihomaho9-ui/quran-medine", "https://github.com/nihomaho9-ui/quran-medine", "https://github.com/nihomaho9-ui/quran-medine", "https://github.com/nihomaho9-ui/quran-medine", "https://github.com/nihomaho9-ui/quran-medine") },
+      { p: P5("Məxfilik ünvanı: https://nihomaho9-ui.github.io/quran-medine/privacy.html", "Gizlilik adresi: https://nihomaho9-ui.github.io/quran-medine/privacy.html", "Privacy URL: https://nihomaho9-ui.github.io/quran-medine/privacy.html", "رابط الخصوصية: https://nihomaho9-ui.github.io/quran-medine/privacy.html", "Адрес политики: https://nihomaho9-ui.github.io/quran-medine/privacy.html") },
+    ]},
+    sources: { title: P5("Mənbələr", "Kaynaklar", "Sources", "المصادر", "Источники"), blocks: [
+      { p: P5("Ərəbcə mətn Tanzil Uthmani mətnidir. Səhifə düzümü və xətt Mədinə məshəfinə uyğundur.", "Arapça metin Tanzil Uthmani metnidir. Sayfa düzeni ve hat Medine mushafına uygundur.", "The Arabic text is the Tanzil Uthmani text. The page layout and script follow the Madinah mushaf.", "النص العربي نص تنزيل العثماني. تخطيط الصفحة والخط وفق مصحف المدينة.", "Арабский текст — Uthmani с Tanzil. Вёрстка и почерк — по мединскому мусхафу.") },
+      { p: P5("Tərcümə və təfsirlər öz müəlliflərinə məxsusdur. Siyahıdakı ad həmin nüsxənin adıdır və mətn dəyişdirilmir.", "Meal ve tefsirler müelliflerine aittir. Listedeki ad o nüshanın adıdır ve metin değiştirilmez.", "Translations and tafsirs belong to their authors. The name in the list is the name of that copy, and the text is not altered.", "الترجمات والتفاسير لمؤلّفيها. الاسم في القائمة اسم تلك النسخة ولا يُغيَّر النص.", "Переводы и тафсиры принадлежат авторам. Имя в списке — имя этой копии, текст не меняется.") },
+    ]},
+  };
+
   function paintSettings() {
     sheet.replaceChildren();
     sheet.dir = uiLang() === "ar" ? "rtl" : "ltr";
@@ -168,10 +239,28 @@
     const bk = el("button", "qm-page-back", "‹");
     bk.type = "button";
     bk.setAttribute("aria-label", T("Əvvəlki"));
-    bk.onclick = () => closeAll();
-    bar.append(bk, el("h2", "", titles[setView] || T("Ayarlar")), el("span", "qm-page-sp"));
+    bk.onclick = () => { if (setView !== "menu") { setView = "menu"; paintSettings(); } else closeAll(); };
+    bar.append(bk, el("h2", "", (DOCS[setView] && L(DOCS[setView].title)) || titles[setView] || T("Ayarlar")), el("span", "qm-page-sp"));
     const body = el("div", "qm-scroll");
     sheet.append(bar, body);
+    if (DOCS[setView]) {
+      const box = el("div", "qm-legal");
+      for (const block of DOCS[setView].blocks) {
+        if (block.h) box.append(el("h3", "", L(block.h)));
+        const p = el("p", "");
+        const text = L(block.p);
+        const m = text.match(/https:\/\/\S+/);
+        if (m) {
+          const i = text.indexOf(m[0]);
+          p.append(text.slice(0, i));
+          const a = el("a", "", m[0]); a.href = m[0]; a.target = "_blank"; a.rel = "noopener";
+          p.append(a, text.slice(i + m[0].length));
+        } else p.textContent = text;
+        box.append(p);
+      }
+      body.append(box);
+      return;
+    }
     if (setView === "lang") {
       const list = el("div", "qm-page-list");
       for (const [id, nm] of LANGS) {
@@ -195,21 +284,32 @@
       body.append(ul);
       return;
     }
+    body.append(el("p", "set-sec", T("Oxuma")));
     const stack = el("div", "home-set");
     stack.append(
-      setLine("lang", T("Dil"), langName(), () => { setView = "lang"; paintSettings(); }),
-      setLine("tf", T("Təfsir"), resLabel("tf"), () => { setView = "tf"; paintSettings(); }),
-      setLine("tr", T("Tərcümə"), resLabel("tr"), () => { setView = "tr"; paintSettings(); }),
+      card("lang", T("Dil"), langName(), () => { setView = "lang"; paintSettings(); }),
+      card("book", T("Təfsir"), resLabel("tf"), () => { setView = "tf"; paintSettings(); }),
+      card("tr", T("Tərcümə"), resLabel("tr"), () => { setView = "tr"; paintSettings(); }),
     );
-    body.append(stack);
-    const sc = el("div", "qm-size-row");
-    sc.append(el("span", "k", T("Mətn ölçüsü")));
+    const sc = card("size", T("Mətn ölçüsü"), "");
     const row = el("div", "qm-size"); const minus = el("button", "qm-chip", "A−"), val = el("b", "", ""), plus = el("button", "qm-chip", "A+");
     const upd = () => { const f = prefs().fs; val.textContent = Math.round(f * 100) + "%"; minus.disabled = f <= 0.8; plus.disabled = f >= 1.6; };
     minus.onclick = () => { setPrefs({ fs: Math.round((prefs().fs - 0.1) * 10) / 10 }); upd(); };
     plus.onclick = () => { setPrefs({ fs: Math.round((prefs().fs + 0.1) * 10) / 10 }); upd(); };
-    upd(); row.append(minus, val, plus); sc.append(row); body.append(sc);
-    body.append(el("p", "qm-note", T("Endirilənlər cihazda qalır, internetsiz işləyir.")));
+    upd(); row.append(minus, val, plus); sc.append(row); stack.append(sc);
+    body.append(stack);
+    body.append(el("p", "set-sec", T("Tətbiq")));
+    const play = el("div", "home-set");
+    play.append(
+      card("shield", T("Məxfilik siyasəti"), T("Məlumat toplanmır"), () => openDoc("privacy")),
+      card("doc", T("İstifadə şərtləri"), T("Oxuma qaydaları"), () => openDoc("terms")),
+      card("lock", T("Məlumat təhlükəsizliyi"), T("Reklam və izləmə yoxdur"), () => openDoc("data")),
+      card("key", T("İcazələr"), T("Yalnız endirmə üçün internet"), () => openDoc("perm")),
+      card("info", T("Tətbiq haqqında"), "Mushafuk 1.0.0", () => openDoc("about")),
+      card("mail", T("Əlaqə"), "GitHub", () => openDoc("contact")),
+      card("src", T("Mənbələr"), T("Mədinə məshəfi"), () => openDoc("sources")),
+    );
+    body.append(play);
   }
   async function openSettings(focus) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
