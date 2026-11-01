@@ -233,6 +233,20 @@
       }
       .qm-size-row .qm-size { margin-inline-start: auto; }
       #rows { flex: 1; overflow: auto; padding-bottom: calc(0.6rem + env(safe-area-inset-bottom)); }
+      #rows[hidden] { display: none; }
+      #ahits { flex: 1; overflow: auto; padding-bottom: calc(0.6rem + env(safe-area-inset-bottom)); }
+      #ahits[hidden] { display: none; }
+      .ahit {
+        width: 100%; border: 0; border-bottom: 1px solid rgba(26, 51, 48, 0.1);
+        background: transparent; text-align: start; padding: 0.55rem 0.95rem; font: inherit; color: inherit; cursor: pointer;
+      }
+      .ahit b { display: block; color: #8a6a2e; font-size: 0.78rem; font-weight: 750; letter-spacing: 0.02em; }
+      .ahit p {
+        margin: 0.12rem 0 0; direction: rtl; text-align: right; color: #1a1612;
+        font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade New", serif;
+        font-size: 1.2rem; line-height: 1.75;
+      }
+      .ahit-more { margin: 0; padding: 0.7rem; text-align: center; color: #6d6456; font-size: 0.82rem; }
       .srow, .jrow {
         width: 100%;
         border: 0;
@@ -413,11 +427,12 @@
           <button type="button" class="home-search" id="search-btn" aria-label="Axtarış"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16.5 20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
         </div>
         <div class="home-q" id="search-wrap" hidden>
-          <input id="q" type="search" enterkeyhint="search" placeholder="Surə axtar…" autocomplete="off" />
+          <input id="q" type="search" enterkeyhint="search" placeholder="Surə və ya ərəbcə söz…" autocomplete="off" />
         </div>
         <p class="home-empty" id="empty" hidden>Tapılmadı</p>
       </div>
       <div id="rows"></div>
+      <div id="ahits" hidden></div>
     </div>
     <header>
       <a href="#" id="back" aria-label="Geri">‹</a>
@@ -749,6 +764,7 @@
       const searchWrap = document.getElementById("search-wrap");
       const searchBtn = document.getElementById("search-btn");
       const emptyEl = document.getElementById("empty");
+      const ahits = document.getElementById("ahits");
       // hərfkəsiz / hərəkəsiz: ə=a=e, ş=s, ç=c, ğ=g, ö=o, ü=u, q=k, x=h, ərəb hərəkələri atılır
       function fold(s) {
         const ar = /[\u0600-\u06FF]/.test(s);
@@ -764,8 +780,68 @@
           .replace(/ğ/g, "g").replace(/q/g, "k").replace(/x/g, "h").replace(/w/g, "v")
           .replace(/e/g, "a").replace(/[^a-z0-9]/g, "");
       }
-      function applyFilter() {
-        const raw = qInput.value.trim();
+      function arPlain(s, alif) {
+        let t = s.replace(/\u06E5/g, "و").replace(/[\u06E6\u06E7]/g, "ي");
+        t = t.replace(/[\u0610-\u061A\u064B-\u0655\u0657-\u065F\u06D6-\u06ED\u08D4-\u08FF\u0640]/g, "");
+        t = t.replace(/[\u0656\u0670]/g, alif ? "ا" : "");
+        return t.replace(/[أإآٱٲ]/g, "ا").replace(/ؤ/g, "و").replace(/[ئىی]/g, "ي").replace(/ة/g, "ه")
+          .replace(/[^\u0621-\u064A\s]/g, " ").replace(/\s+/g, " ").trim();
+      }
+      function normWord(w) {
+        return w.replace(/[أإآٱٲ]/g, "ا").replace(/ؤ/g, "و").replace(/[ئىی]/g, "ي").replace(/ة/g, "ه").replace(/[^\u0621-\u064A]/g, "");
+      }
+      function wordForms(raw, alif) {
+        let t = raw.replace(/\u06E5/g, "و").replace(/[\u06E6\u06E7]/g, "ي");
+        t = t.replace(/[\u0610-\u061A\u064B-\u0655\u0657-\u065F\u06D6-\u06ED\u08D4-\u08FF\u0640]/g, "");
+        t = t.replace(/[\u0656\u0670]/g, alif ? "ا" : "");
+        const out = [];
+        for (const w of t.split(/\s+/)) {
+          if (!w) continue;
+          const full = normWord(w);
+          if (!full) continue;
+          out.push(full);
+          const head = [...w][0];
+          if ((head === "ا" || head === "ٱ") && [...w][1] === "ل" && [...w].length > 3) {
+            const rest = normWord([...w].slice(2).join(""));
+            if (rest) out.push(rest);
+          }
+        }
+        return out;
+      }
+      let quranP = null, searchGen = 0;
+      function loadQuran() {
+        if (quranP) return quranP;
+        quranP = (async () => {
+          const [txt, map] = await Promise.all([
+            fetch("./quran-uthmani.txt").then((r) => r.text()),
+            ayahMap ? Promise.resolve(ayahMap) : fetch("./yazi-ayahs.json").then((r) => r.json()).then((j) => (ayahMap = j)),
+          ]);
+          const pageBy = {};
+          for (const [p, list] of Object.entries(map)) for (const row of list) pageBy[row[0]] = Number(p);
+          const out = [];
+          for (const line of txt.split("\n")) {
+            if (!line) continue;
+            const i = line.indexOf("|"), j = line.indexOf("|", i + 1);
+            if (j < 0) continue;
+            const s = +line.slice(0, i), a = +line.slice(i + 1, j);
+            let raw = line.slice(j + 1).trim();
+            if (a === 1 && s !== 1 && s !== 9) raw = raw.split(/\s+/).slice(4).join(" ");
+            const plain = arPlain(raw, true);
+            if (!plain) continue;
+            const words = [...new Set(wordForms(raw, true).concat(wordForms(raw, false)))];
+            out.push({ s, a, plain, words, page: pageBy[s + ":" + a] || surahPage(s) });
+          }
+          return out;
+        })();
+        return quranP;
+      }
+      function wordHit(item, qs) {
+        return qs.every((q) => item.words.includes(q));
+      }
+      function showSurahs(raw) {
+        ahits.hidden = true;
+        ahits.replaceChildren();
+        rows.hidden = false;
         const nq = fold(raw);
         const alt = nq.length > 4 && nq.startsWith("al") ? nq.slice(2) : "";
         let shown = 0;
@@ -781,6 +857,42 @@
         }
         emptyEl.hidden = shown !== 0;
       }
+      function applyFilter() {
+        const raw = qInput.value.trim();
+        if (!/[\u0600-\u06FF]/.test(raw)) { showSurahs(raw); return; }
+        const gen = ++searchGen;
+        const qs = arPlain(raw).split(" ").filter(Boolean);
+        rows.hidden = true;
+        ahits.hidden = false;
+        ahits.replaceChildren();
+        emptyEl.hidden = true;
+        if (!qs.length) { emptyEl.hidden = false; return; }
+        loadQuran().then((list) => {
+          if (gen !== searchGen) return;
+          const hits = [];
+          for (const item of list) if (wordHit(item, qs)) hits.push(item);
+          const shown = hits.slice(0, 60);
+          for (const h of shown) {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "ahit";
+            const head = document.createElement("b");
+            head.textContent = NAMES[h.s - 1] + "  " + h.s + ":" + h.a;
+            const p = document.createElement("p");
+            p.textContent = h.plain;
+            b.append(head, p);
+            b.addEventListener("click", () => { hlKey = h.s + ":" + h.a; openAt(h.page); });
+            ahits.appendChild(b);
+          }
+          if (hits.length > shown.length) {
+            const more = document.createElement("p");
+            more.className = "ahit-more";
+            more.textContent = shown.length + " / " + hits.length;
+            ahits.appendChild(more);
+          }
+          emptyEl.hidden = hits.length !== 0;
+        }).catch(() => { if (gen === searchGen) emptyEl.hidden = false; });
+      }
       searchBtn.addEventListener("click", () => {
         const open = searchWrap.hidden;
         searchWrap.hidden = !open;
@@ -791,7 +903,7 @@
       qInput.addEventListener("input", applyFilter);
       window.addEventListener("qm-ui", () => {
         const t = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
-        qInput.placeholder = t("Surə axtar…");
+        qInput.placeholder = t("Surə və ya ərəbcə söz…");
         searchBtn.setAttribute("aria-label", t("Axtarış"));
         emptyEl.textContent = t("Tapılmadı");
         for (const btn of rows.children) {
