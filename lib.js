@@ -4,7 +4,7 @@
   const NAMES = window.QM_NAMES;
   let LIST = [];
   const LANGS = [["az", "Azərbaycan"], ["tr", "Türkçe"], ["en", "English"], ["ar", "العربية"], ["ru", "Русский"]];
-  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"]};
+  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"], "Seçilməyib": ["Seçilmedi", "None", "غير محدد", "Не выбрано"], "Axtarış": ["Ara", "Search", "بحث", "Поиск"], "Surə axtar…": ["Sure ara…", "Search a surah…", "ابحث عن سورة…", "Найти суру…"], "Cüz": ["Cüz", "Juz", "الجزء", "Джуз"], "Mədinə": ["Medine", "Medinan", "مدنية", "Мединская"], "Məkkə": ["Mekke", "Meccan", "مكية", "Мекканская"], "ayə": ["ayet", "ayahs", "آية", "аятов"], "Tapılmadı": ["Bulunamadı", "No matches", "لا نتائج", "Ничего не найдено"]};
   const uiLang = () => localStorage.getItem("qm.lang") || "az";
   const T = (k) => { const i = ["tr", "en", "ar", "ru"].indexOf(uiLang()); return i < 0 || !DICT[k] ? k : DICT[k][i]; };
 
@@ -54,53 +54,125 @@
   const sheet = el("div", "qm-sheet qm-set"); back.appendChild(sheet);
   back.addEventListener("click", (e) => { if (e.target === back) closeAll(); });
   document.body.appendChild(back);
-  function closeAll() { back.hidden = true; cur = null; window.QM_HL && window.QM_HL(sel ? sel.slice() : null); sheet.replaceChildren(); }
+  function closeAll() { back.hidden = true; cur = null; closePop(); window.QM_HL && window.QM_HL(sel ? sel.slice() : null); sheet.replaceChildren(); }
   const ICON = {
     lang: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/>',
     size: '<path d="M4 18 8.5 6 13 18M5.6 14h5.8M15 18l3-7.5 3 7.5M15.9 16h4.2"/>',
     tf: '<path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5"/>',
     tr: '<path d="M4 6h9M8.5 4v2M6 6c.5 3 2.5 5.5 5 6.5M11 6c-.5 3-2.5 5.5-5 6.5M13 20l3.5-8 3.5 8M14.2 17.3h4.6"/>',
   };
-  function card(key, title, extra) {
-    const c = el("section", "qm-card"); c.id = "qm-" + key;
-    const h = el("div", "qm-card-h");
-    const ic = el("span", "qm-card-ic"); ic.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[key] + "</svg>";
-    h.append(ic, el("h3", "", title)); if (extra) h.append(el("small", "", extra));
-    c.append(h); return c;
+  const pop = el("div", "qm-pop"); pop.hidden = true; document.body.appendChild(pop);
+  let popAnchor = null;
+  function closePop() { pop.hidden = true; popAnchor = null; pop.replaceChildren(); }
+  document.addEventListener("pointerdown", (ev) => {
+    if (pop.hidden) return;
+    const t = ev.target;
+    if (t instanceof Element && t.closest(".qm-pop, .set-line")) return;
+    closePop();
+  });
+  function placePop(anchor) {
+    pop.hidden = false;
+    pop.style.left = "0.7rem";
+    pop.style.right = "0.7rem";
+    const r = anchor.getBoundingClientRect();
+    const below = window.innerHeight - r.bottom;
+    const cap = Math.min(340, Math.round(window.innerHeight * 0.52));
+    if (below >= 150 || below >= r.top) {
+      pop.style.top = Math.round(r.bottom + 6) + "px";
+      pop.style.bottom = "auto";
+      pop.style.maxHeight = Math.max(120, Math.min(cap, below - 12)) + "px";
+    } else {
+      pop.style.top = "auto";
+      pop.style.bottom = Math.round(window.innerHeight - r.top + 6) + "px";
+      pop.style.maxHeight = Math.max(120, Math.min(cap, r.top - 12)) + "px";
+    }
+  }
+  function togglePop(anchor, fill) {
+    if (!pop.hidden && popAnchor === anchor) { closePop(); return; }
+    popAnchor = anchor;
+    pop.replaceChildren();
+    fill();
+    placePop(anchor);
+  }
+  function langName() { return (LANGS.find((l) => l[0] === uiLang()) || LANGS[0])[1]; }
+  function resLabel(k) {
+    const id = prefs()[k];
+    const r = LIST.find((x) => x.id === id);
+    return r ? r.name : T("Seçilməyib");
+  }
+  function setLine(key, label, value, onClick) {
+    const b = el("button", "set-line");
+    b.type = "button";
+    b.dataset.k = key;
+    const v = el("span", "v", value); v.dir = "auto";
+    b.append(el("span", "k", label), v, el("span", "chev", "▾"));
+    b.onclick = () => onClick(b);
+    return b;
+  }
+  function openLangPop(anchor) {
+    togglePop(anchor, () => {
+      for (const [id, nm] of LANGS) {
+        const b = el("button", "lang-opt" + (id === uiLang() ? " on" : ""), nm);
+        b.type = "button";
+        b.onclick = () => { localStorage.setItem("qm.lang", id); closePop(); refreshUi(); };
+        pop.append(b);
+      }
+    });
+  }
+  function openResPop(kind, anchor) {
+    togglePop(anchor, () => {
+      const items = LIST.filter((r) => r.k === kind);
+      const sorted = kind === "tr" ? [...items].sort((a, b) => a.by.localeCompare(b.by) || a.name.localeCompare(b.name)) : items;
+      const ul = el("ul", "qm-list");
+      let grp = null;
+      for (const r of sorted) {
+        if (kind === "tr" && r.by !== grp) { grp = r.by; const g = el("li", "qm-grp", grp); g.dir = "auto"; ul.append(g); }
+        ul.append(resRow(r));
+      }
+      pop.append(ul);
+    });
+  }
+  function renderHome() {
+    const host = document.getElementById("home-set");
+    if (!host) return;
+    const head = document.querySelector(".idx-head");
+    if (head) head.dir = uiLang() === "ar" ? "rtl" : "ltr";
+    host.replaceChildren(
+      setLine("lang", T("Dil"), langName(), openLangPop),
+      setLine("tf", T("Təfsir"), resLabel("tf"), (b) => openResPop("tf", b)),
+      setLine("tr", T("Tərcümə"), resLabel("tr"), (b) => openResPop("tr", b)),
+    );
+  }
+  function refreshUi() {
+    renderHome();
+    if (!back.hidden && sheet.classList.contains("qm-set")) openSettings();
+    window.dispatchEvent(new CustomEvent("qm-ui"));
   }
   async function openSettings(focus) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
+    closePop();
     sheet.onpointerdown = sheet.onpointerup = null;
     sheet.className = "qm-sheet qm-set"; sheet.replaceChildren();
     sheet.dir = uiLang() === "ar" ? "rtl" : "ltr";
     const head = el("div", "qm-head"); head.append(el("h2", "", T("Ayarlar"))); const x = el("button", "qm-close", T("Bağla")); x.onclick = closeAll; head.append(x); sheet.append(head);
     const body = el("div", "qm-scroll"); sheet.append(body);
-    // 1. language
-    const lc = card("lang", T("Dil")); const chips = el("div", "qm-chips");
-    for (const [id, nm] of LANGS) { const b = el("button", "qm-chip" + (id === uiLang() ? " on" : ""), nm); b.onclick = () => { localStorage.setItem("qm.lang", id); openSettings(); }; chips.append(b); }
-    lc.append(chips); body.append(lc);
-    // 2. text size
-    const sc = card("size", T("Mətn ölçüsü"));
+    const stack = el("div", "home-set");
+    const langB = setLine("lang", T("Dil"), langName(), openLangPop);
+    const tfB = setLine("tf", T("Təfsir"), resLabel("tf"), (b) => openResPop("tf", b));
+    const trB = setLine("tr", T("Tərcümə"), resLabel("tr"), (b) => openResPop("tr", b));
+    stack.append(langB, tfB, trB); body.append(stack);
+    const sc = el("div", "qm-size-row");
+    sc.append(el("span", "k", T("Mətn ölçüsü")));
     const row = el("div", "qm-size"); const minus = el("button", "qm-chip", "A−"), val = el("b", "", ""), plus = el("button", "qm-chip", "A+");
     const upd = () => { const f = prefs().fs; val.textContent = Math.round(f * 100) + "%"; minus.disabled = f <= 0.8; plus.disabled = f >= 1.6; };
     minus.onclick = () => { setPrefs({ fs: Math.round((prefs().fs - 0.1) * 10) / 10 }); upd(); };
     plus.onclick = () => { setPrefs({ fs: Math.round((prefs().fs + 0.1) * 10) / 10 }); upd(); };
     upd(); row.append(minus, val, plus); sc.append(row); body.append(sc);
-    // 3. tafsirs, 4. translations (grouped by language)
-    for (const k of ["tf", "tr"]) {
-      const items = LIST.filter((r) => r.k === k);
-      const c = card(k, k === "tf" ? T("Təfsirlər") : T("Tərcümələr"), String(items.length));
-      const ul = el("ul", "qm-list"); let grp = null;
-      const sorted = k === "tr" ? [...items].sort((a, b) => a.by.localeCompare(b.by)) : items;
-      for (const r of sorted) {
-        if (k === "tr" && r.by !== grp) { grp = r.by; const g = el("li", "qm-grp", grp); g.dir = "auto"; ul.append(g); }
-        ul.append(resRow(r));
-      }
-      c.append(ul); body.append(c);
-    }
     body.append(el("p", "qm-note", T("Endirilənlər cihazda qalır, internetsiz işləyir.")));
     back.hidden = false;
-    if (focus) document.getElementById("qm-" + focus).scrollIntoView();
+    renderHome();
+    if (focus === "tf") openResPop("tf", tfB);
+    else if (focus === "tr") openResPop("tr", trB);
   }
   function resRow(r) {
     const li = el("li", "qm-res"); li.dataset.id = r.id;
@@ -117,11 +189,11 @@
       if (busy) b(T("Dayandır"), "", () => { running[r.id] && (running[r.id].stop = true); });
       else if (!done) b(T("Endir"), "main", go);
       else if (ask) { b(T("Sil"), "danger", del); b("✕", "", () => { ask = false; draw(); }); }
-      else { b(chosen ? T("✓ Seçilib") : T("Seç"), chosen ? "sel" : "", () => { setPrefs({ [r.k]: r.id }); sheet.querySelectorAll(".qm-res").forEach((x) => x._draw && x._draw()); }); b("🗑", "ghost", () => { ask = true; draw(); }); }
+      else { b(chosen ? T("✓ Seçilib") : T("Seç"), chosen ? "sel" : "", () => { setPrefs({ [r.k]: r.id }); document.querySelectorAll(".qm-res").forEach((x) => x._draw && x._draw()); renderHome(); }); b("🗑", "ghost", () => { ask = true; draw(); }); }
     };
     li._draw = draw;
-    const go = async () => { busy = true; err.textContent = ""; draw(); try { await download(r, (k) => { n = k; draw(); }); if (!prefs()[r.k] || prefs()[r.k] !== r.id) setPrefs({ [r.k]: r.id }); } catch (e) { if (e.message !== "stopped") err.textContent = T("Alınmadı. İnterneti yoxlayın."); } busy = false; n = await status(r.id); sheet.querySelectorAll(".qm-res").forEach((x) => x._draw && x._draw()); };
-    const del = async () => { await remove(r.id); n = 0; ask = false; if (prefs()[r.k] === r.id) setPrefs({ [r.k]: "" }); draw(); };
+    const go = async () => { busy = true; err.textContent = ""; draw(); try { await download(r, (k) => { n = k; draw(); }); if (!prefs()[r.k] || prefs()[r.k] !== r.id) setPrefs({ [r.k]: r.id }); } catch (e) { if (e.message !== "stopped") err.textContent = T("Alınmadı. İnterneti yoxlayın."); } busy = false; n = await status(r.id); document.querySelectorAll(".qm-res").forEach((x) => x._draw && x._draw()); renderHome(); };
+    const del = async () => { await remove(r.id); n = 0; ask = false; if (prefs()[r.k] === r.id) setPrefs({ [r.k]: "" }); draw(); renderHome(); };
     status(r.id).then((v) => { n = v; draw(); });
     draw();
     return li;
@@ -407,5 +479,9 @@
     const target = focusKey && body.querySelector('[data-k="' + focusKey + '"]');
     if (target) { target.classList.add("cur"); target.scrollIntoView({ block: "start" }); } else body.scrollTop = 0;
   }
-  window.QM = { openSettings, openFull, openAyah, selecting: () => !!sel, tapAyah };
+  window.QM = { openSettings, openFull, openAyah, selecting: () => !!sel, tapAyah, t: T };
+  (async () => {
+    try { if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json(); } catch (e) {}
+    refreshUi();
+  })();
 })();
