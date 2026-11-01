@@ -176,23 +176,13 @@
       .brand-tx { text-align: start; min-width: 0; }
       .brand-tx strong { display: block; font-size: 1.28rem; font-weight: 680; letter-spacing: -0.02em; color: #12352c; }
       .brand-tx span { display: block; margin-top: 0.05rem; font-size: 0.78rem; font-weight: 550; color: #6d6456; }
-      .home-bar { display: flex; align-items: stretch; gap: 0.45rem; margin-top: 0.75rem; }
+      .home-bar { display: flex; justify-content: flex-end; align-items: center; gap: 0.45rem; margin-top: 0.75rem; }
       .home-ico, .home-search {
-        border: 0; border-radius: 0.95rem; cursor: pointer; padding: 0;
-        display: grid; place-items: center;
-      }
-      .home-ico {
-        flex: 1; min-height: 3.15rem;
-        background: #fffaf0; color: #12352c;
-        border: 1px solid rgba(196, 165, 110, 0.8);
-      }
-      .home-ico svg { width: 1.55rem; height: 1.55rem; }
-      .home-search {
-        width: 3.15rem; flex: 0 0 auto; min-height: 3.15rem;
-        background: #12352c; color: #e4c98a;
+        width: 3.15rem; height: 3.15rem; flex: 0 0 auto; border: 0; border-radius: 0.95rem;
+        background: #12352c; color: #e4c98a; display: grid; place-items: center; cursor: pointer; padding: 0;
         box-shadow: 0 2px 8px rgba(18, 53, 44, 0.18);
       }
-      .home-search svg { width: 1.25rem; height: 1.25rem; }
+      .home-ico svg, .home-search svg { width: 1.45rem; height: 1.45rem; }
       .home-search.on { background: #c4a56e; color: #12352c; }
       .home-q { margin-top: 0.42rem; }
       .home-q[hidden] { display: none; }
