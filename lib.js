@@ -284,6 +284,18 @@
       body.append(ul);
       return;
     }
+    body.append(el("p", "set-sec", T("Tətbiq")));
+    const play = el("div", "home-set");
+    play.append(
+      card("shield", T("Məxfilik siyasəti"), T("Məlumat toplanmır"), () => openDoc("privacy")),
+      card("doc", T("İstifadə şərtləri"), T("Oxuma qaydaları"), () => openDoc("terms")),
+      card("lock", T("Məlumat təhlükəsizliyi"), T("Reklam və izləmə yoxdur"), () => openDoc("data")),
+      card("key", T("İcazələr"), T("Yalnız endirmə üçün internet"), () => openDoc("perm")),
+      card("info", T("Tətbiq haqqında"), "Mushafuk 1.0.0", () => openDoc("about")),
+      card("mail", T("Əlaqə"), "GitHub", () => openDoc("contact")),
+      card("src", T("Mənbələr"), T("Mədinə məshəfi"), () => openDoc("sources")),
+    );
+    body.append(play);
     body.append(el("p", "set-sec", T("Oxuma")));
     const stack = el("div", "home-set");
     stack.append(
@@ -298,18 +310,6 @@
     plus.onclick = () => { setPrefs({ fs: Math.round((prefs().fs + 0.1) * 10) / 10 }); upd(); };
     upd(); row.append(minus, val, plus); sc.append(row); stack.append(sc);
     body.append(stack);
-    body.append(el("p", "set-sec", T("Tətbiq")));
-    const play = el("div", "home-set");
-    play.append(
-      card("shield", T("Məxfilik siyasəti"), T("Məlumat toplanmır"), () => openDoc("privacy")),
-      card("doc", T("İstifadə şərtləri"), T("Oxuma qaydaları"), () => openDoc("terms")),
-      card("lock", T("Məlumat təhlükəsizliyi"), T("Reklam və izləmə yoxdur"), () => openDoc("data")),
-      card("key", T("İcazələr"), T("Yalnız endirmə üçün internet"), () => openDoc("perm")),
-      card("info", T("Tətbiq haqqında"), "Mushafuk 1.0.0", () => openDoc("about")),
-      card("mail", T("Əlaqə"), "GitHub", () => openDoc("contact")),
-      card("src", T("Mənbələr"), T("Mədinə məshəfi"), () => openDoc("sources")),
-    );
-    body.append(play);
   }
   async function openSettings(focus) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
