@@ -371,27 +371,30 @@
       .set-sec { margin: 0.95rem 0.2rem 0.15rem; font-size: 0.7rem; font-weight: 750; letter-spacing: 0.07em; text-transform: uppercase; color: #8a6a2e; }
       .set-sec:first-child { margin-top: 0; }
       .set-card {
-        display: flex; align-items: center; gap: 0.65rem; width: 100%;
-        min-height: 3.2rem; padding: 0.42rem 0.6rem 0.42rem 0.5rem;
+        display: flex; align-items: center; gap: 0.7rem; width: 100%;
+        min-height: 3.05rem; padding: 0.5rem 0.7rem;
         border-radius: 0.9rem; border: 1px solid rgba(196, 165, 110, 0.72);
         background: #fffaf0; color: #1a3330; text-align: start; cursor: pointer; font: inherit;
       }
       .set-card.static { cursor: default; }
       .set-card .ic {
-        width: 2.15rem; height: 2.15rem; flex: 0 0 auto; display: grid; place-items: center;
-        border-radius: 0.62rem; background: #12352c; color: #e4c98a;
+        width: 2.05rem; height: 2.05rem; flex: 0 0 auto; display: grid; place-items: center;
+        border-radius: 0.58rem; background: #12352c; color: #e4c98a;
       }
-      .set-card .ic svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-      .set-card .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.04rem; }
-      .set-card .tx b { font-size: 0.95rem; font-weight: 680; color: #12352c; }
-      .set-card .tx small { font-size: 0.74rem; font-weight: 550; color: #6d6456; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .set-card .chev { color: #a08a58; font-size: 1.2rem; line-height: 1; }
+      .set-card .ic svg { width: 1.12rem; height: 1.12rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+      .set-card .tx { flex: 1; min-width: 0; }
+      .set-card .tx b { display: block; font-size: 0.96rem; font-weight: 650; line-height: 1.2; color: #12352c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .set-card .v { flex: 0 1 auto; max-width: 42%; font-size: 0.8rem; font-weight: 600; line-height: 1.2; color: #8a6a2e; text-align: end; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .set-card .chev { flex: 0 0 auto; color: #a08a58; font-size: 1.25rem; line-height: 1; }
       [dir="rtl"] .set-card .chev { display: inline-block; transform: scaleX(-1); }
-      .set-card .qm-size { margin-inline-start: auto; gap: 0.45rem; }
-      .qm-legal { display: flex; flex-direction: column; gap: 0.65rem; }
-      .qm-legal h3 { margin: 0.35rem 0 0; font-size: 0.95rem; color: #12352c; }
-      .qm-legal p { margin: 0; line-height: 1.6; font-size: 0.92rem; color: #24332e; }
-      .qm-legal a { color: #8a6a2e; }
+      .set-card .qm-size { flex: 0 0 auto; gap: 0.28rem; }
+      .set-card .qm-size .qm-chip { padding: 0.18rem 0.5rem; min-width: 2.15rem; font-size: 0.82rem; }
+      .set-card .qm-size b { min-width: 2.5rem; font-size: 0.86rem; font-weight: 700; }
+      .qm-legal { display: flex; flex-direction: column; gap: 0.7rem; }
+      .qm-legal section { background: #fffaf0; border: 1px solid rgba(196, 165, 110, 0.5); border-radius: 0.9rem; padding: 0.75rem 0.85rem; }
+      .qm-legal h3 { margin: 0 0 0.28rem; font-size: 0.72rem; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase; color: #8a6a2e; }
+      .qm-legal p { margin: 0; line-height: 1.6; font-size: 0.94rem; color: #1a3330; }
+      .qm-legal a { display: block; margin-top: 0.35rem; color: #8a6a2e; word-break: break-all; font-size: 0.84rem; }
       .qm-page-list { display: flex; flex-direction: column; gap: 0.4rem; }
       .qm-page-list .lang-opt {
         display: flex; width: 100%; border: 1px solid rgba(196, 165, 110, 0.72);
@@ -960,6 +963,6 @@
       fetch("./yazi-ayahs.json").then((r) => r.json()).then((j) => { ayahMap = j; if (pages && !gate.hidden === false) show(pageNo); });
       fetch("./yazi-pages.json").then((r) => r.json()).then((json) => { pages = json; loadNames(); });
     </script>
-    <script src="./lib.js?v=7"></script>
+    <script src="./lib.js?v=8"></script>
   </body>
 </html>

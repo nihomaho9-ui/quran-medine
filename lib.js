@@ -182,8 +182,8 @@
     if (onClick) b.type = "button";
     const tx = el("span", "tx");
     tx.append(el("b", "", title));
-    if (hint) { const sm = el("small", "", hint); sm.dir = "auto"; tx.append(sm); }
     b.append(icEl(icon), tx);
+    if (hint) { const sm = el("span", "v", hint); sm.dir = "auto"; b.append(sm); }
     if (onClick) { b.append(el("span", "chev", "›")); b.onclick = onClick; }
     return b;
   }
@@ -246,17 +246,20 @@
     if (DOCS[setView]) {
       const box = el("div", "qm-legal");
       for (const block of DOCS[setView].blocks) {
-        if (block.h) box.append(el("h3", "", L(block.h)));
+        const sec = el("section", "");
+        if (block.h) sec.append(el("h3", "", L(block.h)));
         const p = el("p", "");
         const text = L(block.p);
         const m = text.match(/https:\/\/\S+/);
         if (m) {
           const i = text.indexOf(m[0]);
-          p.append(text.slice(0, i));
+          if (text.slice(0, i).trim()) p.append(text.slice(0, i).replace(/:\s*$/, ""));
           const a = el("a", "", m[0]); a.href = m[0]; a.target = "_blank"; a.rel = "noopener";
-          p.append(a, text.slice(i + m[0].length));
+          p.append(a);
+          if (text.slice(i + m[0].length).trim()) p.append(text.slice(i + m[0].length));
         } else p.textContent = text;
-        box.append(p);
+        sec.append(p);
+        box.append(sec);
       }
       body.append(box);
       return;
@@ -284,18 +287,6 @@
       body.append(ul);
       return;
     }
-    body.append(el("p", "set-sec", T("Tətbiq")));
-    const play = el("div", "home-set");
-    play.append(
-      card("shield", T("Məxfilik siyasəti"), T("Məlumat toplanmır"), () => openDoc("privacy")),
-      card("doc", T("İstifadə şərtləri"), T("Oxuma qaydaları"), () => openDoc("terms")),
-      card("lock", T("Məlumat təhlükəsizliyi"), T("Reklam və izləmə yoxdur"), () => openDoc("data")),
-      card("key", T("İcazələr"), T("Yalnız endirmə üçün internet"), () => openDoc("perm")),
-      card("info", T("Tətbiq haqqında"), "Mushafuk 1.0.0", () => openDoc("about")),
-      card("mail", T("Əlaqə"), "GitHub", () => openDoc("contact")),
-      card("src", T("Mənbələr"), T("Mədinə məshəfi"), () => openDoc("sources")),
-    );
-    body.append(play);
     body.append(el("p", "set-sec", T("Oxuma")));
     const stack = el("div", "home-set");
     stack.append(
@@ -310,6 +301,18 @@
     plus.onclick = () => { setPrefs({ fs: Math.round((prefs().fs + 0.1) * 10) / 10 }); upd(); };
     upd(); row.append(minus, val, plus); sc.append(row); stack.append(sc);
     body.append(stack);
+    body.append(el("p", "set-sec", T("Tətbiq")));
+    const play = el("div", "home-set");
+    play.append(
+      card("shield", T("Məxfilik siyasəti"), "", () => openDoc("privacy")),
+      card("doc", T("İstifadə şərtləri"), "", () => openDoc("terms")),
+      card("lock", T("Məlumat təhlükəsizliyi"), "", () => openDoc("data")),
+      card("key", T("İcazələr"), "", () => openDoc("perm")),
+      card("info", T("Tətbiq haqqında"), "1.0.0", () => openDoc("about")),
+      card("mail", T("Əlaqə"), "", () => openDoc("contact")),
+      card("src", T("Mənbələr"), "", () => openDoc("sources")),
+    );
+    body.append(play);
   }
   async function openSettings(focus) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
