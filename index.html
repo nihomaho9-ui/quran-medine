@@ -581,6 +581,23 @@
       .qm-pl-done.on { background: #2f6b52; border-color: #2f6b52; color: #fff; }
       .qm-pl-new { display: flex; flex-direction: column; gap: 0.45rem; } .qm-pl-ci { flex: 0 0 5.5rem !important; width: 5.5rem; }
       .qm-pl-calc small { color: #6d6456; font-size: 0.82rem; } .qm-pl-end { text-align: center; }
+      .s-tabs { display: flex; gap: 0.4rem; margin-top: 0.5rem; overflow-x: auto; scrollbar-width: none; }
+      .s-tab { flex: 0 0 auto; border: 1.3px solid #c4a56e; border-radius: 999px; background: #fffaf0; color: #1a3330; font: inherit; font-size: 0.84rem; font-weight: 650; padding: 0.32rem 0.85rem; cursor: pointer; }
+      .s-tab.on { background: #1a3330; border-color: #1a3330; color: #fff; }
+      .s-src { margin-top: 0.45rem; width: 100%; border: 1px solid rgba(196, 165, 110, 0.75); background: #fffaf0; border-radius: 0.7rem; padding: 0.4rem 0.6rem; font: inherit; font-size: 0.85rem; color: #1a3330; }
+      .s-src[hidden], .s-info[hidden], .s-nav[hidden] { display: none; }
+      .s-info { margin: 0.45rem 0.1rem 0; font-size: 0.78rem; color: #6d6456; }
+      .s-go { border: 0; background: #1a3330; color: #f3e7d0; border-radius: 999px; padding: 0.3rem 0.8rem; font: inherit; font-size: 0.8rem; font-weight: 650; margin-top: 0.3rem; cursor: pointer; }
+      .s-hit b { display: flex; justify-content: space-between; } .s-hit b small { color: #8a7d68; font-weight: 600; }
+      .ahit p.s-ar { font-family: QMHafs, serif; font-size: 1.2rem; line-height: 1.95; text-align: right; color: #1a1612; }
+      .ahit p.s-tx { font-family: inherit; font-size: 0.88rem; line-height: 1.5; color: #3a3226; text-align: start; }
+      .ahit p.s-tx[dir="rtl"] { font-size: 0.98rem; }
+      .s-hit mark { background: rgba(196, 165, 110, 0.55); color: inherit; border-radius: 0.25rem; padding: 0 0.08rem; }
+      button.ahit-more { display: block; width: 100%; border: 0; background: none; font: inherit; cursor: pointer; font-weight: 700; color: #1a3330; }
+      .s-nav { position: fixed; left: 0.8rem; right: 0.8rem; bottom: calc(1rem + env(safe-area-inset-bottom)); z-index: 22; background: #1a3330; color: #f3e7d0; border-radius: 1rem; padding: 0.5rem 0.6rem; display: flex; align-items: center; gap: 0.45rem; font: 700 0.9rem "Segoe UI", sans-serif; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); max-width: 32rem; margin: 0 auto; }
+      .s-nb { width: 2.3rem; height: 2.3rem; border-radius: 50%; border: 0; background: rgba(255, 255, 255, 0.12); color: #f3e7d0; font: inherit; font-size: 1.15rem; cursor: pointer; flex: 0 0 auto; }
+      .s-nb:disabled { opacity: 0.35; }
+      .s-nt { flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .qm-wps-btn { margin: 0 0 0.6rem; width: 100%; }
       .qm-wpop[hidden] { display: none; }
       .qm-wpop::after { content: ""; position: absolute; left: calc(var(--ax, 50%) - 7px); bottom: -8px; border: 7px solid transparent; border-top-color: #c4a56e; border-bottom: 0; }
@@ -1080,6 +1097,16 @@
         return t.replace(/[أإآٱٲ]/g, "ا").replace(/ؤ/g, "و").replace(/[ئىی]/g, "ي").replace(/ة/g, "ه")
           .replace(/[^\u0621-\u064A\s]/g, " ").replace(/\s+/g, " ").trim();
       }
+      // search normaliser: harakat, Uthmani spellings (dagger alif, wāw/yā with alif), tatweel, alif and hamza seats
+      function arN(t, alif) {
+        t = t.replace(/\u06E5/g, "و").replace(/[\u06E6\u06E7]/g, "ي");
+        t = alif ? t.replace(/\u0648\u0670/g, "ا").replace(/\u0649\u0670/g, "ى").replace(/\u0670/g, "ا") : t.replace(/\u0670/g, "");
+        t = t.replace(/[\u0624\u0626\u0654\u0655]/g, "ء").replace(/آ/g, "ءا");
+        return t.replace(/[\u0610-\u061A\u064B-\u0653\u0656-\u065F\u06D6-\u06ED\u08D4-\u08FF\u0640]/g, "")
+          .replace(/[أإٱٲ]/g, "ا").replace(/[ىی]/g, "ي").replace(/ة/g, "ه").replace(/ک/g, "ك")
+          .replace(/[^\u0621-\u064A\s]/g, " ").replace(/\s+/g, " ").trim();
+      }
+      window.QM_ARN = arN;
       function normWord(w) {
         return w.replace(/[أإآٱٲ]/g, "ا").replace(/ؤ/g, "و").replace(/[ئىی]/g, "ي").replace(/ة/g, "ه").replace(/[^\u0621-\u064A]/g, "");
       }
@@ -1122,7 +1149,7 @@
             const plain = arPlain(raw, true);
             if (!plain) continue;
             const words = [...new Set(wordForms(raw, true).concat(wordForms(raw, false)))];
-            out.push({ s, a, plain, words, page: pageBy[s + ":" + a] || surahPage(s) });
+            out.push({ s, a, raw, plain, words, nA: arN(raw, true), nB: arN(raw, false), hA: arN(raw, true).replace(/ء/g, ""), hB: arN(raw, false).replace(/ء/g, ""), page: pageBy[s + ":" + a] || surahPage(s) });
           }
           return out;
         })();
@@ -1150,48 +1177,124 @@
         }
         emptyEl.hidden = shown !== 0;
       }
-      function applyFilter() {
-        const raw = qInput.value.trim();
-        if (!/[\u0600-\u06FF]/.test(raw)) { showSurahs(raw); return; }
-        const gen = ++searchGen;
-        const qs = arPlain(raw).split(" ").filter(Boolean);
-        rows.hidden = true;
-        ahits.hidden = false;
-        ahits.replaceChildren();
-        emptyEl.hidden = true;
-        if (!qs.length) { emptyEl.hidden = false; return; }
-        loadQuran().then((list) => {
-          if (gen !== searchGen) return;
-          const hits = [];
-          for (const item of list) if (wordHit(item, qs)) hits.push(item);
-          const shown = hits.slice(0, 60);
-          for (const h of shown) {
-            const b = document.createElement("button");
-            b.type = "button";
-            b.className = "ahit";
-            const head = document.createElement("b");
-            head.textContent = NAMES[h.s - 1] + "  " + h.s + ":" + h.a;
-            const p = document.createElement("p");
-            p.textContent = h.plain;
-            b.append(head, p);
-            b.addEventListener("click", () => { hlKey = h.s + ":" + h.a; openAt(h.page); });
-            ahits.appendChild(b);
-          }
-          if (hits.length > shown.length) {
-            const more = document.createElement("p");
-            more.className = "ahit-more";
-            more.textContent = shown.length + " / " + hits.length;
-            ahits.appendChild(more);
-          }
-          emptyEl.hidden = hits.length !== 0;
-        }).catch(() => { if (gen === searchGen) emptyEl.hidden = false; });
+      // ---- search: tabs Ərəbcə / Tərcümə / Təfsir, results, ‹ n / total › bar ----
+      const T_ = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
+      let sTab = "ar", sTimer = 0, sHits = [], sShown = 0, sQ = null;
+      const stabs = document.createElement("div"); stabs.className = "s-tabs"; stabs.id = "stabs";
+      const ssrc = document.createElement("select"); ssrc.className = "s-src"; ssrc.hidden = true;
+      const sInfo = document.createElement("p"); sInfo.className = "s-info"; sInfo.hidden = true;
+      searchWrap.append(stabs, ssrc, sInfo);
+      function paintTabs() {
+        stabs.replaceChildren();
+        for (const [k, l] of [["ar", "Ərəbcə"], ["tr", "Tərcümə"], ["tf", "Təfsir"]]) {
+          const b = document.createElement("button"); b.type = "button"; b.dataset.k = k; b.className = "s-tab" + (sTab === k ? " on" : "");
+          b.textContent = T_(l) + (sTab === k && sQ && sHits.length ? " · " + sHits.length : "");
+          b.onclick = () => { sTab = k; sHits = []; applyFilter(); }; stabs.append(b);
+        }
       }
+      const isAr = (x) => /[\u0600-\u06FF]/.test(x);
+      // Latin/Cyrillic folding that keeps character positions (for highlighting)
+      const lowC = (c) => { let n = c.toLowerCase().replace(/\u0307/g, ""); n = n.replace(/ı/g, "i").replace(/ё/g, "е"); return n.length === 1 ? n : c; };
+      const lowS = (t) => { let o = ""; for (const c of t) o += c.length === 1 ? lowC(c) : c; return o; };
+      function hlArabic(el, raw, toks, fontFix) {
+        const ws = raw.split(/(\s+)/);
+        for (const w of ws) {
+          if (/^\s+$/.test(w) || !w) { el.append(w); continue; }
+          const a = arN(w, true), b = arN(w, false);
+          if (toks.some((t) => a.includes(t) || b.includes(t) || (!t.includes("ء") && (a.replace(/ء/g, "").includes(t) || b.replace(/ء/g, "").includes(t))))) { const m = document.createElement("mark"); m.textContent = fontFix(w); el.append(m); }
+          else el.append(fontFix(w));
+        }
+      }
+      function snipLatin(el, text, toks) {
+        const low = lowS(text); let first = -1;
+        for (const t of toks) { const i = low.indexOf(t); if (i >= 0 && (first < 0 || i < first)) first = i; }
+        let a = 0, b = text.length;
+        if (text.length > 220) { a = Math.max(0, first - 80); b = Math.min(text.length, a + 220); while (a > 0 && !/\s/.test(text[a - 1])) a++; }
+        const seg = text.slice(a, b), lseg = low.slice(a, b);
+        const marks = []; for (const t of toks) { let i = 0; while ((i = lseg.indexOf(t, i)) >= 0) { marks.push([i, i + t.length]); i += t.length; } }
+        marks.sort((x, y) => x[0] - y[0]);
+        if (a > 0) el.append("… ");
+        let p = 0; for (const [x, y] of marks) { if (x < p) continue; el.append(seg.slice(p, x)); const m = document.createElement("mark"); m.textContent = seg.slice(x, y); el.append(m); p = y; }
+        el.append(seg.slice(p)); if (b < text.length) el.append(" …");
+      }
+      function snipArabicText(el, text, toks) {
+        const ws = text.split(/\s+/); let i0 = ws.findIndex((w) => { const n = arN(w, true); return toks.some((t) => n.includes(t) || n.replace(/ء/g, "").includes(t)); });
+        if (i0 < 0) i0 = 0; const a = Math.max(0, i0 - 12), b = Math.min(ws.length, i0 + 18);
+        if (a > 0) el.append("… "); hlArabic(el, ws.slice(a, b).join(" "), toks, (x) => x); if (b < ws.length) el.append(" …");
+      }
+      function renderHits() {
+        ahits.querySelectorAll(".ahit-more").forEach((x) => x.remove());
+        const end = Math.min(sHits.length, sShown + 50);
+        for (let i = sShown; i < end; i++) {
+          const h = sHits[i]; const b = document.createElement("button"); b.type = "button"; b.className = "ahit s-hit"; b.dataset.i = i; b.dataset.k = h.s + ":" + h.a;
+          const head = document.createElement("b"); head.textContent = NAMES[h.s - 1] + " " + h.a + (h.to && h.to > h.a ? "–" + h.to : ""); const ref = document.createElement("small"); ref.textContent = h.s + ":" + h.a; head.append(ref);
+          const p = document.createElement("p");
+          if (h.raw != null) { p.className = "s-ar"; p.dir = "rtl"; hlArabic(p, h.raw, sQ.toks, (x) => (window.QM_SRC ? window.QM_SRC.forFont(x) : x)); }
+          else if (sQ.ar) { p.className = "s-tx"; p.dir = "rtl"; snipArabicText(p, h.t, sQ.toks); }
+          else { p.className = "s-tx"; p.dir = "auto"; snipLatin(p, h.t, sQ.toks); }
+          b.append(head, p); b.onclick = () => goHit(i); ahits.append(b);
+        }
+        sShown = end;
+        if (sShown < sHits.length) { const m = document.createElement("button"); m.type = "button"; m.className = "ahit-more"; m.textContent = T_("Daha çox") + " · " + sShown + " / " + sHits.length; m.onclick = renderHits; ahits.append(m); }
+      }
+      function showInfo(t, btn) { sInfo.hidden = false; sInfo.replaceChildren(t); if (btn) { const b = document.createElement("button"); b.type = "button"; b.className = "s-go"; b.textContent = T_("Ayarlarda endir"); b.onclick = () => QM.openSettings(sTab); sInfo.append(" ", b); } }
+      async function runSearch() {
+        const raw = qInput.value.trim(); const gen = ++searchGen;
+        sInfo.hidden = true; ssrc.hidden = true;
+        if (sTab === "ar" && !isAr(raw)) { sHits = []; sQ = null; paintTabs(); showSurahs(raw); return; }
+        rows.hidden = true; ahits.hidden = false; ahits.replaceChildren(); emptyEl.hidden = true; sHits = []; sShown = 0;
+        if (sTab === "ar") {
+          const toks = arN(raw, true).split(" ").filter(Boolean); sQ = { toks, ar: true };
+          if (!toks.length) { paintTabs(); return; }
+          const list = await loadQuran(); if (gen !== searchGen) return;
+          if (window.QM_SRC) window.QM_SRC.font();
+          sHits = list.filter((it) => toks.every((t) => it.nA.includes(t) || it.nB.includes(t) || (!t.includes("ء") && (it.hA.includes(t) || it.hB.includes(t)))));
+        } else {
+          const srcs = window.QM_SRC ? await window.QM_SRC.list(sTab) : []; if (gen !== searchGen) return;
+          if (!srcs.length) { paintTabs(); rows.hidden = true; showInfo(sTab === "tr" ? T_("Hələ tərcümə endirilməyib.") : T_("Hələ təfsir endirilməyib."), true); return; }
+          let id = window.QM_SRC.pref(sTab); if (!srcs.some((x) => x.id === id)) id = srcs[0].id;
+          ssrc.replaceChildren(); for (const x of srcs) { const o = document.createElement("option"); o.value = x.id; o.textContent = x.name; ssrc.append(o); } ssrc.value = id; ssrc.hidden = srcs.length < 2;
+          if (srcs.length === 1) showInfo(srcs[0].name);
+          if (!raw) { sQ = null; paintTabs(); return; }
+          const ar = isAr(raw); const toks = (ar ? arN(raw, true) : lowS(raw)).split(/\s+/).filter((t) => t.length > (ar ? 0 : 1) || /\d/.test(t)); sQ = { toks, ar };
+          if (!toks.length) { paintTabs(); return; }
+          ahits.replaceChildren(Object.assign(document.createElement("p"), { className: "ahit-more", textContent: "…" }));
+          const rowsD = await window.QM_SRC.rows(id); if (gen !== searchGen) return;
+          await loadQuran(); if (gen !== searchGen) return;
+          for (const r of rowsD) { r._n ||= ar ? null : lowS(r.t); if (ar) { r._a ||= arN(r.t, true); r._h ||= r._a.replace(/ء/g, ""); } if (toks.every((t) => (ar ? r._a.includes(t) || (!t.includes("ء") && r._h.includes(t)) : r._n.includes(t)))) sHits.push(r); }
+          ahits.replaceChildren();
+        }
+        paintTabs(); renderHits(); emptyEl.hidden = sHits.length !== 0;
+      }
+      ssrc.onchange = () => { window.QM_SRC.setPref(sTab, ssrc.value); runSearch(); };
+      function applyFilter() { clearTimeout(sTimer); const raw = qInput.value.trim(); if (sTab === "ar" && !isAr(raw)) { runSearch(); return; } sTimer = setTimeout(runSearch, 180); }
+      // result bar on the mushaf page
+      const snav = document.createElement("div"); snav.className = "s-nav"; snav.hidden = true; document.body.append(snav);
+      let sIdx = -1;
+      function goHit(i) {
+        if (i < 0 || i >= sHits.length) return; sIdx = i; const h = sHits[i];
+        const keys = []; for (let a = h.a; a <= (h.to || h.a); a++) keys.push(h.s + ":" + a);
+        hlKey = keys.length > 1 ? keys : keys[0]; gate.hidden = true; const n = pageOf(keys[0]); show(n);
+        paintNav();
+      }
+      function paintNav() {
+        snav.replaceChildren(); snav.hidden = false; snav.dir = document.documentElement.dir || "ltr";
+        const rtl = (localStorage.getItem("qm.lang") || "az") === "ar"; snav.dir = rtl ? "rtl" : "ltr";
+        const mk = (t, f, lab, dis) => { const b = document.createElement("button"); b.type = "button"; b.className = "s-nb"; b.textContent = t; b.setAttribute("aria-label", lab); b.disabled = !!dis; b.onclick = f; return b; };
+        const h = sHits[sIdx];
+        const mid = document.createElement("span"); mid.className = "s-nt"; mid.textContent = (sIdx + 1) + " / " + sHits.length + " · " + NAMES[h.s - 1] + " " + h.a;
+        snav.append(mk(rtl ? "›" : "‹", () => goHit(sIdx - 1), T_("Əvvəlki"), sIdx === 0), mid, mk(rtl ? "‹" : "›", () => goHit(sIdx + 1), T_("Növbəti"), sIdx >= sHits.length - 1), mk("✕", closeNav, T_("Bağla")));
+      }
+      function closeNav() { snav.hidden = true; sIdx = -1; hlKey = null; paintHl(null); }
+      window.QM_SNAV = { close: closeNav };
+      document.getElementById("back").addEventListener("click", () => { snav.hidden = true; });
+      paintTabs();
       searchBtn.addEventListener("click", () => {
         const open = searchWrap.hidden;
         searchWrap.hidden = !open;
         searchBtn.classList.toggle("on", open);
         if (open) qInput.focus();
-        else { qInput.value = ""; applyFilter(); }
+        else { qInput.value = ""; sTab = "ar"; applyFilter(); }
       });
       qInput.addEventListener("input", applyFilter);
       window.addEventListener("qm-ui", () => {
@@ -1202,6 +1305,7 @@
         document.getElementById("hifz-btn").setAttribute("aria-label", t("Hifz"));
         document.getElementById("notes-btn").setAttribute("aria-label", t("Qeydlər və əlfəcinlər"));
         emptyEl.textContent = t("Tapılmadı");
+        paintTabs(); if (!snav.hidden && sIdx >= 0) paintNav();
         for (const btn of rows.children) {
           if (btn.dataset.kind === "j") btn.querySelector("span").textContent = t("Cüz") + " " + btn.dataset.n;
           else {
