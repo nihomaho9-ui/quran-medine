@@ -1341,6 +1341,6 @@
       Promise.all([fetch("./yazi-pages.json").then((r) => r.json()), fetch("./yazi-words.json").then((r) => r.json()).catch(() => null)]).then(([json, wb]) => { words = wb; pages = json; loadNames(); });
     </script>
     <script src="./lib.js?v=9"></script>
-    <script src="./audio.js?v=1"></script>
+    <script src="./audio.js?v=2"></script>
   </body>
 </html>

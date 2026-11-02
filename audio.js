@@ -95,9 +95,15 @@
     box.append(row, row2);
     function paint() { pb.textContent = st.playing && st.s === s ? "⏸ Dayandır" : "▶ Dinlə"; ds.textContent = localStorage.getItem(doneKey(rec(), s)) ? "🗑 Surəni sil" : "⬇ Tam surə"; }
     paint(); listeners.clear(); listeners.add(paint);
-    return box;
+    // one listen icon; tapping it opens the choices
+    const wrap = el("div", "qa-wrap"), ic = el("button", "qa-icon", "🎧");
+    ic.title = "Dinlə"; ic.setAttribute("aria-label", "Dinlə — seçimlər");
+    box.hidden = true;
+    ic.onclick = () => { box.hidden = !box.hidden; ic.classList.toggle("on", !box.hidden); };
+    wrap.append(ic, box);
+    return wrap;
   }
-  const css = el("style"); css.textContent = ".qa-box{margin:.4rem 0 .5rem;display:flex;flex-direction:column;gap:.35rem}.qa-row{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}.qa-b{border:1px solid #c9b98a;background:#fffaf0;border-radius:8px;padding:.35rem .7rem;font:inherit;font-size:.85rem;cursor:pointer}.qa-b.main{background:#2f5d50;color:#fff;border-color:#2f5d50}.qa-pick{font:inherit;font-size:.85rem;padding:.3rem;border-radius:8px}.qa-cont{font-size:.85rem}.qa-msg{font-size:.8rem;opacity:.8}";
+  const css = el("style"); css.textContent = ".qa-wrap{margin:.3rem 0 .4rem}.qa-icon{width:40px;height:40px;border-radius:50%;border:1px solid #c9b98a;background:#fffaf0;font-size:1.2rem;cursor:pointer}.qa-icon.on{background:#2f5d50;border-color:#2f5d50}.qa-box[hidden]{display:none}.qa-box{margin:.4rem 0 .5rem;padding:.5rem;border:1px solid #e3d7b5;border-radius:10px;background:#fffdf7;display:flex;flex-direction:column;gap:.35rem}.qa-row{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}.qa-b{border:1px solid #c9b98a;background:#fffaf0;border-radius:8px;padding:.35rem .7rem;font:inherit;font-size:.85rem;cursor:pointer}.qa-b.main{background:#2f5d50;color:#fff;border-color:#2f5d50}.qa-pick{font:inherit;font-size:.85rem;padding:.3rem;border-radius:8px}.qa-cont{font-size:.85rem}.qa-msg{font-size:.8rem;opacity:.8}";
   document.head.append(css);
   window.QA = { panel, play, stop, RECITERS };
 })();
