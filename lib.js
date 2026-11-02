@@ -681,30 +681,65 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
 
   /* ---------- words of an ayah: Arabic word, root (Quranic Arabic Corpus), as-Sirac note ---------- */
   const bare = (t) => String(t || "").replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "").replace(/[ٱأإآ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه").replace(/\s+/g, " ").trim();
-  async function siracLines(s, a) {
-    if ((await status("seraj")) < 114) return null;
-    const v = await get("seraj:" + s); const t = v ? v[a - 1] || "" : "";
-    return t.split(/\n+/).map((l) => { const i = l.indexOf(":"); return i > 0 ? { w: l.slice(0, i).trim(), m: l.slice(i + 1).trim(), b: bare(l.slice(0, i)) } : null; }).filter(Boolean);
+  // word ↔ headword matching (Sirac, Ibn Qutaybah): Uthmani and plain spellings meet on a shared skeleton
+  const wmNorm = (t) => String(t || "").replace(/ص\u06DC/g, "س").replace(/[ايى]\u06DF/g, "")
+    .replace(/وٰ/g, "ا").replace(/ىٰ/g, "ا").replace(/\u0670/g, "ا").replace(/([هء][\u064B-\u065F]*)[ۥۦ]/g, "$1").replace(/ۥ/g, "و").replace(/[ۦۧ]/g, "ي")
+    .replace(/[\u0610-\u061A\u064B-\u065F\u06D6-\u06ED\u0640]/g, "")
+    .replace(/[ٱأإآ]/g, "ا").replace(/[ؤئ]/g, "ء").replace(/ى/g, "ي").replace(/ة/g, "ه").replace(/[^\u0621-\u064A ]/g, "").replace(/\s+/g, " ").trim();
+  const wmKey = (n) => n.replace(/[اء]/g, "").replace(/ي$/, "").replace(/(.)\1+/g, "$1");
+  const WM_PRE = /^(?:[وف]?(?:[بلك]|س)?(?:ال|لل)?)/, WM_SUF = /(?:هما|كما|هم|هن|كم|كن|نا|ها|ه|ك|ي)$/;
+  const wmStem = (n) => { let x = n.replace(WM_PRE, ""); if (x.length < 3) x = n.replace(/^[وف]/, ""); const y = x.replace(WM_SUF, ""); return wmKey(y.length >= 3 ? y : x); };
+  // tier: 3 same letters, 2 same skeleton, 1 same stem (prefixes / attached pronouns aside)
+  const wmLoose = (n) => n.replace(/^ء/, "").replace(/(?!^)[اىيء]/g, "");
+  const wmK2 = (h, w, m = 2) => { const a = wmKey(h), b = wmKey(w); if (a.length >= m) return a === b || wmKey(h.replace(/ه$/, "ت")) === b; return w.length >= 3 && wmLoose(h).length >= 2 && wmLoose(h) === wmLoose(w); }; // short words (أنى، آوى): vowels aside
+  const wmTier = (h, w) => (h === w ? 3 : wmK2(h, w) || wmK2(h.replace(/^[وف]/, ""), w.replace(/^[وف]/, ""), 3) ? 2 : wmStem(h).length >= 3 && wmStem(h) === wmStem(w) ? 1 : 0);
+  // indices of the ayah words a headword (one word or a phrase) belongs to; [] when none
+  function wmAttach(words, head) {
+    const W = words.map((w) => wmNorm(w).replace(/ /g, "")), H = wmNorm(head).split(" ").filter(Boolean);
+    if (!H.length) return [];
+    let best = [], bs = 0;
+    for (let i = 0; i + H.length <= W.length; i++) {
+      let sc = 0; for (let j = 0; j < H.length; j++) { const t = wmTier(H[j], W[i + j]); if (!t) { sc = 0; break; } sc += t; }
+      if (sc > bs) { bs = sc; best = H.map((_, j) => i + j); } else if (sc && sc === bs) best = best.concat(H.map((_, j) => i + j));
+    }
+    if (best.length || H.length < 2) return best;
+    const J = wmKey(H.join("")); W.forEach((w, i) => { if (wmKey(w) === J) best.push(i); }); if (best.length) return best; // يا ويلتى → يـٰويلتى
+    // phrase not contiguous in the mushaf words (e.g. a word left out): every word of it that is found
+    const hit = []; H.forEach((h) => { if (h === "الله") return; W.forEach((w, i) => { if (wmTier(h, w) >= 2 && !hit.includes(i)) hit.push(i); }); });
+    return hit.length * 2 >= H.length ? hit : [];
   }
-  // a Sirac entry belongs to a word when the diacritic-free forms are equal or the entry is a phrase starting with it
-  const siracFor = (lines, word) => { if (!lines) return null; const b = bare(word); return lines.find((x) => x.b === b) || lines.find((x) => x.b.split(" ")[0] === b && x.b.includes(" ")) || null; };
+  const wbText = async (id, s, a) => { const v = await get(id + ":" + s); return v ? v[a - 1] || "" : ""; };
+  const siracRows = (t) => t.split(/\n+/).map((l) => { const i = l.indexOf(":"); return i > 0 ? { w: l.slice(0, i).trim(), m: l.slice(i + 1).trim() } : null; }).filter(Boolean);
+  // Sirac entries for word #pos of s:a (and the words they cover); an entry filed under a neighbouring ayah counts when it fits nowhere there
+  async function siracAt(s, a, pos, words) {
+    if ((await status("seraj")) < 114) return null;
+    const all = (await get("wbw:" + s)) || (await get("seraj:w:" + s)) || [];
+    const out = [], span = new Set();
+    const take = (x, idx) => { if (idx.includes(pos - 1)) { out.push(x); idx.forEach((i) => span.add(i)); } };
+    for (const x of siracRows(await wbText("seraj", s, a))) take(x, wmAttach(words, x.w));
+    if (!out.length) for (const b of [a - 1, a + 1]) {
+      if (!all[b - 1]) continue;
+      for (const x of siracRows(await wbText("seraj", s, b))) if (!wmAttach(all[b - 1], x.w).length) take(Object.assign({ far: b }, x), wmAttach(words, x.w));
+    }
+    return { rows: out, span: [...span] };
+  }
   async function wordsOf(s, a) {
     const have = []; for (const id of ["seraj", "ibnqutaybah"]) if ((await status(id)) >= 114) have.push(id);
     if (!have.length) return null;
     const v = (await get("wbw:" + s)) || (await get("seraj:w:" + s)); return v ? v[a - 1] || [] : null;
   }
-  // Ibn Qutaybah: the line of the ayah's entry whose quoted Qur'an words (﴿…﴾ or (…)) contain the word
-  async function qutaybahFor(s, a, word) {
+  // Ibn Qutaybah: the lines of the ayah's entry whose quoted Qur'an words (﴿…﴾ or (…)) cover the word
+  async function qutaybahAt(s, a, pos, words) {
     if ((await status("ibnqutaybah")) < 114) return undefined;
-    const v = await get("ibnqutaybah:" + s); const t = v ? v[a - 1] || "" : "";
-    const b = bare(word).replace(/^و/, "");
-    for (const line of t.split(/\n+/)) {
-      const qs = [...line.matchAll(/﴿([^﴾]*)﴾|\(([^()]{2,})\)/g)].map((m) => bare(m[1] || m[2]));
-      if (qs.some((q) => q.split(" ").some((x) => x === b || x.replace(/^و/, "") === b))) return line.replace(/\s*\[\[[\s\S]*?\]\]\s*/g, " ").replace(/^و(?=[﴿(])/, "").trim();
+    const out = [], span = new Set();
+    for (const line of (await wbText("ibnqutaybah", s, a)).split(/\n+/)) {
+      const qs = [...line.replace(/\[\[[\s\S]*?\]\]/g, "").matchAll(/﴿([^﴾]*)﴾|\(([^()\d٠-٩]{2,})\)/g)].map((m) => m[1] || m[2]);
+      const hit = qs.map((q) => wmAttach(words, q)).find((idx) => idx.includes(pos - 1));
+      if (hit) { out.push(line.replace(/\s*\[\[[\s\S]*?\]\]\s*/g, " ").replace(/^و(?=[﴿(])/, "").trim()); hit.forEach((i) => span.add(i)); }
     }
-    return null;
+    return { rows: out, span: [...span] };
   }
-  const noteEl = (sx, w) => { const n = el("p", "qm-w-sirac"); n.append(el("small", "", "Sirac"), el("span", "", (sx.b !== bare(w) ? sx.w + ": " : "") + sx.m)); return n; };
+  const noteEl = (sx, w) => { const n = el("p", "qm-w-sirac"); n.append(el("small", "", "Sirac"), el("span", "", (wmNorm(sx.w) !== wmNorm(w) ? sx.w + ": " : "") + sx.m)); return n; };
   // double-tap on a mushaf word: a small balloon next to it
   const wpop = el("div", "qm-wpop"); wpop.hidden = true; document.body.appendChild(wpop);
   const closeWpop = () => { if (wpop.hidden) return; wpop.hidden = true; wpop.replaceChildren(); document.querySelectorAll(".w.wsel").forEach((x) => x.classList.remove("wsel")); };
@@ -723,10 +758,14 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     } else if (item) {
       const w = item;
       wpop.append(el("b", "qm-w-ar", forFont(w)));
-      const sl = await siracLines(s, a), sx = siracFor(sl, w), iq = await qutaybahFor(s, a, w);
-      if (sx) wpop.append(noteEl(sx, w));
-      if (iq) { const n = el("p", "qm-w-sirac qm-w-iq"); n.append(el("small", "", "İbn Qutaybah"), el("span", "", iq)); wpop.append(n); }
-      if (!sx && !iq) wpop.append(el("p", "qm-w-none", sl && iq === undefined ? T("Bu söz üçün Sirac izahı yoxdur") : T("Bu söz üçün izah yoxdur")));
+      const sx = await siracAt(s, a, pos, list), iq = await qutaybahAt(s, a, pos, list);
+      for (const x of sx ? sx.rows : []) wpop.append(noteEl(x, w));
+      for (const t of iq ? iq.rows : []) { const n = el("p", "qm-w-sirac qm-w-iq"); n.append(el("small", "", "İbn Qutaybah"), el("span", "", t)); wpop.append(n); }
+      const none = !(sx && sx.rows.length) && !(iq && iq.rows.length);
+      if (none) wpop.append(el("p", "qm-w-none", sx && iq === undefined ? T("Bu söz üçün Sirac izahı yoxdur") : T("Bu söz üçün izah yoxdur")));
+      // a phrase entry lights up every word it covers
+      const ws = [...document.querySelectorAll('.ay[data-k="' + key + '"] .w')];
+      for (const i of new Set([...(sx ? sx.span : []), ...(iq ? iq.span : [])])) ws[i] && ws[i].classList.add("wsel");
       wpop.append(el("small", "qm-wp-ref", NAMES[s - 1] + " " + s + ":" + a + " · " + pos));
     } else { elw.classList.remove("wsel"); return; }
     wpop.hidden = false;
