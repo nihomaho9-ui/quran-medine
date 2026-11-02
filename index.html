@@ -1338,6 +1338,7 @@
       fetch("./yazi-ayahs.json").then((r) => r.json()).then((j) => { ayahMap = j; if (pages && !gate.hidden === false) show(pageNo); });
       Promise.all([fetch("./yazi-pages.json").then((r) => r.json()), fetch("./yazi-words.json").then((r) => r.json()).catch(() => null)]).then(([json, wb]) => { words = wb; pages = json; loadNames(); });
     </script>
-    <script src="./lib.js?v=8"></script>
+    <script src="./lib.js?v=9"></script>
+    <script src="./audio.js?v=1"></script>
   </body>
 </html>

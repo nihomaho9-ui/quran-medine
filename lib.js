@@ -778,6 +778,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   const openNotes = async () => { nFilter = ""; await openSettings(); setView = "notes"; paintSettings(); };
   const toastEl = el("div", "qm-toast"); toastEl.hidden = true; document.body.appendChild(toastEl);
   let toastT = 0;
+  window.QM_TOAST = (t) => toast(t);
   const toast = (t) => { toastEl.textContent = t; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (toastEl.hidden = true), 1800); };
   async function copyText(t) { try { await navigator.clipboard.writeText(t); return true; } catch (e) { const ta = el("textarea"); ta.value = t; document.body.append(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok; } }
   const SVG = {
@@ -838,6 +839,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     sheet.onpointerup = (ev) => { if (sx == null) return; const dx = ev.clientX - sx, dy = ev.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx > 0 ? goNext : goPrev)(); };
     nav.append(pv, nx); head.append(nav);
     sheet.append(head);
+    if (window.QA) sheet.append(window.QA.panel(s, a));
     const tabs = el("div", "qm-tabs");
     for (const k of ["tf", "tr", "wb", "ir"]) { const t = el("button", "qm-tab" + (k === kind ? " on" : ""), k === "tf" ? T("Təfsirlər") : k === "tr" ? T("Tərcümələr") : k === "ir" ? T("Erab") : T("Söz mənaları")); t.onclick = () => { setPrefs({ tab: k }); openAyah(s, a); }; tabs.append(t); }
     sheet.append(tabs);
