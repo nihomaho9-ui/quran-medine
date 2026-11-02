@@ -471,6 +471,21 @@
       .qm-w-sirac small { font-family: "Segoe UI", sans-serif; font-size: 0.66rem; font-weight: 750; letter-spacing: 0.03em; color: #fff; background: #8a6a2e; border-radius: 0.4rem; padding: 0.05rem 0.35rem; margin-inline-end: 0.35rem; white-space: nowrap; }
       .w.wsel { background: rgba(26, 51, 48, 0.16); border-radius: 0.2em; }
       .qm-wpop { position: fixed; z-index: 36; max-width: min(18rem, calc(100vw - 16px)); background: #fffaf0; border: 1.5px solid #c4a56e; border-radius: 0.9rem; padding: 0.55rem 0.75rem 0.5rem; box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22); display: flex; flex-direction: column; gap: 0.25rem; font-family: "Segoe UI", sans-serif; }
+      .qm-wp-gear { position: absolute; top: 0.3rem; left: 0.3rem; width: 1.9rem; height: 1.9rem; padding: 0.3rem; border: 0; background: transparent; color: #8a6a2e; }
+      .qm-wp-gear svg { width: 100%; height: 100%; }
+      .qm-wp-ch { display: flex; gap: 0.3rem; flex-wrap: wrap; justify-content: center; border-top: 1px dashed #d9c49b; padding-top: 0.45rem; margin-top: 0.15rem; }
+      .qm-wp-ch[hidden] { display: none; }
+      .qm-wp-opt { font: 650 0.78rem "Segoe UI", sans-serif; border: 1.5px solid #c4a56e; background: #fff; color: #5b4a2c; border-radius: 1rem; padding: 0.3rem 0.7rem; min-height: 2rem; }
+      .qm-wp-opt.on { background: #1d3b33; border-color: #1d3b33; color: #fff; }
+      .qm-wp-opt:disabled { opacity: 0.4; }
+      .qm-wps { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.35); display: flex; align-items: flex-end; justify-content: center; }
+      .qm-wps-card { background: #fffaf0; width: 100%; max-width: 30rem; border-radius: 1.1rem 1.1rem 0 0; padding: 0.9rem 1rem 1.4rem; display: flex; flex-direction: column; gap: 0.6rem; font-family: "Segoe UI", sans-serif; }
+      .qm-wps-h { display: flex; align-items: center; justify-content: space-between; font-size: 1.05rem; }
+      .qm-wps-tip { margin: 0; color: #7a6a50; font-size: 0.85rem; }
+      .qm-wps-card .qm-wp-ch { border: 0; padding: 0; }
+      .qm-wps-prev { position: relative !important; max-width: none; align-self: center; width: min(18rem, 100%); }
+      .qm-wps-prev::after { display: none; }
+      .qm-wps-btn { margin: 0 0 0.6rem; width: 100%; }
       .qm-wpop[hidden] { display: none; }
       .qm-wpop::after { content: ""; position: absolute; left: calc(var(--ax, 50%) - 7px); bottom: -8px; border: 7px solid transparent; border-top-color: #c4a56e; border-bottom: 0; }
       .qm-wpop.below::after { bottom: auto; top: -8px; border: 7px solid transparent; border-bottom-color: #c4a56e; border-top: 0; }

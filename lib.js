@@ -6,7 +6,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   let LIST = [];
   const kindOf = (id) => (LIST.find((x) => x.id === id) || {}).k;
   const LANGS = [["az", "Azərbaycan"], ["tr", "Türkçe"], ["en", "English"], ["ar", "العربية"], ["ru", "Русский"]];
-  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"], "Seçilməyib": ["Seçilmedi", "None", "غير محدد", "Не выбрано"], "Axtarış": ["Ara", "Search", "بحث", "Поиск"], "Surə və ya ərəbcə söz…": ["Sure veya Arapça söz…", "Surah or an Arabic word…", "سورة أو كلمة…", "Сура или арабское слово…"], "Cüz": ["Cüz", "Juz", "الجزء", "Джуз"], "Mədinə": ["Medine", "Medinan", "مدنية", "Мединская"], "Məkkə": ["Mekke", "Meccan", "مكية", "Мекканская"], "ayə": ["ayet", "ayahs", "آية", "аятов"], "Tapılmadı": ["Bulunamadı", "No matches", "لا نتائج", "Ничего не найдено"], "Oxuma": ["Okuma", "Reading", "القراءة", "Чтение"], "Tətbiq": ["Uygulama", "App", "التطبيق", "Приложение"], "Məxfilik siyasəti": ["Gizlilik politikası", "Privacy policy", "سياسة الخصوصية", "Политика конфиденциальности"], "İstifadə şərtləri": ["Kullanım şartları", "Terms of use", "شروط الاستخدام", "Условия использования"], "Məlumat təhlükəsizliyi": ["Veri güvenliği", "Data safety", "أمان البيانات", "Безопасность данных"], "İcazələr": ["İzinler", "Permissions", "الأذونات", "Разрешения"], "Tətbiq haqqında": ["Uygulama hakkında", "About", "حول التطبيق", "О приложении"], "Əlaqə": ["İletişim", "Contact", "التواصل", "Контакт"], "Mənbələr": ["Kaynaklar", "Sources", "المصادر", "Источники"], "Məlumat toplanmır": ["Veri toplanmaz", "No data collected", "لا نجمع بيانات", "Данные не собираются"], "Oxuma qaydaları": ["Okuma kuralları", "How you may use it", "قواعد الاستخدام", "Правила чтения"], "Reklam və izləmə yoxdur": ["Reklam ve izleme yok", "No ads or tracking", "بلا إعلانات ولا تتبّع", "Без рекламы и слежки"], "Yalnız endirmə üçün internet": ["Yalnızca indirme için internet", "Internet only for downloads", "الإنترنت للتنزيل فقط", "Интернет только для загрузок"], "Söz mənaları": ["Kelime anlamları", "Word meanings", "معاني الكلمات", "Значения слов"], "Müqayisə": ["Karşılaştır", "Compare", "مقارنة", "Сравнить"], "Mənbələri seç": ["Kaynakları seç", "Choose sources", "اختر المصادر", "Выбрать источники"], "Bu ayədə çətin söz izahı yoxdur": ["Bu ayette açıklanan garip kelime yok", "No difficult words explained in this ayah", "لا غريب في هذه الآية", "В этом аяте нет трудных слов"], "Müqayisə üçün Ayarlardan daha bir mənbə endirin": ["Karşılaştırmak için Ayarlardan bir kaynak daha indirin", "Download another source in Settings to compare", "نزّل مصدرًا آخر من الإعدادات للمقارنة", "Скачайте ещё источник в настройках для сравнения"], "Hazır": ["Tamam", "Done", "تم", "Готово"], "Bu söz üçün izah yoxdur": ["Bu kelime için açıklama yok", "No note for this word", "لا بيان لهذه الكلمة", "Нет пояснения к этому слову"], "Bu söz üçün Sirac izahı yoxdur": ["Bu kelime için Sirac açıklaması yok", "No Sirac note for this word", "لا بيان في السراج لهذه الكلمة", "В Сирадже нет пояснения к этому слову"], "Mədinə məshəfi": ["Medine mushafı", "Madinah mushaf", "مصحف المدينة", "Мусхаф Медины"]};
+  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"], "Seçilməyib": ["Seçilmedi", "None", "غير محدد", "Не выбрано"], "Axtarış": ["Ara", "Search", "بحث", "Поиск"], "Surə və ya ərəbcə söz…": ["Sure veya Arapça söz…", "Surah or an Arabic word…", "سورة أو كلمة…", "Сура или арабское слово…"], "Cüz": ["Cüz", "Juz", "الجزء", "Джуз"], "Mədinə": ["Medine", "Medinan", "مدنية", "Мединская"], "Məkkə": ["Mekke", "Meccan", "مكية", "Мекканская"], "ayə": ["ayet", "ayahs", "آية", "аятов"], "Tapılmadı": ["Bulunamadı", "No matches", "لا نتائج", "Ничего не найдено"], "Oxuma": ["Okuma", "Reading", "القراءة", "Чтение"], "Tətbiq": ["Uygulama", "App", "التطبيق", "Приложение"], "Məxfilik siyasəti": ["Gizlilik politikası", "Privacy policy", "سياسة الخصوصية", "Политика конфиденциальности"], "İstifadə şərtləri": ["Kullanım şartları", "Terms of use", "شروط الاستخدام", "Условия использования"], "Məlumat təhlükəsizliyi": ["Veri güvenliği", "Data safety", "أمان البيانات", "Безопасность данных"], "İcazələr": ["İzinler", "Permissions", "الأذونات", "Разрешения"], "Tətbiq haqqında": ["Uygulama hakkında", "About", "حول التطبيق", "О приложении"], "Əlaqə": ["İletişim", "Contact", "التواصل", "Контакт"], "Mənbələr": ["Kaynaklar", "Sources", "المصادر", "Источники"], "Məlumat toplanmır": ["Veri toplanmaz", "No data collected", "لا نجمع بيانات", "Данные не собираются"], "Oxuma qaydaları": ["Okuma kuralları", "How you may use it", "قواعد الاستخدام", "Правила чтения"], "Reklam və izləmə yoxdur": ["Reklam ve izleme yok", "No ads or tracking", "بلا إعلانات ولا تتبّع", "Без рекламы и слежки"], "Yalnız endirmə üçün internet": ["Yalnızca indirme için internet", "Internet only for downloads", "الإنترنت للتنزيل فقط", "Интернет только для загрузок"], "Söz mənaları": ["Kelime anlamları", "Word meanings", "معاني الكلمات", "Значения слов"], "Müqayisə": ["Karşılaştır", "Compare", "مقارنة", "Сравнить"], "Mənbələri seç": ["Kaynakları seç", "Choose sources", "اختر المصادر", "Выбрать источники"], "Bu ayədə çətin söz izahı yoxdur": ["Bu ayette açıklanan garip kelime yok", "No difficult words explained in this ayah", "لا غريب في هذه الآية", "В этом аяте нет трудных слов"], "Müqayisə üçün Ayarlardan daha bir mənbə endirin": ["Karşılaştırmak için Ayarlardan bir kaynak daha indirin", "Download another source in Settings to compare", "نزّل مصدرًا آخر من الإعدادات للمقارنة", "Скачайте ещё источник в настройках для сравнения"], "Hazır": ["Tamam", "Done", "تم", "Готово"], "Bu söz üçün izah yoxdur": ["Bu kelime için açıklama yok", "No note for this word", "لا بيان لهذه الكلمة", "Нет пояснения к этому слову"], "Bu söz üçün Sirac izahı yoxdur": ["Bu kelime için Sirac açıklaması yok", "No Sirac note for this word", "لا بيان في السراج لهذه الكلمة", "В Сирадже нет пояснения к этому слову"], "Söz pəncərəsi": ["Kelime penceresi", "Word balloon", "نافذة الكلمة", "Окно слова"], "Hər ikisi": ["İkisi de", "Both", "كلاهما", "Оба"], "İki dəfə toxunduqda pəncərədə nə görünsün?": ["Çift dokunuşta pencerede ne görünsün?", "What the balloon shows on double-tap", "ماذا تعرض النافذة عند النقر المزدوج؟", "Что показывать при двойном касании?"], "Nümunə": ["Örnek", "Preview", "معاينة", "Пример"], "Mədinə məshəfi": ["Medine mushafı", "Madinah mushaf", "مصحف المدينة", "Мусхаф Медины"]};
   const uiLang = () => localStorage.getItem("qm.lang") || "az";
   const T = (k) => { const i = ["tr", "en", "ar", "ru"].indexOf(uiLang()); return i < 0 || !DICT[k] ? k : DICT[k][i]; };
 
@@ -291,6 +291,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
         ul.append(resRow(r));
       }
       body.append(ul);
+      if (setView === "wb") { const pb = el("button", "qm-rb qm-wps-btn", "⚙ " + T("Söz pəncərəsi")); pb.onclick = openPopSettings; body.prepend(pb); }
       return;
     }
     body.append(el("p", "set-sec", T("Oxuma")));
@@ -381,6 +382,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   const toast = (t) => { toastEl.textContent = t; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (toastEl.hidden = true), 1800); };
   async function copyText(t) { try { await navigator.clipboard.writeText(t); return true; } catch (e) { const ta = el("textarea"); ta.value = t; document.body.append(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok; } }
   const SVG = {
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/><circle cx="12" cy="12" r="6.2"/>',
     share: '<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 12v7.5h14V12"/>',
     copy: '<rect x="8" y="8" width="11.5" height="11.5" rx="2"/><path d="M15.5 8V5.5A1.5 1.5 0 0 0 14 4H5.5A1.5 1.5 0 0 0 4 5.5V14a1.5 1.5 0 0 0 1.5 1.5H8"/>',
     mark: '<path d="M6.5 3.5h11v17L12 16.5l-5.5 4z"/>',
@@ -740,11 +742,57 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     return { rows: out, span: [...span] };
   }
   const noteEl = (sx, w) => { const n = el("p", "qm-w-sirac"); n.append(el("small", "", "Sirac"), el("span", "", (wmNorm(sx.w) !== wmNorm(w) ? sx.w + ": " : "") + sx.m)); return n; };
+  // which books the word balloon shows: "both" | "seraj" | "ibnqutaybah" (shared by the balloon's ⚙ and Settings)
+  const popPref = () => { const v = prefs().wpop; return v === "seraj" || v === "ibnqutaybah" ? v : "both"; };
+  async function popHave() { return { seraj: (await status("seraj")) >= 114, ibnqutaybah: (await status("ibnqutaybah")) >= 114 }; }
+  // the balloon's content: the word, the chosen books' notes, the reference; returns the word indices to light up
+  async function popBody(box, w, sx, iq, ref, s) {
+    const pick = popPref(), have = await popHave();
+    const useS = sx && (pick !== "ibnqutaybah" || !have.ibnqutaybah), useQ = iq && (pick !== "seraj" || !have.seraj);
+    box.append(el("b", "qm-w-ar", forFont(w)));
+    const span = new Set();
+    if (useS) { for (const x of sx.rows) box.append(noteEl(x, w)); sx.span.forEach((i) => span.add(i)); }
+    if (useQ) { for (const t of iq.rows) { const n = el("p", "qm-w-sirac qm-w-iq"); n.append(el("small", "", "İbn Qutaybah"), el("span", "", t)); box.append(n); } iq.span.forEach((i) => span.add(i)); }
+    if (!(useS && sx.rows.length) && !(useQ && iq.rows.length)) box.append(el("p", "qm-w-none", useS && !useQ ? T("Bu söz üçün Sirac izahı yoxdur") : T("Bu söz üçün izah yoxdur")));
+    box.append(el("small", "qm-wp-ref", (s ? NAMES[s - 1] + " " : "") + ref));
+    return [...span];
+  }
+  // Sirac / İbn Qutaybah / both; a book that is not downloaded cannot be picked
+  function popChooser(onPick) {
+    const row = el("div", "qm-wp-ch"); row.dir = uiLang() === "ar" ? "rtl" : "ltr";
+    popHave().then((have) => {
+      const cur = popPref();
+      for (const [v, label, ok] of [["seraj", "Sirac", have.seraj], ["ibnqutaybah", "İbn Qutəybə", have.ibnqutaybah], ["both", T("Hər ikisi"), have.seraj && have.ibnqutaybah]]) {
+        const b = el("button", "qm-wp-opt" + (v === cur ? " on" : ""), label); b.disabled = !ok; b.setAttribute("aria-pressed", v === cur);
+        b.onclick = (ev) => { ev.stopPropagation(); setPrefs({ wpop: v }); onPick(v); };
+        row.append(b);
+      }
+    });
+    return row;
+  }
+  // Settings: the same chooser with a live balloon on غِشَاوَةٌ (2:7), a word both books explain
+  async function openPopSettings() {
+    const ov = el("div", "qm-wps"); const card = el("div", "qm-wps-card"); ov.append(card);
+    const close = () => ov.remove(); ov.onclick = (e) => { if (e.target === ov) close(); };
+    const draw = async () => {
+      card.replaceChildren();
+      const h = el("div", "qm-wps-h"); h.append(el("b", "", T("Söz pəncərəsi"))); const x = icon("close", T("Bağla")); x.onclick = close; h.append(x); card.append(h);
+      card.append(el("p", "qm-wps-tip", T("İki dəfə toxunduqda pəncərədə nə görünsün?")));
+      card.append(popChooser(draw));
+      const prev = el("div", "qm-wpop qm-wps-prev"); prev.dir = "rtl"; card.append(el("p", "qm-wps-tip", T("Nümunə")), prev);
+      const words = ((await get("wbw:2")) || [])[6] || ["خَتَمَ", "ٱللَّهُ", "عَلَىٰ", "قُلُوبِهِمْ", "وَعَلَىٰ", "سَمْعِهِمْ ۖ", "وَعَلَىٰٓ", "أَبْصَـٰرِهِمْ", "غِشَـٰوَةٌۭ ۖ"];
+      await quranFont();
+      const sx = await siracAt(2, 7, 9, words), iq = await qutaybahAt(2, 7, 9, words);
+      const demoS = sx || { rows: [{ w: "غِشَاوَةٌ", m: "غِطَاءٌ." }], span: [] }, demoQ = iq || { rows: ["والغِشَاوَة: الغطاء."], span: [] };
+      await popBody(prev, words[8], demoS, demoQ, "2:7 · 9", 2);
+    };
+    document.body.append(ov); await draw();
+  }
   // double-tap on a mushaf word: a small balloon next to it
   const wpop = el("div", "qm-wpop"); wpop.hidden = true; document.body.appendChild(wpop);
   const closeWpop = () => { if (wpop.hidden) return; wpop.hidden = true; wpop.replaceChildren(); document.querySelectorAll(".w.wsel").forEach((x) => x.classList.remove("wsel")); };
   document.addEventListener("pointerdown", (ev) => { if (!wpop.hidden && !wpop.contains(ev.target)) closeWpop(); }, true);
-  async function wordPop(key, pos, elw) {
+  async function wordPop(key, pos, elw, chooser) {
     closeWpop();
     const [s, a] = key.split(":").map(Number);
     const list = await wordsOf(s, a); await quranFont();
@@ -756,25 +804,25 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       wpop.append(el("p", "qm-wp-none", T("Söz mənaları") + ": " + T("Hələ endirilməyib.")));
       const b = el("button", "qm-rb main", T("Ayarlarda endir")); b.onclick = () => { closeWpop(); openSettings("wb"); }; wpop.append(b);
     } else if (item) {
-      const w = item;
-      wpop.append(el("b", "qm-w-ar", forFont(w)));
       const sx = await siracAt(s, a, pos, list), iq = await qutaybahAt(s, a, pos, list);
-      for (const x of sx ? sx.rows : []) wpop.append(noteEl(x, w));
-      for (const t of iq ? iq.rows : []) { const n = el("p", "qm-w-sirac qm-w-iq"); n.append(el("small", "", "İbn Qutaybah"), el("span", "", t)); wpop.append(n); }
-      const none = !(sx && sx.rows.length) && !(iq && iq.rows.length);
-      if (none) wpop.append(el("p", "qm-w-none", sx && iq === undefined ? T("Bu söz üçün Sirac izahı yoxdur") : T("Bu söz üçün izah yoxdur")));
-      // a phrase entry lights up every word it covers
+      const span = await popBody(wpop, item, sx, iq, s + ":" + a + " · " + pos, s);
       const ws = [...document.querySelectorAll('.ay[data-k="' + key + '"] .w')];
-      for (const i of new Set([...(sx ? sx.span : []), ...(iq ? iq.span : [])])) ws[i] && ws[i].classList.add("wsel");
-      wpop.append(el("small", "qm-wp-ref", NAMES[s - 1] + " " + s + ":" + a + " · " + pos));
+      for (const i of span) ws[i] && ws[i].classList.add("wsel"); // a phrase entry lights up every word it covers
+      const gear = icon("settings", T("Söz pəncərəsi")); gear.classList.add("qm-wp-gear");
+      const ch = popChooser(() => wordPop(key, pos, elw, true)); ch.hidden = !chooser;
+      gear.onclick = (ev) => { ev.stopPropagation(); ch.hidden = !ch.hidden; place(); };
+      wpop.prepend(gear); wpop.append(ch);
     } else { elw.classList.remove("wsel"); return; }
     wpop.hidden = false;
-    const r = elw.getBoundingClientRect(), pw = wpop.offsetWidth, ph = wpop.offsetHeight;
-    const x = Math.max(8, Math.min(innerWidth - pw - 8, r.left + r.width / 2 - pw / 2));
-    const y = r.top - ph - 10 >= 8 ? r.top - ph - 10 : Math.min(innerHeight - ph - 8, r.bottom + 10);
-    wpop.style.left = x + "px"; wpop.style.top = y + "px";
-    wpop.style.setProperty("--ax", r.left + r.width / 2 - x + "px");
-    wpop.classList.toggle("below", y > r.top);
+    const place = () => {
+      const r = elw.getBoundingClientRect(), pw = wpop.offsetWidth, ph = wpop.offsetHeight;
+      const x = Math.max(8, Math.min(innerWidth - pw - 8, r.left + r.width / 2 - pw / 2));
+      const y = r.top - ph - 10 >= 8 ? r.top - ph - 10 : Math.min(innerHeight - ph - 8, r.bottom + 10);
+      wpop.style.left = x + "px"; wpop.style.top = y + "px";
+      wpop.style.setProperty("--ax", r.left + r.width / 2 - x + "px");
+      wpop.classList.toggle("below", y > r.top);
+    };
+    place();
   }
 
   /* ---------- compare sources on one ayah (swipe columns) ---------- */
