@@ -304,12 +304,6 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       card("book", T("Söz mənaları"), resLabel("wb") === T("Seçilməyib") ? T("Sirac") : resLabel("wb"), () => { setView = "wb"; paintSettings(); }),
       card("book", T("Erab"), resLabel("ir"), () => { setView = "ir"; paintSettings(); }),
     );
-    const sc = card("size", T("Mətn ölçüsü"), "");
-    const row = el("div", "qm-size"); const minus = el("button", "qm-chip", "A−"), val = el("b", "", ""), plus = el("button", "qm-chip", "A+");
-    const upd = () => { const f = prefs().fs; val.textContent = Math.round(f * 100) + "%"; minus.disabled = f <= 0.8; plus.disabled = f >= 1.6; };
-    minus.onclick = () => { setPrefs({ fs: Math.round((prefs().fs - 0.1) * 10) / 10 }); upd(); };
-    plus.onclick = () => { setPrefs({ fs: Math.round((prefs().fs + 0.1) * 10) / 10 }); upd(); };
-    upd(); row.append(minus, val, plus); sc.append(row); stack.append(sc);
     body.append(stack);
     body.append(el("p", "set-sec", T("Tətbiq")));
     const play = el("div", "home-set");
