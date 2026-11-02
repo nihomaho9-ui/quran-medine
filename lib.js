@@ -343,7 +343,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     const li = el("li", "qm-res"); li.dataset.id = r.id;
     const tx = el("div", "qm-tx"); const nm = el("b", "", r.name); nm.dir = "auto"; const sm = el("small", "", (r.k === "tr" ? "" : r.by + " · ") + r.mb + " MB"); sm.dir = "auto";
     const bar = el("span", "qm-bar"); const fill = el("i"); bar.append(fill); bar.hidden = true; const err = el("small", "qm-err", ""); tx.append(nm, sm, bar, err);
-    if (r.credit) { const cr = el("small", "qm-credit", T(r.credit)); cr.dir = uiLang() === "ar" ? "rtl" : "ltr"; tx.insertBefore(cr, bar); }
+    if (r.credit) { const cr = el("small", "qm-credit", T(r.credit)); cr.dir = uiLang() === "ar" ? "rtl" : "ltr"; cr.hidden = true; tx.insertBefore(cr, bar); const ib = el("button", "qm-info", "i"); ib.type = "button"; ib.setAttribute("aria-label", "Info"); ib.setAttribute("aria-expanded", "false"); ib.onclick = (e) => { e.stopPropagation(); e.preventDefault(); cr.hidden = !cr.hidden; ib.classList.toggle("on", !cr.hidden); ib.setAttribute("aria-expanded", String(!cr.hidden)); }; nm.after(ib); }
     const act = el("div", "qm-act"); li.append(tx, act);
     let n = 0, busy = false, ask = false;
     const draw = () => {
