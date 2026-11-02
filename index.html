@@ -465,6 +465,23 @@
       .qm-src-list li.on .qm-ck { background: #1a3330; border-color: #1a3330; }
       .qm-mv { width: 1.8rem; height: 1.8rem; border: 1px solid rgba(196, 165, 110, 0.7); border-radius: 0.5rem; background: #fffaf0; color: #1a3330; padding: 0; flex: none; }
       .qm-mv:disabled { opacity: 0.3; }
+      .qm-words { list-style: none; margin: 0; padding: 0; }
+      .qm-words li { padding: 0.5rem 0.1rem; border-bottom: 1px dashed rgba(196, 165, 110, 0.5); }
+      .qm-w-ar { display: block; font-family: QMHafs, serif; font-size: 1.45em; font-weight: 400; color: #1a1612; line-height: 1.7; }
+      .qm-w-meta { display: flex; flex-direction: column; gap: 0.2rem; }
+      .qm-w-root { display: inline-flex; align-items: center; gap: 0.4rem; font-family: QMHafs, serif; color: #1a3330; font-size: 1.05em; }
+      .qm-w-root small, .qm-w-sirac small { font-family: "Segoe UI", sans-serif; font-size: 0.66rem; font-weight: 750; letter-spacing: 0.05em; color: #fff; background: #1a3330; border-radius: 0.4rem; padding: 0.05rem 0.35rem; }
+      .qm-w-sirac { margin: 0; font-family: QMHafs, serif; line-height: 1.8; color: #3a3228; }
+      .qm-w-sirac small { background: #8a6a2e; margin-inline-end: 0.35rem; }
+      .qm-w-credit { font-size: 0.68rem; color: #8a7d68; margin: 0.6rem 0 0; }
+      .w.wsel { background: rgba(26, 51, 48, 0.16); border-radius: 0.2em; }
+      .qm-wpop { position: fixed; z-index: 36; max-width: min(18rem, calc(100vw - 16px)); background: #fffaf0; border: 1.5px solid #c4a56e; border-radius: 0.9rem; padding: 0.55rem 0.75rem 0.5rem; box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22); display: flex; flex-direction: column; gap: 0.25rem; font-family: "Segoe UI", sans-serif; }
+      .qm-wpop[hidden] { display: none; }
+      .qm-wpop::after { content: ""; position: absolute; left: calc(var(--ax, 50%) - 7px); bottom: -8px; border: 7px solid transparent; border-top-color: #c4a56e; border-bottom: 0; }
+      .qm-wpop.below::after { bottom: auto; top: -8px; border: 7px solid transparent; border-bottom-color: #c4a56e; border-top: 0; }
+      .qm-wpop .qm-w-ar { font-size: 1.6rem; text-align: center; }
+      .qm-wp-ref { color: #8a7d68; font-size: 0.68rem; text-align: center; direction: ltr; }
+      .qm-wp-none { margin: 0; font-size: 0.85rem; color: #5c675f; }
       .qm-full { position: fixed; inset: 0; z-index: 32; background: #fffaf0; display: flex; flex-direction: column; font-family: "Segoe UI", sans-serif; color: #161310; }
       .qm-full[hidden] { display: none; }
       .qm-full-h { display: flex; align-items: center; gap: 0.6rem; padding: calc(0.55rem + env(safe-area-inset-top)) 0.8rem 0.55rem; border-bottom: 1px solid rgba(196, 165, 110, 0.55); background: #f6f1e4; }
@@ -667,6 +684,7 @@
 
       let job = 0;
       async function show(n) {
+        window.QM && QM.closeWordPop && QM.closeWordPop();
         const id = ++job;
         pageNo = Math.max(1, Math.min(LAST, n));
         const name = "QCF" + pageNo;
@@ -830,8 +848,33 @@
       board.addEventListener("pointermove", (e) => {
         if (holdT && holdXY && Math.hypot(e.clientX - holdXY[0], e.clientY - holdXY[1]) > 12) cancelHold();
       });
+      // double-tap (two taps within 300 ms, close together) on a word: its root / Sirac note in a balloon
+      let lastTap = null, downT = 0;
+      board.addEventListener("pointerdown", () => { downT = performance.now(); }, true);
+      function pickWord(x, y) {
+        let best = null, bd = Infinity;
+        for (const w of board.querySelectorAll(".ay[data-k] .w")) {
+          for (const r of w.getClientRects()) {
+            const dx = x < r.left ? r.left - x : x > r.right ? x - r.right : 0, dy = y < r.top ? r.top - y : y > r.bottom ? y - r.bottom : 0;
+            const d = dy * 3 + dx; if (d < bd) { bd = d; best = w; }
+          }
+        }
+        return bd < 40 ? best : null;
+      }
+      function wordTap(e) {
+        const now = performance.now();
+        if (now - downT > 300) { lastTap = null; return; }
+        if (lastTap && now - lastTap.t < 300 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30) {
+          lastTap = null;
+          const w = pickWord(e.clientX, e.clientY); if (!w) return;
+          const key = w.parentElement.dataset.k;
+          const pos = [...board.querySelectorAll('.ay[data-k="' + key + '"] .w')].indexOf(w) + 1;
+          QM.wordPop && QM.wordPop(key, pos, w);
+        } else lastTap = { t: now, x: e.clientX, y: e.clientY };
+      }
       board.addEventListener("pointerup", (e) => {
         cancelHold();
+        if (!held && startX != null && Math.abs(e.clientX - startX) < 12 && !QM.selecting()) wordTap(e);
         if (held || startX == null) { startX = null; return; }
         if (Math.abs(e.clientX - startX) < 12 && QM.selecting()) {
           const ay = pickAyah(e.clientX, e.clientY);

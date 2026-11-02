@@ -6,7 +6,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   let LIST = [];
   const kindOf = (id) => (LIST.find((x) => x.id === id) || {}).k;
   const LANGS = [["az", "Azərbaycan"], ["tr", "Türkçe"], ["en", "English"], ["ar", "العربية"], ["ru", "Русский"]];
-  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"], "Seçilməyib": ["Seçilmedi", "None", "غير محدد", "Не выбрано"], "Axtarış": ["Ara", "Search", "بحث", "Поиск"], "Surə və ya ərəbcə söz…": ["Sure veya Arapça söz…", "Surah or an Arabic word…", "سورة أو كلمة…", "Сура или арабское слово…"], "Cüz": ["Cüz", "Juz", "الجزء", "Джуз"], "Mədinə": ["Medine", "Medinan", "مدنية", "Мединская"], "Məkkə": ["Mekke", "Meccan", "مكية", "Мекканская"], "ayə": ["ayet", "ayahs", "آية", "аятов"], "Tapılmadı": ["Bulunamadı", "No matches", "لا نتائج", "Ничего не найдено"], "Oxuma": ["Okuma", "Reading", "القراءة", "Чтение"], "Tətbiq": ["Uygulama", "App", "التطبيق", "Приложение"], "Məxfilik siyasəti": ["Gizlilik politikası", "Privacy policy", "سياسة الخصوصية", "Политика конфиденциальности"], "İstifadə şərtləri": ["Kullanım şartları", "Terms of use", "شروط الاستخدام", "Условия использования"], "Məlumat təhlükəsizliyi": ["Veri güvenliği", "Data safety", "أمان البيانات", "Безопасность данных"], "İcazələr": ["İzinler", "Permissions", "الأذونات", "Разрешения"], "Tətbiq haqqında": ["Uygulama hakkında", "About", "حول التطبيق", "О приложении"], "Əlaqə": ["İletişim", "Contact", "التواصل", "Контакт"], "Mənbələr": ["Kaynaklar", "Sources", "المصادر", "Источники"], "Məlumat toplanmır": ["Veri toplanmaz", "No data collected", "لا نجمع بيانات", "Данные не собираются"], "Oxuma qaydaları": ["Okuma kuralları", "How you may use it", "قواعد الاستخدام", "Правила чтения"], "Reklam və izləmə yoxdur": ["Reklam ve izleme yok", "No ads or tracking", "بلا إعلانات ولا تتبّع", "Без рекламы и слежки"], "Yalnız endirmə üçün internet": ["Yalnızca indirme için internet", "Internet only for downloads", "الإنترنت للتنزيل فقط", "Интернет только для загрузок"], "Söz mənaları": ["Kelime anlamları", "Word meanings", "معاني الكلمات", "Значения слов"], "Müqayisə": ["Karşılaştır", "Compare", "مقارنة", "Сравнить"], "Mənbələri seç": ["Kaynakları seç", "Choose sources", "اختر المصادر", "Выбрать источники"], "Bu ayədə çətin söz izahı yoxdur": ["Bu ayette açıklanan garip kelime yok", "No difficult words explained in this ayah", "لا غريب في هذه الآية", "В этом аяте нет трудных слов"], "Müqayisə üçün Ayarlardan daha bir mənbə endirin": ["Karşılaştırmak için Ayarlardan bir kaynak daha indirin", "Download another source in Settings to compare", "نزّل مصدرًا آخر من الإعدادات للمقارنة", "Скачайте ещё источник в настройках для сравнения"], "Hazır": ["Tamam", "Done", "تم", "Готово"], "Mədinə məshəfi": ["Medine mushafı", "Madinah mushaf", "مصحف المدينة", "Мусхаф Медины"]};
+  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"], "Seçilməyib": ["Seçilmedi", "None", "غير محدد", "Не выбрано"], "Axtarış": ["Ara", "Search", "بحث", "Поиск"], "Surə və ya ərəbcə söz…": ["Sure veya Arapça söz…", "Surah or an Arabic word…", "سورة أو كلمة…", "Сура или арабское слово…"], "Cüz": ["Cüz", "Juz", "الجزء", "Джуз"], "Mədinə": ["Medine", "Medinan", "مدنية", "Мединская"], "Məkkə": ["Mekke", "Meccan", "مكية", "Мекканская"], "ayə": ["ayet", "ayahs", "آية", "аятов"], "Tapılmadı": ["Bulunamadı", "No matches", "لا نتائج", "Ничего не найдено"], "Oxuma": ["Okuma", "Reading", "القراءة", "Чтение"], "Tətbiq": ["Uygulama", "App", "التطبيق", "Приложение"], "Məxfilik siyasəti": ["Gizlilik politikası", "Privacy policy", "سياسة الخصوصية", "Политика конфиденциальности"], "İstifadə şərtləri": ["Kullanım şartları", "Terms of use", "شروط الاستخدام", "Условия использования"], "Məlumat təhlükəsizliyi": ["Veri güvenliği", "Data safety", "أمان البيانات", "Безопасность данных"], "İcazələr": ["İzinler", "Permissions", "الأذونات", "Разрешения"], "Tətbiq haqqında": ["Uygulama hakkında", "About", "حول التطبيق", "О приложении"], "Əlaqə": ["İletişim", "Contact", "التواصل", "Контакт"], "Mənbələr": ["Kaynaklar", "Sources", "المصادر", "Источники"], "Məlumat toplanmır": ["Veri toplanmaz", "No data collected", "لا نجمع بيانات", "Данные не собираются"], "Oxuma qaydaları": ["Okuma kuralları", "How you may use it", "قواعد الاستخدام", "Правила чтения"], "Reklam və izləmə yoxdur": ["Reklam ve izleme yok", "No ads or tracking", "بلا إعلانات ولا تتبّع", "Без рекламы и слежки"], "Yalnız endirmə üçün internet": ["Yalnızca indirme için internet", "Internet only for downloads", "الإنترنت للتنزيل فقط", "Интернет только для загрузок"], "Söz mənaları": ["Kelime anlamları", "Word meanings", "معاني الكلمات", "Значения слов"], "Müqayisə": ["Karşılaştır", "Compare", "مقارنة", "Сравнить"], "Mənbələri seç": ["Kaynakları seç", "Choose sources", "اختر المصادر", "Выбрать источники"], "Bu ayədə çətin söz izahı yoxdur": ["Bu ayette açıklanan garip kelime yok", "No difficult words explained in this ayah", "لا غريب في هذه الآية", "В этом аяте нет трудных слов"], "Müqayisə üçün Ayarlardan daha bir mənbə endirin": ["Karşılaştırmak için Ayarlardan bir kaynak daha indirin", "Download another source in Settings to compare", "نزّل مصدرًا آخر من الإعدادات للمقارنة", "Скачайте ещё источник в настройках для сравнения"], "Hazır": ["Tamam", "Done", "تم", "Готово"], "Sözlər": ["Kelimeler", "Words", "الكلمات", "Слова"], "Kök": ["Kök", "Root", "الجذر", "Корень"], "Söz məlumatı endirilməyib": ["Kelime verisi indirilmedi", "Word data not downloaded", "بيانات الكلمات غير منزّلة", "Данные слов не скачаны"], "Mədinə məshəfi": ["Medine mushafı", "Madinah mushaf", "مصحف المدينة", "Мусхаф Медины"]};
   const uiLang = () => localStorage.getItem("qm.lang") || "az";
   const T = (k) => { const i = ["tr", "en", "ar", "ru"].indexOf(uiLang()); return i < 0 || !DICT[k] ? k : DICT[k][i]; };
 
@@ -43,7 +43,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   const remove = (id) => tx("readwrite", (s) => { s.delete(IDBKeyRange.bound(id + ":", id + ":\uffff")); });
   async function entry(id, s, a) {
     const v = await get(id + ":" + s); if (!v) return null;
-    if (kindOf(id) === "wb") return { text: v[a - 1] || "", from: a, to: a, exact: true }; // word meanings belong to their own ayah only
+    if (kindOf(id) === "wb" || kindOf(id) === "wd") return { text: v[a - 1] || "", from: a, to: a, exact: true }; // word meanings belong to their own ayah only
     let from = a; while (from > 1 && !v[from - 1]) from--;
     if (!v[from - 1]) return { text: "", from: a, to: a };
     let to = from; while (to < v.length && !v[to]) to++;
@@ -239,7 +239,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   function paintSettings() {
     sheet.replaceChildren();
     sheet.dir = uiLang() === "ar" ? "rtl" : "ltr";
-    const titles = { menu: T("Ayarlar"), lang: T("Dil"), tf: T("Təfsir"), tr: T("Tərcümə"), wb: T("Söz mənaları") };
+    const titles = { menu: T("Ayarlar"), lang: T("Dil"), tf: T("Təfsir"), tr: T("Tərcümə"), wb: T("Söz mənaları"), wd: T("Sözlər") };
     const bar = el("div", "qm-page-bar");
     const bk = el("button", "qm-page-back", "‹");
     bk.type = "button";
@@ -280,7 +280,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       body.append(list);
       return;
     }
-    if (setView === "tf" || setView === "tr" || setView === "wb") {
+    if (setView === "tf" || setView === "tr" || setView === "wb" || setView === "wd") {
       const items = LIST.filter((r) => r.k === setView);
       const sorted = setView === "tr" ? [...items].sort((a, b) => a.by.localeCompare(b.by) || a.name.localeCompare(b.name)) : items;
       const ul = el("ul", "qm-list");
@@ -299,6 +299,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       card("book", T("Təfsir"), resLabel("tf"), () => { setView = "tf"; paintSettings(); }),
       card("tr", T("Tərcümə"), resLabel("tr"), () => { setView = "tr"; paintSettings(); }),
       card("book", T("Söz mənaları"), resLabel("wb") === T("Seçilməyib") ? "Sirac" : resLabel("wb"), () => { setView = "wb"; paintSettings(); }),
+      card("book", T("Sözlər"), T("Kök") + " · corpus.quran.com", () => { setView = "wd"; paintSettings(); }),
     );
     const sc = card("size", T("Mətn ölçüsü"), "");
     const row = el("div", "qm-size"); const minus = el("button", "qm-chip", "A−"), val = el("b", "", ""), plus = el("button", "qm-chip", "A+");
@@ -327,7 +328,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     sheet.onpointerdown = sheet.onpointerup = null;
     sheet.className = "qm-sheet qm-set";
     back.classList.add("qm-page");
-    if (focus === "tf" || focus === "tr" || focus === "wb") setView = focus;
+    if (focus === "tf" || focus === "tr" || focus === "wb" || focus === "wd") setView = focus;
     else if (!already || setView === "lang") setView = "menu";
     paintSettings();
     back.hidden = false;
@@ -434,7 +435,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     nav.append(pv, nx); head.append(nav);
     sheet.append(head);
     const tabs = el("div", "qm-tabs");
-    for (const k of ["tf", "tr", "wb"]) { const t = el("button", "qm-tab" + (k === kind ? " on" : ""), k === "tf" ? T("Təfsirlər") : k === "tr" ? T("Tərcümələr") : T("Söz mənaları")); t.onclick = () => { setPrefs({ tab: k }); openAyah(s, a); }; tabs.append(t); }
+    for (const k of ["tf", "tr", "wb", "wd"]) { const t = el("button", "qm-tab" + (k === kind ? " on" : ""), k === "tf" ? T("Təfsirlər") : k === "tr" ? T("Tərcümələr") : k === "wb" ? "Sirac" : T("Sözlər")); t.onclick = () => { setPrefs({ tab: k }); openAyah(s, a); }; tabs.append(t); }
     sheet.append(tabs);
     if (have.length > 1) {
       const sel = el("select", "qm-pick");
@@ -449,6 +450,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       body.dir = r.dir; body.lang = r.lang; body.style.fontSize = p.fs * (r.lang === "ar" ? 1.15 : 1) + "rem";
       if (have.length === 1) { const src = el("b", "qm-src", (r.k === "tr" ? r.by + " · " : "") + r.name); src.dir = "auto"; body.append(src); }
       if (r.k === "wb") renderWb(body, e ? e.text : "");
+      else if (r.k === "wd") await renderWords(body, s, a, e ? e.text : null);
       else {
         const txt = e && e.text ? plain(e.text) : "—";
         for (const para of txt.split(/\n{2,}/)) body.append(el("p", "", para));
@@ -660,6 +662,65 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     box.append(ul);
   }
 
+  /* ---------- words of an ayah: Arabic word, root (Quranic Arabic Corpus), as-Sirac note ---------- */
+  const bare = (t) => String(t || "").replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "").replace(/[ٱأإآ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه").replace(/\s+/g, " ").trim();
+  async function siracLines(s, a) {
+    if ((await status("seraj")) < 114) return null;
+    const v = await get("seraj:" + s); const t = v ? v[a - 1] || "" : "";
+    return t.split(/\n+/).map((l) => { const i = l.indexOf(":"); return i > 0 ? { w: l.slice(0, i).trim(), m: l.slice(i + 1).trim(), b: bare(l.slice(0, i)) } : null; }).filter(Boolean);
+  }
+  // a Sirac entry belongs to a word when the diacritic-free forms are equal or the entry is a phrase starting with it
+  const siracFor = (lines, word) => { if (!lines) return null; const b = bare(word); return lines.find((x) => x.b === b) || lines.find((x) => x.b.split(" ")[0] === b && x.b.includes(" ")) || null; };
+  const rootTxt = (r) => (r ? [...r].join(" ") : "");
+  async function wordsOf(s, a) { if ((await status("words")) < 114) return null; const v = await get("words:" + s); return v ? v[a - 1] || [] : null; }
+  async function renderWords(box, s, a, list) {
+    list = list || (await wordsOf(s, a)) || []; await quranFont();
+    const sl = await siracLines(s, a);
+    const ul = el("ol", "qm-words"); ul.dir = "rtl"; ul.lang = "ar";
+    for (const [w, root] of list) {
+      const li = el("li", "");
+      li.append(el("b", "qm-w-ar", forFont(w)));
+      const meta = el("div", "qm-w-meta");
+      if (root) { const k = el("span", "qm-w-root"); k.append(el("small", "", T("Kök")), el("span", "", rootTxt(root))); meta.append(k); }
+      const sx = siracFor(sl, w);
+      if (sx) { const n = el("p", "qm-w-sirac"); n.append(el("small", "", "Sirac"), el("span", "", (sx.b !== bare(w) ? sx.w + ": " : "") + sx.m)); meta.append(n); }
+      li.append(meta); ul.append(li);
+    }
+    box.append(ul);
+    const cr = el("p", "qm-w-credit", T("Kök") + ": Quranic Arabic Corpus — corpus.quran.com" + (sl ? " · Sirac: QuranEnc" : "")); cr.dir = "ltr"; box.append(cr);
+  }
+  // double-tap on a mushaf word: a small balloon next to it
+  const wpop = el("div", "qm-wpop"); wpop.hidden = true; document.body.appendChild(wpop);
+  const closeWpop = () => { if (wpop.hidden) return; wpop.hidden = true; wpop.replaceChildren(); document.querySelectorAll(".w.wsel").forEach((x) => x.classList.remove("wsel")); };
+  document.addEventListener("pointerdown", (ev) => { if (!wpop.hidden && !wpop.contains(ev.target)) closeWpop(); }, true);
+  async function wordPop(key, pos, elw) {
+    closeWpop();
+    const [s, a] = key.split(":").map(Number);
+    const list = await wordsOf(s, a); await quranFont();
+    const item = list && list[pos - 1];
+    elw.classList.add("wsel");
+    wpop.dir = "rtl";
+    if (!list) {
+      wpop.dir = uiLang() === "ar" ? "rtl" : "ltr";
+      wpop.append(el("p", "qm-wp-none", T("Söz məlumatı endirilməyib")));
+      const b = el("button", "qm-rb main", T("Ayarlarda endir")); b.onclick = () => { closeWpop(); openSettings("wd"); }; wpop.append(b);
+    } else if (item) {
+      const [w, root] = item;
+      wpop.append(el("b", "qm-w-ar", forFont(w)));
+      if (root) { const k = el("span", "qm-w-root"); k.append(el("small", "", T("Kök")), el("span", "", rootTxt(root))); wpop.append(k); }
+      const sx = siracFor(await siracLines(s, a), w);
+      if (sx) { const n = el("p", "qm-w-sirac"); n.append(el("small", "", "Sirac"), el("span", "", (sx.b !== bare(w) ? sx.w + ": " : "") + sx.m)); wpop.append(n); }
+      wpop.append(el("small", "qm-wp-ref", NAMES[s - 1] + " " + s + ":" + a + " · " + pos));
+    } else { elw.classList.remove("wsel"); return; }
+    wpop.hidden = false;
+    const r = elw.getBoundingClientRect(), pw = wpop.offsetWidth, ph = wpop.offsetHeight;
+    const x = Math.max(8, Math.min(innerWidth - pw - 8, r.left + r.width / 2 - pw / 2));
+    const y = r.top - ph - 10 >= 8 ? r.top - ph - 10 : Math.min(innerHeight - ph - 8, r.bottom + 10);
+    wpop.style.left = x + "px"; wpop.style.top = y + "px";
+    wpop.style.setProperty("--ax", r.left + r.width / 2 - x + "px");
+    wpop.classList.toggle("below", y > r.top);
+  }
+
   /* ---------- compare sources on one ayah (swipe columns) ---------- */
   const cmpEl = el("div", "qm-cmp"); cmpEl.hidden = true; document.body.appendChild(cmpEl);
   let cmpCur = null;
@@ -751,7 +812,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     row.append(no, ok); box.append(row); menu.append(box);
     menu.onclick = (ev) => { if (ev.target === menu) menu.hidden = true; };
   }
-  window.QM = { openSettings, openFull, openAyah, openCompare, selecting: () => !!sel, tapAyah, t: T };
+  window.QM = { openSettings, openFull, openAyah, openCompare, wordPop, closeWordPop: closeWpop, selecting: () => !!sel, tapAyah, t: T };
   (async () => {
     try { if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json(); } catch (e) {}
     refreshUi();
