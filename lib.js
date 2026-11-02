@@ -752,7 +752,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     box.append(el("b", "qm-w-ar", forFont(w)));
     const span = new Set();
     if (useS) { for (const x of sx.rows) box.append(noteEl(x, w)); sx.span.forEach((i) => span.add(i)); }
-    if (useQ) { for (const t of iq.rows) { const n = el("p", "qm-w-sirac qm-w-iq"); n.append(el("small", "", "İbn Qutaybah"), el("span", "", t)); box.append(n); } iq.span.forEach((i) => span.add(i)); }
+    if (useQ) { for (const t of iq.rows) { const n = el("p", "qm-w-sirac qm-w-iq"); n.append(el("small", "", "İbn Qutəybə"), el("span", "", t)); box.append(n); } iq.span.forEach((i) => span.add(i)); }
     if (!(useS && sx.rows.length) && !(useQ && iq.rows.length)) box.append(el("p", "qm-w-none", useS && !useQ ? T("Bu söz üçün Sirac izahı yoxdur") : T("Bu söz üçün izah yoxdur")));
     box.append(el("small", "qm-wp-ref", (s ? NAMES[s - 1] + " " : "") + ref));
     return [...span];
@@ -832,7 +832,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   // the user's sources in the user's order; default: every downloaded source in Settings order
   const cmpSources = (have) => { const p = prefs(); if (!Array.isArray(p.cmp)) return have; const by = new Map(have.map((r) => [r.id, r])); return p.cmp.map((id) => by.get(id)).filter(Boolean); };
   const srcLabel = (r) => (r.k === "tr" ? r.by + " · " + r.name : r.k === "wb" ? T("Söz mənaları") + " · " + wbShort(r) : r.name);
-  const wbShort = (r) => (r.id === "seraj" ? "Sirac" : r.id === "ibnqutaybah" ? "İbn Qutaybah" : r.name);
+  const wbShort = (r) => (r.id === "seraj" ? "Sirac" : r.id === "ibnqutaybah" ? "İbn Qutəybə" : r.name);
   async function openCompare(s, a) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
     cmpCur = { s, a }; quranFont();
