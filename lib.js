@@ -791,6 +791,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     cmp: '<rect x="3.5" y="5" width="7.5" height="14" rx="1.6"/><rect x="13" y="5" width="7.5" height="14" rx="1.6"/>',
     hz: '<path d="M5 19V11M10 19V6M15 19v-5M20 19V9"/>',
     hifz: '<path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5"/><path d="m8.5 11 1.5 1.5 3-3"/>',
+    listen: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3.5" y="13.5" width="4" height="6" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6" rx="1.5"/>',
     plus: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8.5v7M8.5 12h7"/>',
   };
   const icon = (name, label, filled) => { const b = el("button", "qm-ic" + (filled ? " on" : "")); b.type = "button"; b.setAttribute("aria-label", label); b.title = label; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + SVG[name] + "</svg>"; return b; };
@@ -813,8 +814,9 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     const shareB = icon("share", T("Paylaş")), copyB = icon("copy", T("Kopyala")), markB = icon("mark", T("Əlfəcin"), marks().includes(s + ":" + a)), closeB = icon("close", T("Bağla"));
     shareB.onclick = () => shareMenu([s + ":" + a]);
     copyB.onclick = async () => toast((await copyText(await buildText([s + ":" + a], false))) ? T("Kopyalandı") : T("Alınmadı"));
-    const selB = icon("plus", T("Bir neçə ayə seç"));
-    selB.onclick = () => { startSelect(s + ":" + a); };
+    const qa = window.QA ? window.QA.panel(s, a) : null;
+    const auB = qa ? icon("listen", T("Dinlə")) : null;
+    if (qa) auB.onclick = () => { qa.hidden = !qa.hidden; auB.classList.toggle("on", !qa.hidden); };
     markB.onclick = () => openNote(s + ":" + a, () => { if (cur && cur.s === s && cur.a === a) markB.classList.toggle("on", marks().includes(s + ":" + a)); });
     closeB.onclick = () => { cur = null; window.QM_HL && window.QM_HL(null); closeAll(); };
     closeB.classList.add("end");
@@ -823,7 +825,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     const cmpB = icon("cmp", T("Müqayisə"));
     cmpB.onclick = () => openCompare(s, a);
     const hzB = icon("hifz", T("Hifz")); hzB.onclick = () => { cur = null; window.QM_HL && window.QM_HL(null); closeAll(); openHifz(s, a); };
-    bar.append(shareB, copyB, markB, hzB, selB, cmpB, closeB);
+    bar.append(...[auB, shareB, copyB, markB, hzB, cmpB, closeB].filter(Boolean));
     sheet.append(bar);
     const head = el("div", "qm-head");
     head.append(el("h2", "", NAMES[s - 1] + " · " + (e && e.from !== e.to ? e.from + "–" + e.to : a)));
@@ -839,7 +841,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     sheet.onpointerup = (ev) => { if (sx == null) return; const dx = ev.clientX - sx, dy = ev.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx > 0 ? goNext : goPrev)(); };
     nav.append(pv, nx); head.append(nav);
     sheet.append(head);
-    if (window.QA) sheet.append(window.QA.panel(s, a));
+    if (qa) sheet.append(qa);
     const tabs = el("div", "qm-tabs");
     for (const k of ["tf", "tr", "wb", "ir"]) { const t = el("button", "qm-tab" + (k === kind ? " on" : ""), k === "tf" ? T("Təfsirlər") : k === "tr" ? T("Tərcümələr") : k === "ir" ? T("Erab") : T("Söz mənaları")); t.onclick = () => { setPrefs({ tab: k }); openAyah(s, a); }; tabs.append(t); }
     sheet.append(tabs);

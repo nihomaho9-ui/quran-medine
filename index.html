@@ -178,11 +178,17 @@
       .brand-tx span { display: block; margin-top: 0.05rem; font-size: 0.78rem; font-weight: 550; color: #6d6456; }
       .home-bar { display: flex; justify-content: flex-end; align-items: center; gap: 0.45rem; margin-top: 0.75rem; }
       .home-ico, .home-search {
-        width: 3.15rem; height: 3.15rem; flex: 0 0 auto; border: 0; border-radius: 0.95rem;
-        background: #12352c; color: #e4c98a; display: grid; place-items: center; cursor: pointer; padding: 0;
-        box-shadow: 0 2px 8px rgba(18, 53, 44, 0.18);
+        width: 2.9rem; height: 2.9rem; flex: 0 0 auto; border: 1.5px solid rgba(18,53,44,0.28); border-radius: 50%;
+        background: #fffaf0; color: #12352c; display: grid; place-items: center; cursor: pointer; padding: 0;
       }
-      .home-ico svg, .home-search svg { width: 1.45rem; height: 1.45rem; }
+      .home-search, .home-ico.home-hi { background: #12352c; color: #e4c98a; border-color: #12352c; box-shadow: 0 2px 8px rgba(18,53,44,0.2); }
+      .home-ico svg, .home-search svg { width: 1.35rem; height: 1.35rem; }
+      .recent-pop { margin-top: 0.5rem; background: #fffaf0; border: 1px solid rgba(196,165,110,0.6); border-radius: 0.9rem; padding: 0.35rem; box-shadow: 0 6px 18px rgba(18,53,44,0.12); }
+      .recent-pop[hidden] { display: none; }
+      .recent-pop button { display: flex; width: 100%; justify-content: space-between; align-items: center; border: 0; background: none; padding: 0.6rem 0.7rem; border-radius: 0.6rem; font: 600 0.92rem "Segoe UI", sans-serif; color: #12352c; cursor: pointer; }
+      .recent-pop button + button { border-top: 1px solid rgba(196,165,110,0.3); }
+      .recent-pop button span { color: #8a7d68; font-weight: 550; font-size: 0.82rem; }
+      .recent-pop p { margin: 0.5rem; text-align: center; color: #6d6456; font-size: 0.88rem; }
       .home-search.on { background: #c4a56e; color: #12352c; }
       .home-q { margin-top: 0.42rem; }
       .home-q[hidden] { display: none; }
@@ -643,15 +649,15 @@
       <div class="idx-head">
         <div class="brand-row">
           <img class="app-icon" src="./icon.png" alt="" width="56" height="56" />
-          <div class="brand-tx"><strong>Mushafuk</strong><span>Mədinə məshəfi</span></div>
+          <div class="brand-tx"><strong>Mushafuk</strong></div>
         </div>
         <div class="home-bar">
-          <button type="button" class="home-ico" id="plan-btn" aria-label="Oxuma planı" onclick="QM.openPlan()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
-          <button type="button" class="home-ico" id="hifz-btn" aria-label="Hifz" onclick="QM.openHifz()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
           <button type="button" class="home-ico" id="notes-btn" aria-label="Qeydlər və əlfəcinlər" onclick="QM.openNotes()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17L12 16.5l-5.5 4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></button>
-          <button type="button" class="home-ico" id="menu-btn" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></button>
+          <button type="button" class="home-ico" id="recent-btn" aria-label="Son oxunan" onclick="QM_RECENT()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
           <button type="button" class="home-search" id="search-btn" aria-label="Axtarış"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16.5 20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+          <button type="button" class="home-ico home-hi" id="menu-btn" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.1v2.2M12 18.7v2.2M4.9 6.1l1.6 1.4M17.5 16.5l1.6 1.4M3.1 12h2.2M18.7 12h2.2M4.9 17.9l1.6-1.4M17.5 7.5l1.6-1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
         </div>
+        <div class="recent-pop" id="recent-pop" hidden></div>
         <div class="home-q" id="search-wrap" hidden>
           <input id="q" type="search" enterkeyhint="search" placeholder="Surə və ya ərəbcə söz…" autocomplete="off" />
         </div>
@@ -663,7 +669,8 @@
     <header>
       <a href="#" id="back" aria-label="Geri">‹</a>
       <h1 id="sure">Fatihə surəsi</h1>
-      <button type="button" class="gear" id="full-btn" aria-label="Tam ekran" title="Tam ekran" onclick="QM.openFullHere()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="gear" id="hifz-btn" title="Hifz" aria-label="Hifz" onclick="QM.openHifz()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="gear gear2" id="full-btn" aria-label="Tam ekran" title="Tam ekran" onclick="QM.openFullHere()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button type="button" class="gear gear2" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.1v2.2M12 18.7v2.2M4.9 6.1l1.6 1.4M17.5 16.5l1.6 1.4M3.1 12h2.2M18.7 12h2.2M4.9 17.9l1.6-1.4M17.5 7.5l1.6-1.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
     </header>
     <main class="page" id="page"></main>
@@ -824,6 +831,7 @@
         window.QM && QM.closeWordPop && QM.closeWordPop();
         const id = ++job;
         pageNo = Math.max(1, Math.min(LAST, n));
+        setTimeout(() => { if (id !== job) return; try { const h = JSON.parse(localStorage.getItem("qm-recent") || "[]").filter((x) => x.p !== pageNo); h.unshift({ p: pageNo, t: (document.getElementById("sure") || {}).textContent || "" }); localStorage.setItem("qm-recent", JSON.stringify(h.slice(0, 5))); } catch (e) {} }, 400);
         const name = "QCF" + pageNo;
         if (!loaded.has(pageNo)) {
           try {
@@ -1306,7 +1314,6 @@
         const t = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
         qInput.placeholder = t("Surə və ya ərəbcə söz…");
         searchBtn.setAttribute("aria-label", t("Axtarış"));
-        document.getElementById("plan-btn").setAttribute("aria-label", t("Oxuma planı"));
         document.getElementById("hifz-btn").setAttribute("aria-label", t("Hifz"));
         document.getElementById("notes-btn").setAttribute("aria-label", t("Qeydlər və əlfəcinlər"));
         emptyEl.textContent = t("Tapılmadı");
@@ -1336,6 +1343,7 @@
       }
       window.QM_GOTO = (key, keys) => { const n = pageOf(key); hlKey = keys || key; if (n !== pageNo) show(n); else paintHl(hlKey); };
       window.QM_HL = paintHl;
+      window.QM_RECENT = () => { const pop = document.getElementById("recent-pop"); if (!pop.hidden) { pop.hidden = true; return; } let h = []; try { h = JSON.parse(localStorage.getItem("qm-recent") || "[]"); } catch (e) {} pop.replaceChildren(); if (!h.length) { const p = document.createElement("p"); p.textContent = "Hələ oxunan səhifə yoxdur"; pop.append(p); } for (const x of h) { const b = document.createElement("button"); b.type = "button"; b.append(x.t || "Səhifə"); const sp = document.createElement("span"); sp.textContent = "Səhifə " + x.p; b.append(sp); b.onclick = () => { pop.hidden = true; QM_OPENPAGE(x.p); }; pop.append(b); } pop.hidden = false; };
       window.QM_OPENPAGE = (n) => { hlKey = null; paintHl(null); gate.hidden = true; show(n); };
       window.QM_JUMP = (key) => { hlKey = key; gate.hidden = true; const n = pageOf(key); show(n); };
       window.QM_AYAHS = AYAHS;
@@ -1343,7 +1351,7 @@
       fetch("./yazi-ayahs.json").then((r) => r.json()).then((j) => { ayahMap = j; if (pages && !gate.hidden === false) show(pageNo); });
       Promise.all([fetch("./yazi-pages.json").then((r) => r.json()), fetch("./yazi-words.json").then((r) => r.json()).catch(() => null)]).then(([json, wb]) => { words = wb; pages = json; loadNames(); });
     </script>
-    <script src="./lib.js?v=10"></script>
-    <script src="./audio.js?v=2"></script>
+    <script src="./lib.js?v=12"></script>
+    <script src="./audio.js?v=4"></script>
   </body>
 </html>

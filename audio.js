@@ -95,15 +95,10 @@
     box.append(row, row2);
     function paint() { pb.textContent = st.playing && st.s === s ? "⏸ Dayandır" : "▶ Dinlə"; ds.textContent = localStorage.getItem(doneKey(rec(), s)) ? "🗑 Surəni sil" : "⬇ Tam surə"; }
     paint(); listeners.clear(); listeners.add(paint);
-    // one listen icon; tapping it opens the choices
-    const wrap = el("div", "qa-wrap"), ic = el("button", "qa-icon", "🎧");
-    ic.title = "Dinlə"; ic.setAttribute("aria-label", "Dinlə — seçimlər");
     box.hidden = true;
-    ic.onclick = () => { box.hidden = !box.hidden; ic.classList.toggle("on", !box.hidden); };
-    wrap.append(ic, box);
-    return wrap;
+    return box;
   }
-  const css = el("style"); css.textContent = ".qa-wrap{margin:.3rem 0 .4rem}.qa-icon{width:40px;height:40px;border-radius:50%;border:1px solid #c9b98a;background:#fffaf0;font-size:1.2rem;cursor:pointer}.qa-icon.on{background:#2f5d50;border-color:#2f5d50}.qa-box[hidden]{display:none}.qa-box{margin:.4rem 0 .5rem;padding:.5rem;border:1px solid #e3d7b5;border-radius:10px;background:#fffdf7;display:flex;flex-direction:column;gap:.35rem}.qa-row{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}.qa-b{border:1px solid #c9b98a;background:#fffaf0;border-radius:8px;padding:.35rem .7rem;font:inherit;font-size:.85rem;cursor:pointer}.qa-b.main{background:#2f5d50;color:#fff;border-color:#2f5d50}.qa-pick{font:inherit;font-size:.85rem;padding:.3rem;border-radius:8px}.qa-cont{font-size:.85rem}.qa-msg{font-size:.8rem;opacity:.8}";
+  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}";
   document.head.append(css);
   window.QA = { panel, play, stop, RECITERS };
 })();
