@@ -520,6 +520,41 @@
       .qm-nl-n { margin: 0.1rem 0 0; font-size: 0.88rem; line-height: 1.45; color: #3a3226; white-space: pre-wrap; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
       .qm-nl-empty { text-align: center; color: #6d6456; padding: 2rem 1rem; } .qm-nl-empty p { margin: 0 0 0.4rem; font-weight: 650; color: #1a3330; }
       .qm-nl-io { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1.2rem; }
+      .qm-hz { position: fixed; inset: 0; z-index: 34; background: #f6f1e4; display: flex; flex-direction: column; font-family: "Segoe UI", sans-serif; color: #161310; }
+      .qm-hz[hidden] { display: none; }
+      .qm-hz-h { background: #fffaf0; }
+      .qm-hz-h .qm-full-t small { color: #8a6a2e; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.68rem; }
+      .qm-hz-h .qm-full-t b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .qm-hz-modes { flex-wrap: nowrap; overflow-x: auto; padding: 0.55rem 0.8rem; border-bottom: 1px solid rgba(196, 165, 110, 0.3); scrollbar-width: none; }
+      .qm-hz-b { flex: 1; overflow-y: auto; padding: 0.6rem 0.9rem calc(1.4rem + env(safe-area-inset-bottom)); -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 0.5rem; }
+      .qm-hz-list { display: flex; flex-direction: column; }
+      .qm-hz-ay { margin: 0; padding: 0.35rem 0.4rem; font-family: QMHafs, serif; font-size: 1.4rem; line-height: 2.05; text-align: right; color: #1a1612; border-bottom: 1px dashed rgba(196, 165, 110, 0.5); border-radius: 0.4rem; cursor: pointer; transition: filter 0.2s; }
+      .qm-hz-ay.cur { background: rgba(196, 165, 110, 0.26); }
+      .qm-hz-ay.blur { filter: blur(6px); opacity: 0.72; user-select: none; }
+      .qm-hz-ay.mem { box-shadow: inset -4px 0 0 #2f6b52; }
+      .qm-hz-tip, .qm-hz-cap { text-align: center; margin: 0; font-size: 0.8rem; color: #7a6a50; }
+      .qm-hz-cnt { display: flex; align-items: center; justify-content: center; gap: 1.1rem; margin-top: 0.3rem; }
+      .qm-hz-pm { width: 2.8rem; height: 2.8rem; border-radius: 50%; border: 1.3px solid #c4a56e; background: #fffaf0; color: #1a3330; font-size: 1.3rem; cursor: pointer; }
+      .qm-hz-ring { width: 5.2rem; height: 5.2rem; border-radius: 50%; display: grid; place-items: center; cursor: pointer; background: conic-gradient(#2f6b52 var(--p), #e8dcc2 0); }
+      .qm-hz-ring b { width: 4.1rem; height: 4.1rem; border-radius: 50%; background: #f6f1e4; display: grid; place-items: center; font-size: 1.15rem; font-weight: 800; color: #1a3330; direction: ltr; }
+      .qm-hz-ring.done b { color: #2f6b52; }
+      .qm-hz-tg { justify-content: center; }
+      .qm-hz-tg { flex-wrap: nowrap; gap: 0.3rem; }
+      .qm-hz-tg .qm-np-chip { padding: 0.3rem 0.62rem; }
+      .qm-hz-tg .qm-hz-ti { flex: 0 0 3.1rem; width: 3.1rem; text-align: center; padding: 0.3rem 0.2rem; }
+      .qm-hz-lb { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; font-size: 0.78rem; font-weight: 700; color: #8a6a2e; }
+      .qm-hz-tg .qm-hz-lb { flex: 0 0 auto; }
+      .qm-hz-sel { width: 100%; }
+      .qm-hz-go { padding: 0.75rem; font-size: 1rem; border-radius: 0.9rem; margin-top: 0.4rem; }
+      .qm-hz-mem { flex: 1; } .qm-hz-mem.on { background: #2f6b52; border-color: #2f6b52; color: #fff; }
+      .qm-hz-next { flex: 1.4; }
+      .qm-hz-card { display: block; width: 100%; text-align: start; font: inherit; color: inherit; background: #fffaf0; border: 1px solid rgba(196, 165, 110, 0.55); border-radius: 1rem; padding: 0.65rem 0.85rem; cursor: pointer; }
+      .qm-hz-card.main { border: 1.6px solid #1a3330; cursor: default; }
+      .qm-hz-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.45rem; }
+      .qm-hz-row b { color: #1a3330; } .qm-hz-row small { color: #8a7d68; font-size: 0.78rem; }
+      .qm-hz-big { font-size: 1.6rem; }
+      .qm-hz-bar { display: block; height: 8px; border-radius: 4px; background: #e8dcc2; overflow: hidden; }
+      .qm-hz-bar i { display: block; height: 100%; background: #2f6b52; } .qm-hz-bar i.part { background: #c4a56e; }
       .qm-wps-btn { margin: 0 0 0.6rem; width: 100%; }
       .qm-wpop[hidden] { display: none; }
       .qm-wpop::after { content: ""; position: absolute; left: calc(var(--ax, 50%) - 7px); bottom: -8px; border: 7px solid transparent; border-top-color: #c4a56e; border-bottom: 0; }
@@ -564,6 +599,7 @@
           <div class="brand-tx"><strong>Mushafuk</strong><span>Mədinə məshəfi</span></div>
         </div>
         <div class="home-bar">
+          <button type="button" class="home-ico" id="hifz-btn" aria-label="Hifz" onclick="QM.openHifz()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
           <button type="button" class="home-ico" id="notes-btn" aria-label="Qeydlər və əlfəcinlər" onclick="QM.openNotes()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17L12 16.5l-5.5 4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></button>
           <button type="button" class="home-ico" id="menu-btn" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></button>
           <button type="button" class="home-search" id="search-btn" aria-label="Axtarış"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16.5 20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
@@ -1134,6 +1170,7 @@
         const t = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
         qInput.placeholder = t("Surə və ya ərəbcə söz…");
         searchBtn.setAttribute("aria-label", t("Axtarış"));
+        document.getElementById("hifz-btn").setAttribute("aria-label", t("Hifz"));
         document.getElementById("notes-btn").setAttribute("aria-label", t("Qeydlər və əlfəcinlər"));
         emptyEl.textContent = t("Tapılmadı");
         for (const btn of rows.children) {
