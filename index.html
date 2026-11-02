@@ -485,6 +485,41 @@
       .qm-wps-card .qm-wp-ch { border: 0; padding: 0; }
       .qm-wps-prev { position: relative !important; max-width: none; align-self: center; width: min(18rem, 100%); }
       .qm-wps-prev::after { display: none; }
+      .ay.qm-mk:not(.hl) { background: color-mix(in srgb, var(--mc) 13%, transparent); }
+      .qm-np { z-index: 61; } .qm-np2 { z-index: 62; }
+      .qm-np .qm-wps-card { max-height: 88vh; overflow-y: auto; gap: 0.45rem; padding-bottom: calc(1.2rem + env(safe-area-inset-bottom)); color: #161310; }
+      .qm-np-grab { display: block; width: 2.6rem; height: 0.3rem; border-radius: 3px; background: #d8c7a2; margin: 0 auto; }
+      .qm-np-l { margin: 0.35rem 0 0; font-size: 0.7rem; font-weight: 750; letter-spacing: 0.07em; text-transform: uppercase; color: #8a6a2e; }
+      .qm-np-ta { width: 100%; box-sizing: border-box; min-height: 7rem; resize: vertical; border: 1.4px solid #c4a56e; border-radius: 0.8rem; padding: 0.65rem 0.75rem; font: inherit; font-size: 0.95rem; line-height: 1.5; background: #fff; color: #2a241c; }
+      .qm-np-ta:focus, .qm-np-in:focus { outline: 2px solid rgba(26, 51, 48, 0.35); outline-offset: 1px; }
+      .qm-np-dots { display: flex; gap: 0.6rem; }
+      .qm-np-dot { width: 2rem; height: 2rem; border-radius: 50%; border: 3px solid #fffaf0; box-shadow: 0 0 0 1.3px #c4a56e; padding: 0; cursor: pointer; }
+      .qm-np-dot.on { box-shadow: 0 0 0 2.6px #1a3330; }
+      .qm-np-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+      .qm-np-chip { border: 1.3px solid #c4a56e; border-radius: 999px; background: #fffaf0; color: #1a3330; font: inherit; font-size: 0.85rem; font-weight: 650; padding: 0.34rem 0.8rem; cursor: pointer; white-space: nowrap; }
+      .qm-np-chip.on { background: #1a3330; border-color: #1a3330; color: #fff; }
+      .qm-np-chip.add { border-style: dashed; color: #8a6a2e; }
+      .qm-np-in { flex: 1; min-width: 0; border: 1.3px solid #c4a56e; border-radius: 0.7rem; padding: 0.4rem 0.6rem; font: inherit; font-size: 0.9rem; background: #fff; color: #1a1612; }
+      .qm-np-chips .qm-np-in { flex: 1 1 8rem; }
+      .qm-np-row { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
+      .qm-np-row .qm-rb { padding: 0.72rem 1rem; font-size: 0.98rem; border-radius: 0.9rem; }
+      .qm-np-save { flex: 1; }
+      .qm-np-fl { display: flex; flex-direction: column; gap: 0.45rem; }
+      .qm-np-fr { display: flex; align-items: center; gap: 0.45rem; }
+      .qm-np-fr small { color: #8a7d68; white-space: nowrap; font-size: 0.75rem; }
+      .qm-nl-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.3rem; margin: 0 -0.1rem 0.3rem; scrollbar-width: none; }
+      .qm-nl { display: flex; flex-direction: column; gap: 0.55rem; }
+      .qm-nl-it { background: #fffaf0; border: 1px solid rgba(196, 165, 110, 0.55); border-inline-end: 5px solid var(--c); border-radius: 1rem; padding: 0.6rem 0.8rem; cursor: pointer; }
+      .qm-nl-top { display: flex; align-items: center; gap: 0.45rem; }
+      .qm-nl-top b { font-size: 0.86rem; color: #1a3330; white-space: nowrap; }
+      .qm-nl-sp { flex: 1; }
+      .qm-nl-top small { font-size: 0.74rem; color: #8a7d68; white-space: nowrap; }
+      .qm-nl-tag { font-size: 0.68rem; font-weight: 800; color: #fff; border-radius: 0.4rem; padding: 0.12rem 0.4rem; max-width: 8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .qm-nl-ed { margin-inline-start: -0.2rem; padding: 0.1rem 0.35rem; }
+      .qm-nl-ar { margin: 0.15rem 0 0; font-family: QMHafs, serif; font-size: 1.15rem; line-height: 1.95; text-align: right; color: #1a1612; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .qm-nl-n { margin: 0.1rem 0 0; font-size: 0.88rem; line-height: 1.45; color: #3a3226; white-space: pre-wrap; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+      .qm-nl-empty { text-align: center; color: #6d6456; padding: 2rem 1rem; } .qm-nl-empty p { margin: 0 0 0.4rem; font-weight: 650; color: #1a3330; }
+      .qm-nl-io { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1.2rem; }
       .qm-wps-btn { margin: 0 0 0.6rem; width: 100%; }
       .qm-wpop[hidden] { display: none; }
       .qm-wpop::after { content: ""; position: absolute; left: calc(var(--ax, 50%) - 7px); bottom: -8px; border: 7px solid transparent; border-top-color: #c4a56e; border-bottom: 0; }
@@ -529,6 +564,7 @@
           <div class="brand-tx"><strong>Mushafuk</strong><span>Mədinə məshəfi</span></div>
         </div>
         <div class="home-bar">
+          <button type="button" class="home-ico" id="notes-btn" aria-label="Qeydlər və əlfəcinlər" onclick="QM.openNotes()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17L12 16.5l-5.5 4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></button>
           <button type="button" class="home-ico" id="menu-btn" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></button>
           <button type="button" class="home-search" id="search-btn" aria-label="Axtarış"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16.5 20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
         </div>
@@ -802,6 +838,7 @@
         }
         fit();
         if (hlKey) paintHl(hlKey);
+        window.QM_MARKS && window.QM_MARKS();
         const ahead = pageNo + 1;
         if (ahead <= LAST && !loaded.has(ahead)) {
           const nextFace = new FontFace("QCF" + ahead, "url(./yazi-fonts/qcf/p" + ahead + ".woff2)");
@@ -1097,6 +1134,7 @@
         const t = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
         qInput.placeholder = t("Surə və ya ərəbcə söz…");
         searchBtn.setAttribute("aria-label", t("Axtarış"));
+        document.getElementById("notes-btn").setAttribute("aria-label", t("Qeydlər və əlfəcinlər"));
         emptyEl.textContent = t("Tapılmadı");
         for (const btn of rows.children) {
           if (btn.dataset.kind === "j") btn.querySelector("span").textContent = t("Cüz") + " " + btn.dataset.n;
@@ -1123,6 +1161,7 @@
       }
       window.QM_GOTO = (key, keys) => { const n = pageOf(key); hlKey = keys || key; if (n !== pageNo) show(n); else paintHl(hlKey); };
       window.QM_HL = paintHl;
+      window.QM_JUMP = (key) => { hlKey = key; gate.hidden = true; const n = pageOf(key); show(n); };
       window.QM_AYAHS = AYAHS;
       window.QM_NAMES = NAMES;
       fetch("./yazi-ayahs.json").then((r) => r.json()).then((j) => { ayahMap = j; if (pages && !gate.hidden === false) show(pageNo); });
