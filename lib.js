@@ -6,7 +6,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   let LIST = [];
   const kindOf = (id) => (LIST.find((x) => x.id === id) || {}).k;
   const LANGS = [["az", "Azərbaycan"], ["tr", "Türkçe"], ["en", "English"], ["ar", "العربية"], ["ru", "Русский"]];
-  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"], "Seçilməyib": ["Seçilmedi", "None", "غير محدد", "Не выбрано"], "Axtarış": ["Ara", "Search", "بحث", "Поиск"], "Surə və ya ərəbcə söz…": ["Sure veya Arapça söz…", "Surah or an Arabic word…", "سورة أو كلمة…", "Сура или арабское слово…"], "Cüz": ["Cüz", "Juz", "الجزء", "Джуз"], "Mədinə": ["Medine", "Medinan", "مدنية", "Мединская"], "Məkkə": ["Mekke", "Meccan", "مكية", "Мекканская"], "ayə": ["ayet", "ayahs", "آية", "аятов"], "Tapılmadı": ["Bulunamadı", "No matches", "لا نتائج", "Ничего не найдено"], "Oxuma": ["Okuma", "Reading", "القراءة", "Чтение"], "Tətbiq": ["Uygulama", "App", "التطبيق", "Приложение"], "Məxfilik siyasəti": ["Gizlilik politikası", "Privacy policy", "سياسة الخصوصية", "Политика конфиденциальности"], "İstifadə şərtləri": ["Kullanım şartları", "Terms of use", "شروط الاستخدام", "Условия использования"], "Məlumat təhlükəsizliyi": ["Veri güvenliği", "Data safety", "أمان البيانات", "Безопасность данных"], "İcazələr": ["İzinler", "Permissions", "الأذونات", "Разрешения"], "Tətbiq haqqında": ["Uygulama hakkında", "About", "حول التطبيق", "О приложении"], "Əlaqə": ["İletişim", "Contact", "التواصل", "Контакт"], "Mənbələr": ["Kaynaklar", "Sources", "المصادر", "Источники"], "Məlumat toplanmır": ["Veri toplanmaz", "No data collected", "لا نجمع بيانات", "Данные не собираются"], "Oxuma qaydaları": ["Okuma kuralları", "How you may use it", "قواعد الاستخدام", "Правила чтения"], "Reklam və izləmə yoxdur": ["Reklam ve izleme yok", "No ads or tracking", "بلا إعلانات ولا تتبّع", "Без рекламы и слежки"], "Yalnız endirmə üçün internet": ["Yalnızca indirme için internet", "Internet only for downloads", "الإنترنت للتنزيل فقط", "Интернет только для загрузок"], "Söz mənaları": ["Kelime anlamları", "Word meanings", "معاني الكلمات", "Значения слов"], "Müqayisə": ["Karşılaştır", "Compare", "مقارنة", "Сравнить"], "Mənbələri seç": ["Kaynakları seç", "Choose sources", "اختر المصادر", "Выбрать источники"], "Bu ayədə çətin söz izahı yoxdur": ["Bu ayette açıklanan garip kelime yok", "No difficult words explained in this ayah", "لا غريب في هذه الآية", "В этом аяте нет трудных слов"], "Müqayisə üçün Ayarlardan daha bir mənbə endirin": ["Karşılaştırmak için Ayarlardan bir kaynak daha indirin", "Download another source in Settings to compare", "نزّل مصدرًا آخر من الإعدادات للمقارنة", "Скачайте ещё источник в настройках для сравнения"], "Hazır": ["Tamam", "Done", "تم", "Готово"], "Bu söz üçün izah yoxdur": ["Bu kelime için açıklama yok", "No note for this word", "لا بيان لهذه الكلمة", "Нет пояснения к этому слову"], "Bu söz üçün Sirac izahı yoxdur": ["Bu kelime için Sirac açıklaması yok", "No As-Siraj note for this word", "لا بيان في السراج لهذه الكلمة", "В Ас-Сирадже нет пояснения к этому слову"], "Söz pəncərəsi": ["Kelime penceresi", "Word balloon", "نافذة الكلمة", "Окно слова"], "Hər ikisi": ["İkisi de", "Both", "كلاهما", "Оба"], "İki dəfə toxunduqda pəncərədə nə görünsün?": ["Çift dokunuşta pencerede ne görünsün?", "What the balloon shows on double-tap", "ماذا تعرض النافذة عند النقر المزدوج؟", "Что показывать при двойном касании?"], "Nümunə": ["Örnek", "Preview", "معاينة", "Пример"], "Mədinə məshəfi": ["Medine mushafı", "Madinah mushaf", "مصحف المدينة", "Мусхаф Медины"], "Sirac": ["Sirac", "As-Siraj", "السراج", "Ас-Сирадж"], "İbn Qutəybə": ["İbn Kuteybe", "Ibn Qutaybah", "ابن قتيبة", "Ибн Кутейба"], "as-Sirac fi Beyâni Garîbi'l-Kur’ân — Dr. M. al-Khudayri · QuranEnc": ["es-Sirâc fî Beyâni Garîbi'l-Kur'ân — Dr. M. el-Hudayrî · QuranEnc", "As-Siraj fi Bayan Gharib al-Qur'an — Dr. M. al-Khudayri · QuranEnc", "السراج في بيان غريب القرآن — د. محمد الخضيري · موسوعة القرآن الكريم (QuranEnc)", "Ас-Сирадж фи баян гариб аль-Куран — д-р М. аль-Худайри · QuranEnc"], "Tafsîru Garîbi'l-Kur'ân — İbn Qutəybə (ö. 276) · thq. Ahmad Saqr (1978) · mətn: tafsir.app": ["Tefsîru Garîbi'l-Kur'ân — İbn Kuteybe (ö. 276) · thk. Ahmed Sakr (1978) · metin: tafsir.app", "Tafsir Gharib al-Qur'an — Ibn Qutaybah (d. 276 AH) · ed. Ahmad Saqr (1978) · text: tafsir.app", "تفسير غريب القرآن — ابن قتيبة (ت ٢٧٦ هـ) · تحقيق أحمد صقر (١٩٧٨) · النص: tafsir.app", "Тафсир гариб аль-Куран — Ибн Кутейба (ум. 276 г. х.) · ред. Ахмад Сакр (1978) · текст: tafsir.app"]};
+  const DICT = {"Tam ekran": ["Tam ekran", "Full screen", "ملء الشاشة", "Во весь экран"], "Səhifə": ["Sayfa", "Page", "صفحة", "Стр."], "Təfsir": ["Tefsir", "Tafsir", "تفسير", "Тафсир"], "Tərcümə": ["Meal", "Translation", "ترجمة", "Перевод"], "Əvvəlki səhifə": ["Önceki sayfa", "Previous page", "الصفحة السابقة", "Пред. стр."], "Növbəti səhifə": ["Sonraki sayfa", "Next page", "الصفحة التالية", "След. стр."], "Mətn": ["Metin", "Text", "نص", "Текст"], "Şəkil": ["Görsel", "Image", "صورة", "Картинка"], "Ləğv": ["İptal", "Cancel", "إلغاء", "Отмена"], "Yadda saxla": ["Kaydet", "Save", "حفظ", "Сохранить"], "Hazırlanır…": ["Hazırlanıyor…", "Preparing…", "جارٍ التحضير…", "Готовлю…"], "N ayə seçilib": ["N ayet seçildi", "N ayahs selected", "N آيات محددة", "Выбрано аятов: N"], "Başqa ayələrə toxunun": ["Diğer ayetlere dokunun", "Tap other ayahs to add", "انقر آيات أخرى لإضافتها", "Нажмите другие аяты"], "Bir neçə ayə seç": ["Birden çok ayet seç", "Select several ayahs", "تحديد عدة آيات", "Выбрать несколько аятов"], "Əvvəlki": ["Önceki", "Previous", "السابقة", "Пред."], "Növbəti": ["Sonraki", "Next", "التالية", "След."], "Alınmadı": ["Olmadı", "Failed", "تعذّر", "Не удалось"], "Alınmadı. İnterneti yoxlayın.": ["Olmadı. İnterneti kontrol edin.", "Failed. Check the connection.", "تعذّر التنزيل. تحقّق من الاتصال.", "Не удалось. Проверьте интернет."], "Ayarlar": ["Ayarlar", "Settings", "الإعدادات", "Настройки"], "Bağla": ["Kapat", "Close", "إغلاق", "Закрыть"], "Dayandır": ["Durdur", "Stop", "إيقاف", "Стоп"], "Endir": ["İndir", "Download", "تنزيل", "Скачать"], "Endirilənlər cihazda qalır, internetsiz işləyir.": ["İndirilenler cihazda kalır, internetsiz çalışır.", "Downloads stay on this device and work offline.", "تبقى التنزيلات على الجهاز وتعمل دون إنترنت.", "Загрузки хранятся на устройстве и работают офлайн."], "Hələ endirilməyib.": ["Henüz indirilmedi.", "Nothing downloaded yet.", "لم يُنزَّل شيء بعد.", "Пока ничего не скачано."], "Ayarlarda endir": ["Ayarlardan indir", "Download in Settings", "نزّل من الإعدادات", "Скачать в настройках"], "Kopyalandı": ["Kopyalandı", "Copied", "تم النسخ", "Скопировано"], "Kopyala": ["Kopyala", "Copy", "نسخ", "Копировать"], "Mətn ölçüsü": ["Yazı boyutu", "Text size", "حجم النص", "Размер текста"], "Paylaş": ["Paylaş", "Share", "مشاركة", "Поделиться"], "Seç": ["Seç", "Use", "اختيار", "Выбрать"], "Sil": ["Sil", "Delete", "حذف", "Удалить"], "Təfsirlər": ["Tefsirler", "Tafsirs", "التفاسير", "Тафсиры"], "Tərcümələr": ["Mealler", "Translations", "الترجمات", "Переводы"], "Əlfəcin": ["Yer imi", "Bookmark", "علامة", "Закладка"], "Əlfəcindən silindi": ["Yer iminden silindi", "Bookmark removed", "أُزيلت العلامة", "Закладка удалена"], "Əlfəcinə əlavə olundu": ["Yer imine eklendi", "Bookmarked", "أُضيفت علامة", "Добавлено в закладки"], "✓ Seçilib": ["✓ Seçili", "✓ In use", "✓ مختار", "✓ Выбрано"], "Dil": ["Dil", "Language", "اللغة", "Язык"], "Seçilməyib": ["Seçilmedi", "None", "غير محدد", "Не выбрано"], "Axtarış": ["Ara", "Search", "بحث", "Поиск"], "Surə və ya ərəbcə söz…": ["Sure veya Arapça söz…", "Surah or an Arabic word…", "سورة أو كلمة…", "Сура или арабское слово…"], "Cüz": ["Cüz", "Juz", "الجزء", "Джуз"], "Mədinə": ["Medine", "Medinan", "مدنية", "Мединская"], "Məkkə": ["Mekke", "Meccan", "مكية", "Мекканская"], "ayə": ["ayet", "ayahs", "آية", "аятов"], "Tapılmadı": ["Bulunamadı", "No matches", "لا نتائج", "Ничего не найдено"], "Oxuma": ["Okuma", "Reading", "القراءة", "Чтение"], "Tətbiq": ["Uygulama", "App", "التطبيق", "Приложение"], "Məxfilik siyasəti": ["Gizlilik politikası", "Privacy policy", "سياسة الخصوصية", "Политика конфиденциальности"], "İstifadə şərtləri": ["Kullanım şartları", "Terms of use", "شروط الاستخدام", "Условия использования"], "Məlumat təhlükəsizliyi": ["Veri güvenliği", "Data safety", "أمان البيانات", "Безопасность данных"], "İcazələr": ["İzinler", "Permissions", "الأذونات", "Разрешения"], "Tətbiq haqqında": ["Uygulama hakkında", "About", "حول التطبيق", "О приложении"], "Əlaqə": ["İletişim", "Contact", "التواصل", "Контакт"], "Mənbələr": ["Kaynaklar", "Sources", "المصادر", "Источники"], "Məlumat toplanmır": ["Veri toplanmaz", "No data collected", "لا نجمع بيانات", "Данные не собираются"], "Oxuma qaydaları": ["Okuma kuralları", "How you may use it", "قواعد الاستخدام", "Правила чтения"], "Reklam və izləmə yoxdur": ["Reklam ve izleme yok", "No ads or tracking", "بلا إعلانات ولا تتبّع", "Без рекламы и слежки"], "Yalnız endirmə üçün internet": ["Yalnızca indirme için internet", "Internet only for downloads", "الإنترنت للتنزيل فقط", "Интернет только для загрузок"], "Söz mənaları": ["Kelime anlamları", "Word meanings", "معاني الكلمات", "Значения слов"], "Müqayisə": ["Karşılaştır", "Compare", "مقارنة", "Сравнить"], "Mənbələri seç": ["Kaynakları seç", "Choose sources", "اختر المصادر", "Выбрать источники"], "Bu ayədə çətin söz izahı yoxdur": ["Bu ayette açıklanan garip kelime yok", "No difficult words explained in this ayah", "لا غريب في هذه الآية", "В этом аяте нет трудных слов"], "Müqayisə üçün Ayarlardan daha bir mənbə endirin": ["Karşılaştırmak için Ayarlardan bir kaynak daha indirin", "Download another source in Settings to compare", "نزّل مصدرًا آخر من الإعدادات للمقارنة", "Скачайте ещё источник в настройках для сравнения"], "Hazır": ["Tamam", "Done", "تم", "Готово"], "Bu söz üçün izah yoxdur": ["Bu kelime için açıklama yok", "No note for this word", "لا بيان لهذه الكلمة", "Нет пояснения к этому слову"], "Bu söz üçün Sirac izahı yoxdur": ["Bu kelime için Sirac açıklaması yok", "No As-Siraj note for this word", "لا بيان في السراج لهذه الكلمة", "В Ас-Сирадже нет пояснения к этому слову"], "Söz pəncərəsi": ["Kelime penceresi", "Word balloon", "نافذة الكلمة", "Окно слова"], "Hər ikisi": ["İkisi de", "Both", "كلاهما", "Оба"], "İki dəfə toxunduqda pəncərədə nə görünsün?": ["Çift dokunuşta pencerede ne görünsün?", "What the balloon shows on double-tap", "ماذا تعرض النافذة عند النقر المزدوج؟", "Что показывать при двойном касании?"], "Nümunə": ["Örnek", "Preview", "معاينة", "Пример"], "Mədinə məshəfi": ["Medine mushafı", "Madinah mushaf", "مصحف المدينة", "Мусхаф Медины"], "Sirac": ["Sirac", "As-Siraj", "السراج", "Ас-Сирадж"], "İbn Qutəybə": ["İbn Kuteybe", "Ibn Qutaybah", "ابن قتيبة", "Ибн Кутейба"], "as-Sirac fi Beyâni Garîbi'l-Kur’ân — Dr. M. al-Khudayri · QuranEnc": ["es-Sirâc fî Beyâni Garîbi'l-Kur'ân — Dr. M. el-Hudayrî · QuranEnc", "As-Siraj fi Bayan Gharib al-Qur'an — Dr. M. al-Khudayri · QuranEnc", "السراج في بيان غريب القرآن — د. محمد الخضيري · موسوعة القرآن الكريم (QuranEnc)", "Ас-Сирадж фи баян гариб аль-Куран — д-р М. аль-Худайри · QuranEnc"], "Tafsîru Garîbi'l-Kur'ân — İbn Qutəybə (ö. 276) · thq. Ahmad Saqr (1978) · mətn: tafsir.app": ["Tefsîru Garîbi'l-Kur'ân — İbn Kuteybe (ö. 276) · thk. Ahmed Sakr (1978) · metin: tafsir.app", "Tafsir Gharib al-Qur'an — Ibn Qutaybah (d. 276 AH) · ed. Ahmad Saqr (1978) · text: tafsir.app", "تفسير غريب القرآن — ابن قتيبة (ت ٢٧٦ هـ) · تحقيق أحمد صقر (١٩٧٨) · النص: tafsir.app", "Тафсир гариб аль-Куран — Ибн Кутейба (ум. 276 г. х.) · ред. Ахмад Сакр (1978) · текст: tafsir.app"], "İ'rab": ["İrab", "I'rab", "الإعراب", "Иъраб"], "al-İ'râbu'l-Müyəssər — əd-Dâru'l-Arabiyyə li-Tiqniyyəti'l-Məlumât · mətn: QUL (Tarteel)": ["el-İ'râbü'l-Müyesser — ed-Dâru'l-Arabiyye li-Teknolocyâ'l-Ma'lûmât · metin: QUL (Tarteel)", "Al-I'rab al-Muyassar — Arabic Company for Information Technology (ad-Dar al-Arabiyya) · text: QUL (Tarteel)", "الإعراب الميسر — الدار العربية لتقنية المعلومات · النص: QUL (ترتيل)", "Аль-Иъраб аль-Муяссар — ад-Дар аль-Арабийя ли-тикниййат аль-маалюмат · текст: QUL (Tarteel)"], "İ'râbu'l-Qur'ân — Əbû Cə'fər ən-Nəhhâs (ö. 338) · thq. Abdulmun'im Xəlil İbrahim (1421) · mətn: tafsir.app": ["İ'râbü'l-Kur'ân — Ebû Ca'fer en-Nehhâs (ö. 338) · thk. Abdülmün'im Halîl İbrâhîm (1421) · metin: tafsir.app", "I'rab al-Qur'an — Abu Ja'far an-Nahhas (d. 338 AH) · ed. Abd al-Mun'im Khalil Ibrahim (1421 AH) · text: tafsir.app", "إعراب القرآن — أبو جعفر النحاس (ت ٣٣٨ هـ) · وضع حواشيه عبد المنعم خليل إبراهيم (١٤٢١ هـ) · النص: tafsir.app", "Иъраб аль-Куран — Абу Джафар ан-Наххас (ум. 338 г. х.) · ред. Абд аль-Муним Халиль Ибрахим (1421 г. х.) · текст: tafsir.app"]};
   const uiLang = () => localStorage.getItem("qm.lang") || "az";
   const T = (k) => { const i = ["tr", "en", "ar", "ru"].indexOf(uiLang()); return i < 0 || !DICT[k] ? k : DICT[k][i]; };
 
@@ -31,7 +31,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       }
       for (let s = (await status(r.id)) + 1; s <= 114; s++) {
         if (ctl.stop) throw new Error("stopped");
-        const res = await fetch(RB + r.k + "/" + r.id + "/" + s + ".json"); if (!res.ok) throw new Error("http");
+        const res = await fetch(RB + (r.p || r.k) + "/" + r.id + "/" + s + ".json"); if (!res.ok) throw new Error("http");
         const j = await res.json();
         const out = r.k === "tr" ? j.t : j;
         if (!Array.isArray(out) || out.length !== AYAHS[s - 1]) throw new Error("bad file");
@@ -44,7 +44,8 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   const remove = (id) => tx("readwrite", (s) => { s.delete(IDBKeyRange.bound(id + ":", id + ":\uffff")); });
   async function entry(id, s, a) {
     const v = await get(id + ":" + s); if (!v) return null;
-    if (kindOf(id) === "wb") return { text: v[a - 1] || "", from: a, to: a, exact: true }; // word meanings belong to their own ayah only
+    const R = LIST.find((x) => x.id === id) || {};
+    if (R.k === "wb" || R.ex) return { text: v[a - 1] || "", from: a, to: a, exact: true }; // word meanings, and books stored per ayah (a passage on several ayahs repeated on each), belong to their own ayah
     let from = a; while (from > 1 && !v[from - 1]) from--;
     if (!v[from - 1]) return { text: "", from: a, to: a };
     let to = from; while (to < v.length && !v[to]) to++;
@@ -240,7 +241,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   function paintSettings() {
     sheet.replaceChildren();
     sheet.dir = uiLang() === "ar" ? "rtl" : "ltr";
-    const titles = { menu: T("Ayarlar"), lang: T("Dil"), tf: T("Təfsir"), tr: T("Tərcümə"), wb: T("Söz mənaları") };
+    const titles = { menu: T("Ayarlar"), lang: T("Dil"), tf: T("Təfsir"), tr: T("Tərcümə"), wb: T("Söz mənaları"), ir: T("İ'rab") };
     const bar = el("div", "qm-page-bar");
     const bk = el("button", "qm-page-back", "‹");
     bk.type = "button";
@@ -281,7 +282,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       body.append(list);
       return;
     }
-    if (setView === "tf" || setView === "tr" || setView === "wb") {
+    if (setView === "tf" || setView === "tr" || setView === "wb" || setView === "ir") {
       const items = LIST.filter((r) => r.k === setView);
       const sorted = setView === "tr" ? [...items].sort((a, b) => a.by.localeCompare(b.by) || a.name.localeCompare(b.name)) : items;
       const ul = el("ul", "qm-list");
@@ -301,6 +302,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       card("book", T("Təfsir"), resLabel("tf"), () => { setView = "tf"; paintSettings(); }),
       card("tr", T("Tərcümə"), resLabel("tr"), () => { setView = "tr"; paintSettings(); }),
       card("book", T("Söz mənaları"), resLabel("wb") === T("Seçilməyib") ? T("Sirac") : resLabel("wb"), () => { setView = "wb"; paintSettings(); }),
+      card("book", T("İ'rab"), resLabel("ir"), () => { setView = "ir"; paintSettings(); }),
     );
     const sc = card("size", T("Mətn ölçüsü"), "");
     const row = el("div", "qm-size"); const minus = el("button", "qm-chip", "A−"), val = el("b", "", ""), plus = el("button", "qm-chip", "A+");
@@ -329,7 +331,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     sheet.onpointerdown = sheet.onpointerup = null;
     sheet.className = "qm-sheet qm-set";
     back.classList.add("qm-page");
-    if (focus === "tf" || focus === "tr" || focus === "wb") setView = focus;
+    if (focus === "tf" || focus === "tr" || focus === "wb" || focus === "ir") setView = focus;
     else if (!already || setView === "lang") setView = "menu";
     paintSettings();
     back.hidden = false;
@@ -398,7 +400,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   async function openAyah(s, a) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
     cur = { s, a }; window.QM_GOTO ? window.QM_GOTO(s + ":" + a) : window.QM_HL && window.QM_HL(s + ":" + a);
-    const p = prefs(); const kind = ["tf", "tr", "wb"].includes(p.tab) ? p.tab : "tf";
+    const p = prefs(); const kind = ["tf", "tr", "wb", "ir"].includes(p.tab) ? p.tab : "tf";
     const have = []; for (const r of LIST) if (r.k === kind && (await status(r.id)) >= 114) have.push(r);
     const r = have.find((x) => x.id === p[kind]) || have[0];
     const e = r ? await entry(r.id, s, a) : null;
@@ -437,7 +439,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     nav.append(pv, nx); head.append(nav);
     sheet.append(head);
     const tabs = el("div", "qm-tabs");
-    for (const k of ["tf", "tr", "wb"]) { const t = el("button", "qm-tab" + (k === kind ? " on" : ""), k === "tf" ? T("Təfsirlər") : k === "tr" ? T("Tərcümələr") : T("Söz mənaları")); t.onclick = () => { setPrefs({ tab: k }); openAyah(s, a); }; tabs.append(t); }
+    for (const k of ["tf", "tr", "wb", "ir"]) { const t = el("button", "qm-tab" + (k === kind ? " on" : ""), k === "tf" ? T("Təfsirlər") : k === "tr" ? T("Tərcümələr") : k === "ir" ? T("İ'rab") : T("Söz mənaları")); t.onclick = () => { setPrefs({ tab: k }); openAyah(s, a); }; tabs.append(t); }
     sheet.append(tabs);
     if (have.length > 1) {
       const sel = el("select", "qm-pick");
@@ -454,7 +456,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       if (r.k === "wb") renderWb(body, e ? e.text : "", r.id);
       else {
         const txt = e && e.text ? plain(e.text) : "—";
-        for (const para of txt.split(/\n{2,}/)) body.append(el("p", "", para));
+        if (txt.includes("[[")) renderNoted(body, txt); else for (const para of txt.split(/\n{2,}/)) body.append(el("p", "", para));
         if (fn) body.append(el("p", "qm-fn", plain(fn)));
       }
     }
@@ -666,6 +668,21 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     if (notes.length) { const ol = el("ol", "qm-gh-notes"); for (const n of notes) ol.append(el("li", "", n)); wrap.append(ol); }
     box.append(wrap);
   }
+  // plain text whose editor's notes come as [[…]]: numbered marks, the notes listed under the text
+  function renderNoted(box, t) {
+    const notes = [];
+    for (const para of t.split(/\n+/)) {
+      if (!para.trim()) continue;
+      const p = el("p", "");
+      for (const part of para.split(/(\[\[[\s\S]*?\]\](?!\]))/)) {
+        if (!part) continue;
+        if (part.startsWith("[[") && part.endsWith("]]")) { notes.push(part.slice(2, -2).trim()); p.append(el("sup", "qm-gh-n", AR_DIG(notes.length))); }
+        else p.append(part);
+      }
+      box.append(p);
+    }
+    if (notes.length) { const ol = el("ol", "qm-gh-notes"); for (const n of notes) ol.append(el("li", "", n)); box.append(ol); }
+  }
   function renderWb(box, text, id) {
     const t = String(text || "").trim();
     if (!t) { box.append(el("p", "qm-wb-none", T("Bu ayədə çətin söz izahı yoxdur"))); return; }
@@ -872,7 +889,8 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       if (r.k === "wb") renderWb(body, e ? e.text : "", r.id);
       else {
         if (e && e.from !== e.to) body.append(el("small", "qm-range", s + ":" + e.from + "–" + e.to));
-        for (const para of (e && e.text ? plain(e.text) : "—").split(/\n{2,}/)) body.append(el("p", "", para));
+        const txt = e && e.text ? plain(e.text) : "—";
+        if (txt.includes("[[")) renderNoted(body, txt); else for (const para of txt.split(/\n{2,}/)) body.append(el("p", "", para));
         if (fns[i]) body.append(el("p", "qm-fn", plain(fns[i])));
       }
       c.append(body); rail.append(c); return c;
