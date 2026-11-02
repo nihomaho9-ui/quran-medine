@@ -453,7 +453,7 @@
       .qm-wb-r:last-child { border-bottom: 0; }
       .qm-wb dt { display: inline; font-weight: 700; color: #8a6a2e; }
       .qm-wb dt::after { content: ": "; color: #8a7d68; }
-      .qm-wb dd { display: inline; margin: 0; }
+      .qm-wb dd { display: inline; margin: 0; font-family: "Segoe UI", system-ui, sans-serif; }
       .qm-w-none { margin: 0; color: #8a7d68; font-style: italic; font-family: "Segoe UI", sans-serif; font-size: 0.85rem; }
       .qm-wb-none { font-family: "Segoe UI", sans-serif; color: #8a7d68; font-style: italic; text-align: center; margin-top: 1rem; }
       .qm-credit { display: block; color: #8a6a2e; font-size: 0.7rem; margin-top: 0.15rem; }
@@ -467,8 +467,8 @@
       .qm-mv { width: 1.8rem; height: 1.8rem; border: 1px solid rgba(196, 165, 110, 0.7); border-radius: 0.5rem; background: #fffaf0; color: #1a3330; padding: 0; flex: none; }
       .qm-mv:disabled { opacity: 0.3; }
       .qm-w-ar { display: block; font-family: QMHafs, serif; font-size: 1.45em; font-weight: 400; color: #1a1612; line-height: 1.7; }
-      .qm-w-sirac { margin: 0; font-family: QMHafs, serif; line-height: 1.8; color: #3a3228; }
-      .qm-w-sirac small { background: #8a6a2e; margin-inline-end: 0.35rem; }
+      .qm-w-sirac { margin: 0; line-height: 1.8; font-size: 0.95rem; color: #3a3228; }
+      .qm-w-sirac small { font-family: "Segoe UI", sans-serif; font-size: 0.66rem; font-weight: 750; letter-spacing: 0.03em; color: #fff; background: #8a6a2e; border-radius: 0.4rem; padding: 0.05rem 0.35rem; margin-inline-end: 0.35rem; white-space: nowrap; }
       .w.wsel { background: rgba(26, 51, 48, 0.16); border-radius: 0.2em; }
       .qm-wpop { position: fixed; z-index: 36; max-width: min(18rem, calc(100vw - 16px)); background: #fffaf0; border: 1.5px solid #c4a56e; border-radius: 0.9rem; padding: 0.55rem 0.75rem 0.5rem; box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22); display: flex; flex-direction: column; gap: 0.25rem; font-family: "Segoe UI", sans-serif; }
       .qm-wpop[hidden] { display: none; }
@@ -477,6 +477,12 @@
       .qm-wpop .qm-w-ar { font-size: 1.6rem; text-align: center; }
       .qm-wp-ref { color: #8a7d68; font-size: 0.68rem; text-align: center; direction: ltr; }
       .qm-wp-none { margin: 0; font-size: 0.85rem; color: #5c675f; }
+      .qm-gh { line-height: 1.9; }
+      .qm-gh p { margin: 0 0 0.55rem; }
+      .qm-gh-q { color: #8a6a2e; font-weight: 400; font-family: QMHafs, serif; font-size: 1.08em; }
+      .qm-gh-n { color: #8a6a2e; font-family: "Segoe UI", sans-serif; font-size: 0.65em; margin: 0 0.1em; }
+      .qm-gh-notes { margin: 0.6rem 0 0; padding: 0.5rem 1.2rem 0 0; border-top: 1px solid rgba(196, 165, 110, 0.5); font-size: 0.8em; color: #6a6052; }
+      .qm-w-iq small { background: #2f6b52; }
       .qm-full { position: fixed; inset: 0; z-index: 32; background: #fffaf0; display: flex; flex-direction: column; font-family: "Segoe UI", sans-serif; color: #161310; }
       .qm-full[hidden] { display: none; }
       .qm-full-h { display: flex; align-items: center; gap: 0.6rem; padding: calc(0.55rem + env(safe-area-inset-top)) 0.8rem 0.55rem; border-bottom: 1px solid rgba(196, 165, 110, 0.55); background: #f6f1e4; }
