@@ -449,8 +449,8 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     } else {
       body.dir = r.dir; body.lang = r.lang; body.style.fontSize = p.fs * (r.lang === "ar" ? 1.15 : 1) + "rem";
       if (have.length === 1) { const src = el("b", "qm-src", (r.k === "tr" ? r.by + " · " : "") + r.name); src.dir = "auto"; body.append(src); }
-      if (r.k === "wb") renderWb(body, e ? e.text : "");
-      else if (kind === "wd") await renderWords(body, s, a);
+      if (kind === "wd") await renderWords(body, s, a);
+      else if (r.k === "wb") renderWb(body, e ? e.text : "");
       else {
         const txt = e && e.text ? plain(e.text) : "—";
         for (const para of txt.split(/\n{2,}/)) body.append(el("p", "", para));
