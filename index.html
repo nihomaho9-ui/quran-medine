@@ -86,7 +86,7 @@
       .shead {
         position: relative;
         width: 96%;
-        height: 88%;
+        height: 96%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -558,13 +558,54 @@
         for (const line of board.querySelectorAll(".line:not(.surah):not(.basmala)")) ink = Math.max(ink, textWidth(line));
         const card = Math.min(Math.max(ink, 0), board.clientWidth * 0.92);
         for (const head of board.querySelectorAll(".shead")) if (card > 0) head.style.width = card + "px";
-        for (const row of board.querySelectorAll(".snames")) {
-          const head = row.parentElement;
-          const maxW = head.clientWidth * 0.62;
-          let sizeName = head.clientHeight * 0.68; // surah names were too small (was 0.46)
-          row.style.fontSize = sizeName + "px";
-          if (row.scrollWidth > maxW && row.scrollWidth > 0) row.style.fontSize = sizeName * (maxW / row.scrollWidth) + "px";
+        for (const row of board.querySelectorAll(".snames")) fitName(row);
+      }
+
+      // Inner oval of surah-banner.png (1020x116): x 181..839, y 21..94.
+      const OVAL = { x0: 181 / 1020, x1: 839 / 1020, y0: 21 / 116, y1: 94 / 116 };
+      const glyphInk = new Map();
+      function inkOf(ch) {
+        if (!glyphInk.has(ch)) {
+          const c = (inkOf.c ||= document.createElement("canvas").getContext("2d"));
+          c.font = "100px surahnames";
+          if (!document.fonts.check("100px surahnames", ch)) return { w: 270, a: 86, d: 9, l: 0, r: 270 };
+          const m = c.measureText(ch);
+          glyphInk.set(ch, { w: m.width, a: m.actualBoundingBoxAscent, d: m.actualBoundingBoxDescent, l: m.actualBoundingBoxLeft, r: m.actualBoundingBoxRight });
         }
+        return glyphInk.get(ch);
+      }
+      function fitName(row) {
+        const head = row.parentElement;
+        const spans = row.querySelectorAll(".sname");
+        const g = [...spans].map((s) => inkOf(s.textContent));
+        const asc = Math.max(...g.map((x) => x.a)), desc = Math.max(...g.map((x) => x.d));
+        const wid = g.reduce((t, x) => t + x.w, 0) + 28 * (g.length - 1);
+        const ovW = head.clientWidth * (OVAL.x1 - OVAL.x0), ovH = head.clientHeight * (OVAL.y1 - OVAL.y0);
+        // ink fills at most 80% of the oval height and 78% of its width
+        const size = Math.max(6, Math.min((ovH * 0.8 * 100) / (asc + desc), (ovW * 0.78 * 100) / wid));
+        row.style.fontSize = size + "px";
+        row.style.transform = "";
+        let mark = row.querySelector(".sbase");
+        if (!mark) {
+          mark = document.createElement("i");
+          mark.className = "sbase";
+          mark.style.cssText = "display:inline-block;width:0;height:0;";
+          spans[spans.length - 1].appendChild(mark);
+        }
+        const hr = head.getBoundingClientRect();
+        if (!hr.height) return;
+        const base = mark.getBoundingClientRect().top - hr.top;
+        const inkMid = base - (size * (asc - desc)) / 200;
+        const ovMid = (head.clientHeight * (OVAL.y0 + OVAL.y1)) / 2;
+        // horizontal: rtl row puts the last glyph (name) on the left, the word on the right
+        let lo = Infinity, hi = -Infinity, x = 0;
+        for (let i = g.length - 1; i >= 0; i--) {
+          lo = Math.min(lo, x - g[i].l);
+          hi = Math.max(hi, x + g[i].r);
+          x += g[i].w + 28;
+        }
+        const dx = ((wid / 2 - (lo + hi) / 2) * size) / 100;
+        row.style.transform = "translate(" + dx.toFixed(2) + "px," + (ovMid - inkMid).toFixed(2) + "px)";
       }
 
       let job = 0;
