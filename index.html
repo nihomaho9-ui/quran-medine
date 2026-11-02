@@ -555,6 +555,32 @@
       .qm-hz-big { font-size: 1.6rem; }
       .qm-hz-bar { display: block; height: 8px; border-radius: 4px; background: #e8dcc2; overflow: hidden; }
       .qm-hz-bar i { display: block; height: 100%; background: #2f6b52; } .qm-hz-bar i.part { background: #c4a56e; }
+      .qm-pl-sum { display: flex; flex-direction: column; margin: 0 0.2rem 0.5rem; } .qm-pl-sum b { color: #1a3330; font-size: 1.05rem; } .qm-pl-sum small { color: #8a7d68; font-size: 0.8rem; }
+      .qm-pl-tabs { margin-bottom: 0.6rem; }
+      .qm-pl-card { background: #fffaf0; border: 1px solid rgba(196, 165, 110, 0.55); border-radius: 1rem; padding: 0.7rem; margin-bottom: 0.55rem; }
+      .qm-pl-card.main { border: 1.6px solid #1a3330; } .qm-pl-card.main > b { color: #1a3330; } .qm-pl-card.main p { margin: 0.3rem 0 0.2rem; color: #6d6456; font-size: 0.88rem; line-height: 1.45; }
+      .qm-pl-mon { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; } .qm-pl-mon b { color: #1a3330; text-transform: capitalize; }
+      .qm-pl-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+      .qm-pl-cal i { font-style: normal; color: #8a7d68; font-size: 0.66rem; font-weight: 700; padding-bottom: 2px; white-space: nowrap; overflow: hidden; }
+      .qm-pl-d { aspect-ratio: 1; border-radius: 0.55rem; border: 1px solid rgba(196, 165, 110, 0.45); background: #fffaf0; color: #1a3330; font: inherit; font-size: 0.84rem; padding: 0; cursor: pointer; }
+      .qm-pl-d:disabled { background: transparent; border-color: transparent; color: #b8ad98; cursor: default; }
+      .qm-pl-cal .x { visibility: hidden; }
+      .qm-pl-d.s-d { background: #2f6b52; border-color: #2f6b52; color: #fff; }
+      .qm-pl-d.s-m { background: #f3dcd6; border-color: #a8443a; color: #a8443a; }
+      .qm-pl-d.s-v { background: repeating-linear-gradient(45deg, #efe6d4, #efe6d4 4px, #fffaf0 4px, #fffaf0 8px); color: #8a7d68; }
+      .qm-pl-d.now { outline: 2px solid #1a3330; outline-offset: -2px; font-weight: 800; }
+      .qm-pl-lg { display: flex; gap: 0.8rem; margin-top: 0.55rem; font-size: 0.74rem; color: #6d6456; flex-wrap: wrap; } .qm-pl-lg span { display: inline-flex; align-items: center; gap: 0.3rem; }
+      .qm-pl-lg i { width: 0.75rem; height: 0.75rem; border-radius: 0.2rem; background: #fffaf0; border: 1px solid #c4a56e; } .qm-pl-lg i.s-d { background: #2f6b52; border-color: #2f6b52; } .qm-pl-lg i.s-m { background: #f3dcd6; border-color: #a8443a; }
+      .qm-pl-cnt { display: flex; gap: 0.5rem; } .qm-pl-cnt .c { flex: 1; text-align: center; display: flex; flex-direction: column; } .qm-pl-cnt b { font-size: 1.5rem; color: #1a3330; } .qm-pl-cnt small { font-size: 0.74rem; color: #8a7d68; }
+      .qm-pl-day { background: #fffaf0; border: 1px solid rgba(196, 165, 110, 0.55); border-inline-end: 5px solid #e8dcc2; border-radius: 1rem; padding: 0.6rem 0.8rem; }
+      .qm-pl-day.big { margin-bottom: 0.55rem; border-inline-end-width: 6px; }
+      .qm-pl-day.s-d { border-inline-end-color: #2f6b52; } .qm-pl-day.s-m { border-inline-end-color: #a8443a; } .qm-pl-day.s-t { border-inline-end-color: #1a3330; border-color: #1a3330; }
+      .qm-pl-day b { color: #1a3330; } .qm-pl-st { font-weight: 700; color: #8a7d68; } .s-d .qm-pl-st { color: #2f6b52; } .s-m .qm-pl-st { color: #a8443a; } .s-t .qm-pl-st { color: #1a3330; }
+      .qm-pl-rng { font-size: 0.86rem; color: #3a3226; margin-top: 0.15rem; } .qm-pl-pg { display: block; font-size: 0.74rem; color: #8a7d68; }
+      .qm-pl-day .qm-np-row { margin-top: 0.45rem; } .qm-pl-day .qm-rb { padding: 0.42rem 0.8rem; font-size: 0.85rem; border-radius: 0.8rem; }
+      .qm-pl-done.on { background: #2f6b52; border-color: #2f6b52; color: #fff; }
+      .qm-pl-new { display: flex; flex-direction: column; gap: 0.45rem; } .qm-pl-ci { flex: 0 0 5.5rem !important; width: 5.5rem; }
+      .qm-pl-calc small { color: #6d6456; font-size: 0.82rem; } .qm-pl-end { text-align: center; }
       .qm-wps-btn { margin: 0 0 0.6rem; width: 100%; }
       .qm-wpop[hidden] { display: none; }
       .qm-wpop::after { content: ""; position: absolute; left: calc(var(--ax, 50%) - 7px); bottom: -8px; border: 7px solid transparent; border-top-color: #c4a56e; border-bottom: 0; }
@@ -599,6 +625,7 @@
           <div class="brand-tx"><strong>Mushafuk</strong><span>Mədinə məshəfi</span></div>
         </div>
         <div class="home-bar">
+          <button type="button" class="home-ico" id="plan-btn" aria-label="Oxuma planı" onclick="QM.openPlan()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
           <button type="button" class="home-ico" id="hifz-btn" aria-label="Hifz" onclick="QM.openHifz()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
           <button type="button" class="home-ico" id="notes-btn" aria-label="Qeydlər və əlfəcinlər" onclick="QM.openNotes()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17L12 16.5l-5.5 4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></button>
           <button type="button" class="home-ico" id="menu-btn" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg></button>
@@ -875,6 +902,7 @@
         fit();
         if (hlKey) paintHl(hlKey);
         window.QM_MARKS && window.QM_MARKS();
+        window.QM_SEEN && window.QM_SEEN(pageNo);
         const ahead = pageNo + 1;
         if (ahead <= LAST && !loaded.has(ahead)) {
           const nextFace = new FontFace("QCF" + ahead, "url(./yazi-fonts/qcf/p" + ahead + ".woff2)");
@@ -1170,6 +1198,7 @@
         const t = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
         qInput.placeholder = t("Surə və ya ərəbcə söz…");
         searchBtn.setAttribute("aria-label", t("Axtarış"));
+        document.getElementById("plan-btn").setAttribute("aria-label", t("Oxuma planı"));
         document.getElementById("hifz-btn").setAttribute("aria-label", t("Hifz"));
         document.getElementById("notes-btn").setAttribute("aria-label", t("Qeydlər və əlfəcinlər"));
         emptyEl.textContent = t("Tapılmadı");
@@ -1198,6 +1227,7 @@
       }
       window.QM_GOTO = (key, keys) => { const n = pageOf(key); hlKey = keys || key; if (n !== pageNo) show(n); else paintHl(hlKey); };
       window.QM_HL = paintHl;
+      window.QM_OPENPAGE = (n) => { hlKey = null; paintHl(null); gate.hidden = true; show(n); };
       window.QM_JUMP = (key) => { hlKey = key; gate.hidden = true; const n = pageOf(key); show(n); };
       window.QM_AYAHS = AYAHS;
       window.QM_NAMES = NAMES;
