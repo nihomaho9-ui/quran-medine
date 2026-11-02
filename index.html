@@ -281,6 +281,9 @@
         font-size: 0.92rem;
       }
       .ay { border-radius: 0; }
+      .line { --g: 0.09em; }
+      .w { margin-inline-start: var(--g); }
+      .w.w0 { margin-inline-start: 0; }
       .ay.hl { background: rgba(196, 165, 110, 0.36); }
       .gear { margin-inline-start: auto; background: none; border: 0; color: #8a7d68; padding: 0.15rem; line-height: 0; cursor: pointer; }
       .gear svg { width: 1.15rem; height: 1.15rem; }
@@ -518,6 +521,7 @@
       }
       let pageNo = 1;
       let pages = null;
+      let words = null; // Quran.com word lengths (chars) per page line: yazi-words.json
       const loaded = new Set();
       const board = document.getElementById("page");
       const pos = document.getElementById("pos");
@@ -528,6 +532,7 @@
         return range.getBoundingClientRect().width;
       }
       function fit() {
+        for (const line of board.querySelectorAll(".line")) line.style.removeProperty("--g");
         const phoneLand = matchMedia("(orientation: landscape) and (max-height: 520px)").matches;
         const h = board.clientHeight;
         if (!phoneLand) {
@@ -558,6 +563,15 @@
         for (const line of board.querySelectorAll(".line:not(.surah):not(.basmala)")) ink = Math.max(ink, textWidth(line));
         const card = Math.min(Math.max(ink, 0), board.clientWidth * 0.92);
         for (const head of board.querySelectorAll(".shead")) if (card > 0) head.style.width = card + "px";
+        // justify full lines to the common width with the extra space between words, like the printed page
+        if (card > 0) for (const line of board.querySelectorAll(".line:not(.surah):not(.basmala)")) {
+          const ws = line.querySelectorAll(".w"); if (ws.length < 2) continue;
+          const min = parseFloat(getComputedStyle(line).getPropertyValue("--g")) || 0;
+          const gap0 = parseFloat(getComputedStyle(ws[1]).marginInlineStart) || 0;
+          const nat = textWidth(line) - gap0 * (ws.length - 1);
+          const g = (card - nat) / (ws.length - 1);
+          if (nat >= card * 0.8 && g >= gap0) line.style.setProperty("--g", g.toFixed(2) + "px");
+        }
         for (const row of board.querySelectorAll(".snames")) fitName(row);
       }
 
@@ -657,12 +671,20 @@
           if (ch !== " ") { while (left === 0 && ri < runs.length - 1) { ri++; left = runs[ri][1]; } left--; }
           return runs[ri] ? runs[ri][0] : "";
         }));
+        // every Quran.com word gets its own .w box so the line can keep a gap between words (QCF V2 glyphs carry no
+        // word spacing; drawn back to back the first word of a line ran into the next one)
+        const wlens = (words && words[String(pageNo)]) || [];
         const addAyahs = (row, text, i) => {
-          let span = null; const ks = lineKeys[i];
+          let span = null, word = null; const ks = lineKeys[i];
+          const lens = wlens[i] || [];
+          let wi = 0, left = lens[0] || Infinity, first = true;
           [...text].forEach((ch, j) => {
             const key = ks[j] || "";
-            if (!span || span.dataset.k !== key) { span = document.createElement("span"); span.className = "ay"; span.dataset.k = key; row.appendChild(span); }
-            span.textContent += ch;
+            if (!span || span.dataset.k !== key) { span = document.createElement("span"); span.className = "ay"; span.dataset.k = key; row.appendChild(span); word = null; }
+            if (left === 0) { wi++; left = lens[wi] || Infinity; word = null; }
+            if (!word) { word = document.createElement("span"); word.className = first ? "w w0" : "w"; first = false; span.appendChild(word); }
+            word.textContent += ch;
+            left--;
           });
         };
         pageLines.forEach((text, i) => {
@@ -1002,7 +1024,7 @@
       window.QM_AYAHS = AYAHS;
       window.QM_NAMES = NAMES;
       fetch("./yazi-ayahs.json").then((r) => r.json()).then((j) => { ayahMap = j; if (pages && !gate.hidden === false) show(pageNo); });
-      fetch("./yazi-pages.json").then((r) => r.json()).then((json) => { pages = json; loadNames(); });
+      Promise.all([fetch("./yazi-pages.json").then((r) => r.json()), fetch("./yazi-words.json").then((r) => r.json()).catch(() => null)]).then(([json, wb]) => { words = wb; pages = json; loadNames(); });
     </script>
     <script src="./lib.js?v=8"></script>
   </body>
