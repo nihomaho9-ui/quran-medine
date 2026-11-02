@@ -823,7 +823,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     const cmpB = icon("cmp", T("Müqayisə"));
     cmpB.onclick = () => openCompare(s, a);
     const hzB = icon("hifz", T("Hifz")); hzB.onclick = () => { cur = null; window.QM_HL && window.QM_HL(null); closeAll(); openHifz(s, a); };
-    bar.append(shareB, copyB, markB, hzB, selB, cmpB, fullB, closeB);
+    bar.append(shareB, copyB, markB, hzB, selB, cmpB, closeB);
     sheet.append(bar);
     const head = el("div", "qm-head");
     head.append(el("h2", "", NAMES[s - 1] + " · " + (e && e.from !== e.to ? e.from + "–" + e.to : a)));
@@ -1337,7 +1337,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     row.append(no, ok); box.append(row); menu.append(box);
     menu.onclick = (ev) => { if (ev.target === menu) menu.hidden = true; };
   }
-  window.QM = { openPlan, openHifz, hifzProgress, openNotes, openNote, openSettings, openFull, openAyah, openCompare, wordPop, closeWordPop: closeWpop, selecting: () => !!sel, tapAyah, t: T };
+  window.QM = { openPlan, openHifz, hifzProgress, openNotes, openNote, openSettings, openFull, openFullHere: () => { const k = prefs().tab === "tr" ? "tr" : "tf"; const f = cur ? cur.s + ":" + cur.a : null; openFull(k, f); }, openAyah, openCompare, wordPop, closeWordPop: closeWpop, selecting: () => !!sel, tapAyah, t: T };
   (async () => {
     try { if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json(); } catch (e) {}
     refreshUi();
