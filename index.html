@@ -662,7 +662,7 @@
       #jrows[hidden] { display: none; }
       .jhd { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: #f3e7d0; color: #12352c; font-weight: 650; font-size: 1rem; width: 100%; border: 0; font-family: inherit; cursor: pointer; }
       .qrow { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem; align-items: center; width: 100%; border: 0; border-bottom: 1px solid rgba(26,51,48,0.1); background: transparent; padding: 0.6rem 1rem; text-align: start; font: inherit; color: inherit; cursor: pointer; }
-      .qrow p { margin: 0; direction: rtl; text-align: right; font-family: "Noto Naskh Arabic", "Amiri", serif; font-size: 1.2rem; line-height: 1.7; color: #1a1612; }
+      .qrow p { margin: 0; direction: rtl; unicode-bidi: isolate; text-align: left; font-family: "Noto Naskh Arabic", "Amiri", serif; font-size: 1.2rem; line-height: 1.7; color: #1a1612; }
       .qrow small { display: block; color: #4f6b3a; font-size: 0.82rem; font-weight: 550; }
       .qrow .pg { background: #f3e7d0; color: #8a6a2e; border-radius: 999px; padding: 0.15rem 0.6rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; min-width: 2rem; text-align: center; }
     </style>
@@ -1123,7 +1123,7 @@
         RUB.forEach(([s, a, pg, w], i) => {
           if (i % 8 === 0) { const hd = document.createElement("button"); hd.type = "button"; hd.className = "jhd"; hd.innerHTML = "<span>" + tt("Cüz") + " " + (i / 8 + 1) + "</span><span>" + JUZ[i / 8] + "</span>"; hd.onclick = () => openAt(JUZ[i / 8]); jrows.appendChild(hd); }
           const r = document.createElement("button"); r.type = "button"; r.className = "qrow";
-          const d = document.createElement("div"); const p = document.createElement("p"); p.textContent = w + "…"; const sm = document.createElement("small"); sm.textContent = tt("Surə") + " " + NAMES[s - 1] + ", " + tt("ayə") + " " + a; d.append(p, sm);
+          const d = document.createElement("div"); const p = document.createElement("p"); p.dir = "rtl"; p.lang = "ar"; p.textContent = w + "…"; const sm = document.createElement("small"); sm.textContent = tt("Surə") + " " + NAMES[s - 1] + ", " + tt("ayə") + " " + a; d.append(p, sm);
           const g = document.createElement("span"); g.className = "pg"; g.textContent = pg; r.append(d, g);
           r.onclick = () => openAt(pg); jrows.appendChild(r);
         });
