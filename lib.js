@@ -223,7 +223,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       { p: P5("İnternet yalnız sizin seçdiyiniz təfsir və ya tərcüməni endirmək üçündür. Endirməsəniz oxuma internetsiz də işləyir.", "İnternet yalnızca seçtiğiniz tefsir veya meali indirmek içindir. İndirmezseniz okuma internetsiz de çalışır.", "Internet is only for downloading the tafsir or translation you choose. Reading works offline if you do not download.", "الإنترنت فقط لتنزيل التفسير أو الترجمة التي تختارها. القراءة تعمل بلا إنترنت إن لم تنزّل.", "Интернет только чтобы скачать выбранный тафсир или перевод. Чтение работает и без сети, если ничего не качать.") },
     ]},
     about: { title: P5("Tətbiq haqqında", "Uygulama hakkında", "About", "حول التطبيق", "О приложении"), blocks: [
-      { p: P5("Mushafuk. Versiya 1.2.1. Mədinə məshəfi.", "Mushafuk. Sürüm 1.2.1. Medine mushafı.", "Mushafuk. Version 1.2.1. Madinah mushaf.", "مصحفك. الإصدار 1.2.1. مصحف المدينة.", "Mushafuk. Версия 1.2.1. Мусхаф Медины.") },
+      { p: P5("Mushafuk. Versiya 1.0.1. Mədinə məshəfi.", "Mushafuk. Sürüm 1.0.1. Medine mushafı.", "Mushafuk. Version 1.0.1. Madinah mushaf.", "مصحفك. الإصدار 1.0.1. مصحف المدينة.", "Mushafuk. Версия 1.0.1. Мусхаф Медины.") },
       { p: P5("Səhifə səhifə ərəbcə mətn, surə siyahısı, ərəbcə söz axtarışı, təfsir və tərcümə. Dil: azərbaycan, türk, ingilis, ərəb, rus.", "Sayfa sayfa Arapça metin, sure listesi, Arapça kelime arama, tefsir ve meal. Dil: Azerbaycan, Türkçe, İngilizce, Arapça, Rusça.", "Page by page Arabic text, a surah index, Arabic word search, tafsir and translation. Languages: Azerbaijani, Turkish, English, Arabic, Russian.", "نص عربي صفحةً بصفحة، وفهرس سور، وبحث عن كلمة عربية، وتفسير وترجمة. اللغات: الأذربيجانية والتركية والإنجليزية والعربية والروسية.", "Текст по страницам, список сур, поиск арабского слова, тафсир и перевод. Языки: азербайджанский, турецкий, английский, арабский, русский.") },
       { p: P5("Yaş: hər kəs. Kateqoriya: kitab və məlumat. Reklam yoxdur. Ödəniş yoxdur.", "Yaş: herkes. Kategori: kitaplar ve referans. Reklam yok. Ödeme yok.", "Age: everyone. Category: books and reference. No ads. No payments.", "العمر: للجميع. الفئة: كتب ومراجع. بلا إعلانات وبلا دفع.", "Возраст: для всех. Категория: книги и справочники. Без рекламы и платежей.") },
       { p: P5("Nibras Code · https://nibrascode.com", "Nibras Code · https://nibrascode.com", "Nibras Code · https://nibrascode.com", "Nibras Code · https://nibrascode.com", "Nibras Code · https://nibrascode.com") },
@@ -320,7 +320,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       card("doc", T("İstifadə şərtləri"), "", () => openDoc("terms")),
       card("lock", T("Məlumat təhlükəsizliyi"), "", () => openDoc("data")),
       card("key", T("İcazələr"), "", () => openDoc("perm")),
-      card("info", T("Tətbiq haqqında"), "1.2.1", () => openDoc("about")),
+      card("info", T("Tətbiq haqqında"), "1.0.1", () => openDoc("about")),
       card("mail", T("Əlaqə"), "", () => openDoc("contact")),
       card("src", T("Mənbələr"), "", () => openDoc("sources")),
     );
