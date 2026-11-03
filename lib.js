@@ -787,7 +787,14 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   const openPlan = async () => { planNew = false; planTab = "cal"; planMonth = null; await openSettings(); setView = "plan"; paintSettings(); };
   /* ---------- search inside downloaded translations / tafsirs ---------- */
   const srcCache = {};
-  async function srcList(kind) { if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json(); const o = []; for (const r of LIST) if ((kind === "tf" ? r.k === "tf" || r.k === "ir" : r.k === kind) && (await status(r.id)) >= 114) o.push({ id: r.id, name: (r.k === "tr" ? r.by + " · " : "") + r.name, lang: r.lang, dir: r.dir }); return o; }
+  async function srcList(kind) {
+    if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
+    const o = [];
+    const ok = (r) => kind === "tf" ? (r.k === "tf" || r.k === "ir" || r.k === "wb") : r.k === kind;
+    const nm = (r) => r.k === "tr" ? r.by + " · " + r.name : r.k === "wb" ? (r.id === "seraj" ? T("Sirac") : r.id === "ibnqutaybah" ? T("İbn Qutəybə") : r.name) : r.name;
+    for (const r of LIST) if (ok(r) && (await status(r.id)) >= 114) o.push({ id: r.id, name: nm(r), lang: r.lang, dir: r.dir, k: r.k });
+    return o;
+  }
   async function srcRows(id) {
     if (srcCache[id]) return srcCache[id];
     const R = LIST.find((x) => x.id === id) || {}; const out = [];
@@ -901,7 +908,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   const xsState = { src: "", q: "" };
   async function openAyahSearch(s, a) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
-    const srcs = []; for (const r of LIST) if ((r.k === "tf" || r.k === "ir") && (await status(r.id)) >= 114) srcs.push(r);
+    const srcs = []; for (const r of LIST) if ((r.k === "tf" || r.k === "ir" || r.k === "wb") && (await status(r.id)) >= 114) srcs.push(r);
     cur = { s, a };
     sheet.onpointerdown = sheet.onpointerup = null;
     sheet.className = "qm-sheet qm-ayah qm-xs"; sheet.replaceChildren(); sheet.dir = uiLang() === "ar" ? "rtl" : "ltr";
@@ -915,7 +922,8 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     const pick = el("div", "qm-tabs");
     const mk = (id, label) => { const b = el("button", "qm-tab" + (xsState.src === id ? " on" : ""), label); b.onclick = () => { xsState.src = id; [...pick.children].forEach((c) => c.classList.toggle("on", c === b)); run(); }; return b; };
     if (xsState.src && !srcs.some((r) => r.id === xsState.src)) xsState.src = "";
-    pick.append(mk("", "Bütün təfsirlərdə"), ...srcs.map((r) => mk(r.id, r.name)));
+    const xsLabel = (r) => r.k === "wb" ? (r.id === "seraj" ? T("Sirac") : r.id === "ibnqutaybah" ? T("İbn Qutəybə") : r.name) : r.name;
+    pick.append(mk("", "Bütün təfsirlərdə"), ...srcs.map((r) => mk(r.id, xsLabel(r))));
     pick.style.flexWrap = "wrap";
     const inp = el("input", "qm-pick"); inp.type = "search"; inp.placeholder = "Bu ayənin təfsirlərində axtar…"; inp.value = xsState.q; inp.dir = "auto";
     const res = el("div", "qm-xs-res");
