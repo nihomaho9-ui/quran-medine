@@ -655,7 +655,6 @@
       .qm-range { display: inline-block; font-size: 0.72rem; color: #8a6a2e; background: #f3e7d0; border-radius: 999px; padding: 0.05rem 0.5rem; margin-bottom: 0.3rem; }
       .qm-full-nav { display: flex; justify-content: space-between; gap: 0.5rem; padding-top: 1rem; }
       .qm-empty { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 0.8rem 0; color: #5c675f; }
-      #rows .srow .pg { background: #f3e7d0; color: #8a6a2e; border-radius: 999px; padding: 0.15rem 0.6rem; min-width: 2rem; text-align: center; }
       .htabs { display: flex; background: #12352c; }
       .htabs button { flex: 1; border: 0; background: none; color: #c9bf9f; font: 700 0.92rem "Segoe UI", sans-serif; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.78rem 0; border-bottom: 3px solid transparent; cursor: pointer; }
       .htabs button.on { color: #fffaf0; border-bottom-color: #c4a56e; }
@@ -1087,6 +1086,7 @@
       });
       (function buildIndex() {
         const items = [];
+        for (let i = 0; i < 30; i++) items.push({ k: "j", n: i + 1, page: JUZ[i] });
         NAMES.forEach((name, i) => items.push({ k: "s", n: i + 1, name, page: surahPage(i + 1), ayahs: AYAHS[i] }));
         items.sort((a, b) => a.page - b.page || (a.k === "j" ? -1 : 1));
         for (const item of items) {
