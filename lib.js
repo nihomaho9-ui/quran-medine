@@ -820,6 +820,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     hz: '<path d="M5 19V11M10 19V6M15 19v-5M20 19V9"/>',
     hifz: '<path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5"/><path d="m8.5 11 1.5 1.5 3-3"/>',
     listen: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3.5" y="13.5" width="4" height="6" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6" rx="1.5"/>',
+    fsearch: '<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5M8 10.5h5M10.5 8v5"/>',
     plus: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8.5v7M8.5 12h7"/>',
   };
   const icon = (name, label, filled) => { const b = el("button", "qm-ic" + (filled ? " on" : "")); b.type = "button"; b.setAttribute("aria-label", label); b.title = label; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + SVG[name] + "</svg>"; return b; };
@@ -853,7 +854,8 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     const cmpB = icon("cmp", T("Müqayisə"));
     cmpB.onclick = () => openCompare(s, a);
     const hzB = icon("hifz", T("Hifz")); hzB.onclick = () => { cur = null; window.QM_HL && window.QM_HL(null); closeAll(); openHifz(s, a); };
-    bar.append(...[auB, shareB, copyB, markB, hzB, cmpB, closeB].filter(Boolean));
+    const xsB = icon("fsearch", "Xüsusi axtarış"); xsB.onclick = () => openAyahSearch(s, a);
+    bar.append(...[auB, shareB, copyB, markB, hzB, cmpB, xsB, closeB].filter(Boolean));
     sheet.append(bar);
     const head = el("div", "qm-head");
     head.append(el("h2", "", NAMES[s - 1] + " · " + (e && e.from !== e.to ? e.from + "–" + e.to : a)));
@@ -893,6 +895,62 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       }
     }
     back.hidden = false;
+  }
+
+  /* ---------- «Xüsusi axtarış»: search this ayah's text across all / one tafsir ---------- */
+  const xsState = { src: "", q: "" };
+  async function openAyahSearch(s, a) {
+    if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
+    const srcs = []; for (const r of LIST) if ((r.k === "tf" || r.k === "ir") && (await status(r.id)) >= 114) srcs.push(r);
+    cur = { s, a };
+    sheet.onpointerdown = sheet.onpointerup = null;
+    sheet.className = "qm-sheet qm-ayah qm-xs"; sheet.replaceChildren(); sheet.dir = uiLang() === "ar" ? "rtl" : "ltr";
+    const bar = el("div", "qm-icons");
+    const bk = el("button", "qm-step", "‹ " + NAMES[s - 1] + " " + s + ":" + a); bk.onclick = () => openAyah(s, a);
+    const closeB = icon("close", T("Bağla")); closeB.classList.add("end"); closeB.onclick = () => { cur = null; window.QM_HL && window.QM_HL(null); closeAll(); };
+    bar.append(bk, closeB); sheet.append(bar);
+    const head = el("div", "qm-head"); head.append(el("h2", "", "Xüsusi axtarış · " + NAMES[s - 1] + " " + s + ":" + a)); sheet.append(head);
+    const body = el("div", "qm-body"); sheet.append(body);
+    if (!srcs.length) { const box = el("div", "qm-empty"); box.append(el("p", "", T("Hələ təfsir endirilməyib."))); const b = el("button", "qm-rb main", T("Ayarlarda endir")); b.onclick = () => openSettings("tf"); box.append(b); body.append(box); back.hidden = false; return; }
+    const pick = el("div", "qm-tabs");
+    const mk = (id, label) => { const b = el("button", "qm-tab" + (xsState.src === id ? " on" : ""), label); b.onclick = () => { xsState.src = id; [...pick.children].forEach((c) => c.classList.toggle("on", c === b)); run(); }; return b; };
+    if (xsState.src && !srcs.some((r) => r.id === xsState.src)) xsState.src = "";
+    pick.append(mk("", "Bütün təfsirlərdə"), ...srcs.map((r) => mk(r.id, r.name)));
+    pick.style.flexWrap = "wrap";
+    const inp = el("input", "qm-pick"); inp.type = "search"; inp.placeholder = "Bu ayənin təfsirlərində axtar…"; inp.value = xsState.q; inp.dir = "auto";
+    const res = el("div", "qm-xs-res");
+    body.append(pick, inp, res);
+    const norm = (t) => t.toLowerCase().replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه");
+    let tok = 0;
+    async function run() {
+      const my = ++tok; xsState.q = inp.value; const q = norm(inp.value.trim());
+      const list = xsState.src ? srcs.filter((r) => r.id === xsState.src) : srcs; const out = [];
+      for (const r of list) { const e = await entry(r.id, s, a); if (e && e.text) out.push({ r, e, t: plain(e.text) }); }
+      if (my !== tok) return; res.replaceChildren();
+      let n = 0;
+      for (const { r, e, t } of out) {
+        const nt = norm(t); const hits = [];
+        if (q) { let i = nt.indexOf(q); while (i >= 0 && hits.length < 5) { hits.push(i); i = nt.indexOf(q, i + q.length); } if (!hits.length) continue; }
+        n++;
+        const card = el("button", "qm-opt qm-xs-hit"); card.style.cssText = "display:block;width:100%;text-align:start;white-space:normal;margin:.4rem 0";
+        card.append(el("b", "", r.name + " · " + s + ":" + (e.from !== e.to ? e.from + "–" + e.to : a) + (q ? " · " + hits.length + (hits.length >= 5 ? "+" : "") : "")));
+        const segs = q ? hits.slice(0, 3) : [0];
+        for (const i of segs) {
+          // norm() keeps length except removed marks; map position roughly by searching original
+          const p = el("p"); p.dir = r.dir || "auto"; p.lang = r.lang || "";
+          const st = Math.max(0, i - 80), en = Math.min(nt.length, i + q.length + 120);
+          const pre = nt.slice(st, i), hit = nt.slice(i, i + q.length), post = nt.slice(i + q.length, en);
+          if (!q) p.textContent = t.slice(0, 220) + (t.length > 220 ? "…" : "");
+          else { p.append((st ? "…" : "") + pre); const m = el("mark", "", hit); p.append(m, post + (en < nt.length ? "…" : "")); }
+          card.append(p);
+        }
+        card.onclick = () => { setPrefs({ tab: r.k, [r.k]: r.id }); openAyah(s, a); };
+        res.append(card);
+      }
+      if (!n) res.append(el("p", "qm-empty", T("Tapılmadı")));
+    }
+    let dt = 0; inp.oninput = () => { clearTimeout(dt); dt = setTimeout(run, 200); };
+    run(); back.hidden = false; setTimeout(() => inp.focus(), 50);
   }
 
   /* ---------- several ayahs: text, image, selection ---------- */
