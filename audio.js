@@ -61,7 +61,7 @@
   const audio = new Audio(); audio.preload = "auto";
   let st = { s: 0, a: 0, cont: false, playing: false, left: 0 }, ui = null;
   const listeners = new Set();
-  const notify = () => listeners.forEach((f) => f());
+  const notify = () => { listeners.forEach((f) => f()); paintBar && paintBar(); };
   const reps = () => Math.min(9, Math.max(1, +localStorage.getItem("qm.audio.rep") || 1));
   function markSurahIfFull(r, s) {
     (async () => {
@@ -94,6 +94,33 @@
   };
   audio.onerror = () => { if (!st.playing) return; st.playing = false; notify(); window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin"); };
 
+
+  // listen mini-bar (style C): shows while an ayah plays
+  const lb = el("div", "qlb"); lb.hidden = true;
+  const lbLine = el("div", "qlb-line"), lbFill = el("i"); lbLine.append(lbFill);
+  const lbT = el("span", "qlb-t", "0:00");
+  const lbPrev = el("button", "qlb-n", "⏮"), lbStop = el("button", "qlb-stop"), lbNext = el("button", "qlb-n", "⏭");
+  lbStop.append(el("i")); lbStop.title = "Dayandır"; lbPrev.title = "Əvvəlki ayə"; lbNext.title = "Növbəti ayə";
+  const lbRep = el("div", "qlb-rep"), lbM = el("button", "", "−"), lbN = el("b", "", "1×"), lbP = el("button", "", "+");
+  lbRep.append(lbM, lbN, lbP);
+  const lbMid = el("div", "qlb-mid"); lbMid.append(lbPrev, lbStop, lbNext);
+  lb.append(lbLine, lbT, lbMid, lbRep);
+  const go = (d) => { const a = st.a + d; if (!st.s || a < 1 || a > AYAHS[st.s - 1]) return; window.QM_GOTO && window.QM_GOTO(st.s + ":" + a); play(st.s, a); };
+  lbPrev.onclick = () => go(-1); lbNext.onclick = () => go(1); lbStop.onclick = stop;
+  const setRep = (d) => { const n = Math.min(9, Math.max(1, reps() + d)); localStorage.setItem("qm.audio.rep", n); st.left = Math.max(0, Math.min(st.left + d, n - 1)); paintBar(); };
+  lbM.onclick = () => setRep(-1); lbP.onclick = () => setRep(1);
+  const fmt = (x) => { x = Math.max(0, Math.floor(x || 0)); return Math.floor(x / 60) + ":" + String(x % 60).padStart(2, "0"); };
+  function paintBar() {
+    lb.hidden = !st.playing; document.body.classList.toggle("qlb-on", st.playing);
+    lbN.textContent = reps() + "×";
+    const d = audio.duration, c = audio.currentTime;
+    lbT.textContent = fmt(isFinite(d) ? d - c : 0);
+    lbFill.style.width = isFinite(d) && d ? (c / d * 100) + "%" : "0";
+    lbPrev.disabled = st.a <= 1; lbNext.disabled = !st.s || st.a >= AYAHS[st.s - 1];
+  }
+  audio.addEventListener("timeupdate", paintBar); audio.addEventListener("loadedmetadata", paintBar);
+  (document.body ? Promise.resolve() : new Promise((r) => addEventListener("DOMContentLoaded", r))).then(() => document.body.append(lb));
+
   // panel for the ayah sheet
   function panel(s, a) {
     const box = el("div", "qa-box");
@@ -125,7 +152,7 @@
     box.hidden = true;
     return box;
   }
-  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-rep{flex:0 0 auto;min-width:3.4rem}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}";
+  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-rep{flex:0 0 auto;min-width:3.4rem}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}.qlb[hidden]{display:none}.qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.6rem + env(safe-area-inset-bottom));width:min(94vw,640px);z-index:60;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem .7rem .35rem;background:#fbf6ec;color:#1a3330;font-size:.8rem}.qlb-line{position:absolute;left:0;right:0;top:0;height:1.5px;background:rgba(196,165,110,.45)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}.qlb-t{min-width:2.8rem;color:#a8893f;font-weight:600;font-variant-numeric:tabular-nums}.qlb-mid{display:flex;align-items:center;gap:1.4rem}.qlb-n{border:0;background:none;font-size:1.25rem;color:#2c3a2a;cursor:pointer;padding:.2rem}.qlb-n:disabled{opacity:.3}.qlb-stop{width:44px;height:44px;border-radius:50%;border:0;background:#5f6b2f;display:grid;place-items:center;cursor:pointer}.qlb-stop i{width:14px;height:14px;border-radius:3px;background:#fbf6ec}.qlb-rep{display:flex;align-items:center;gap:.55rem;border:1px solid #c4a56e;border-radius:999px;padding:.12rem .55rem}.qlb-rep button{border:0;background:none;color:#1a3330;font-size:.95rem;cursor:pointer;padding:0 .1rem}.qlb-rep b{min-width:1.6rem;text-align:center}";
   document.head.append(css);
   window.QA = { panel, play, stop, RECITERS };
 })();
