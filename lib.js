@@ -779,6 +779,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   const toastEl = el("div", "qm-toast"); toastEl.hidden = true; document.body.appendChild(toastEl);
   let toastT = 0;
   window.QM_TOAST = (t) => toast(t);
+  window.QM_CLOSEAYAH = () => { if (!back.hidden && sheet.classList.contains("qm-ayah")) closeAll(); };
   const toast = (t) => { toastEl.textContent = t; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (toastEl.hidden = true), 1800); };
   async function copyText(t) { try { await navigator.clipboard.writeText(t); return true; } catch (e) { const ta = el("textarea"); ta.value = t; document.body.append(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok; } }
   const SVG = {

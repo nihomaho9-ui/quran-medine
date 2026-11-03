@@ -4,6 +4,11 @@
   const RECITERS = [
     { id: "maher", name: "Maher Al Muaiqly", ea: "MaherAlMuaiqly128kbps", rel: "maher-128kbps-v1" },
     { id: "husary", name: "Husary", ea: "Husary_128kbps", rel: "husary-128kbps-v1" },
+    { id: "qatami", name: "Nasser Al Qatami", ea: "Nasser_Alqatami_128kbps", rel: "qatami-128kbps-v1" },
+    { id: "dosari", name: "Yasser Al Dosari", ea: "Yasser_Ad-Dussary_128kbps", rel: "dosari-128kbps-v1" },
+    { id: "ayyub", name: "Muhammad Ayyub", ea: "Muhammad_Ayyoub_128kbps", rel: "ayyub-128kbps-v1" },
+    { id: "jibreel", name: "Muhammad Jibreel", ea: "Muhammad_Jibreel_128kbps", rel: "jibreel-128kbps-v1" },
+    { id: "shuraim", name: "Saud Ash-Shuraim", ea: "Saood_ash-Shuraym_128kbps", rel: "shuraym-128kbps-v1" },
   ];
   const CACHE = "qm-audio-v1";
   const p3 = (n) => String(n).padStart(3, "0");
@@ -38,6 +43,7 @@
     const c = await caches.open(CACHE), n = AYAHS[s - 1];
     try { // one zip from the GitHub release (works in the app; browsers may block it — then ayah by ayah)
       prog(0, 1);
+      if (!r.rel) throw new Error("no zip");
       const res = await fetch(zipUrl(r, s)); if (!res.ok) throw new Error("HTTP " + res.status);
       const files = unzipStored(await res.arrayBuffer());
       let k = 0; for (let a = 1; a <= n; a++) { const f = files[p3(s) + p3(a) + ".mp3"]; if (!f) throw new Error("zip"); await putMp3(c, r, s, a, f); prog(++k, n); }
@@ -53,17 +59,19 @@
   async function delSurah(r, s) { const c = await caches.open(CACHE); for (let a = 1; a <= AYAHS[s - 1]; a++) await c.delete(url(r, s, a)); localStorage.removeItem(doneKey(r, s)); }
 
   const audio = new Audio(); audio.preload = "auto";
-  let st = { s: 0, a: 0, cont: false, playing: false }, ui = null;
+  let st = { s: 0, a: 0, cont: false, playing: false, left: 0 }, ui = null;
   const listeners = new Set();
   const notify = () => listeners.forEach((f) => f());
-  async function play(s, a) {
-    const r = rec(); st.s = s; st.a = a; st.playing = true; notify();
+  const reps = () => Math.min(9, Math.max(1, +localStorage.getItem("qm.audio.rep") || 1));
+  async function play(s, a, rep) {
+    const r = rec(); if (st.s !== s || st.a !== a || !rep) st.left = reps() - 1; st.s = s; st.a = a; st.playing = true; notify();
     audio.src = (await cached(r, s, a)) || url(r, s, a);
     try { await audio.play(); } catch (e) { st.playing = false; notify(); window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin"); }
     window.QM_HL && window.QM_HL(s + ":" + a);
   }
   function stop() { audio.pause(); st.playing = false; notify(); }
   audio.onended = () => {
+    if (st.left > 0) { st.left--; play(st.s, st.a, true); return; }
     if (st.cont && st.a < AYAHS[st.s - 1]) { const a = st.a + 1; window.QM_GOTO ? window.QM_GOTO(st.s + ":" + a) : 0; play(st.s, a); }
     else { st.playing = false; notify(); }
   };
@@ -78,8 +86,10 @@
     const pb = el("button", "qa-b main"); const cont = el("label", "qa-cont"); const cb = el("input"); cb.type = "checkbox"; cb.checked = localStorage.getItem("qm.audio.cont") === "1"; cont.append(cb, el("span", "", " Davamlı"));
     cb.onchange = () => { st.cont = cb.checked; localStorage.setItem("qm.audio.cont", cb.checked ? "1" : ""); };
     st.cont = cb.checked;
-    pb.onclick = () => (st.playing && st.s === s ? stop() : play(s, a));
-    row.append(pb, pick, cont);
+    pb.onclick = () => { if (st.playing && st.s === s) return stop(); window.QM_CLOSEAYAH && window.QM_CLOSEAYAH(); play(s, a); };
+    const rp = el("select", "qa-pick qa-rep"); for (let i = 1; i <= 9; i++) { const o = el("option", "", "×" + i); o.value = i; rp.append(o); }
+    rp.title = "Təkrar"; rp.value = reps(); rp.onchange = () => { localStorage.setItem("qm.audio.rep", rp.value); };
+    row.append(pb, pick, rp, cont);
     const row2 = el("div", "qa-row");
     const da = el("button", "qa-b", "⬇ Bu ayə"), ds = el("button", "qa-b"), msg = el("span", "qa-msg");
     da.onclick = async () => { msg.textContent = "Endirilir…"; try { await saveAyah(rec(), s, a); msg.textContent = "✓ Ayə cihazda"; } catch (e) { msg.textContent = navigator.onLine ? "Alınmadı" : "İnternet yoxdur"; } };
@@ -98,7 +108,7 @@
     box.hidden = true;
     return box;
   }
-  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}";
+  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-rep{flex:0 0 auto;min-width:3.4rem}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}";
   document.head.append(css);
   window.QA = { panel, play, stop, RECITERS };
 })();
