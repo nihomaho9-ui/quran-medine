@@ -53,8 +53,10 @@
   }
 
   async function saveAyah(r, s, a) {
+    if (memo.has(mkey(r, s, a))) return;
     const c = await caches.open(CACHE);
-    if (await c.match(url(r, s, a))) return;
+    const hit = await c.match(url(r, s, a));
+    if (hit) { memoPut(r, s, a, await hit.arrayBuffer()); return; }
     const res = await fetch(url(r, s, a)); if (!res.ok) throw new Error("HTTP " + res.status);
     await putMp3(c, r, s, a, await res.arrayBuffer());
   }
@@ -79,13 +81,16 @@
   const A = [new Audio(), new Audio()];
   A.forEach((x) => { x.preload = "auto"; });
   let curA = 0;
-  const audio = () => A[curA]; // active element (for timeupdate / paint)
+  const audio = () => A[curA];
   let st = { s: 0, a: 0, cont: false, playing: false, paused: false, left: 0, gen: 0 }, ui = null;
-  let nextReady = null, surahPull = null;
+  let nextReady = null, surahPull = null, hydrateJob = null;
   const listeners = new Set();
   const notify = () => { listeners.forEach((f) => f()); paintBar && paintBar(); };
   const reps = () => Math.min(9, Math.max(1, +localStorage.getItem("qm.audio.rep") || 1));
+  const kick = (el) => { const p = el.play(); if (p && p.catch) p.catch(() => {}); };
+
   function markSurahIfFull(r, s) {
+    if (st.playing) return; // never scan Cache during playback
     (async () => {
       try {
         if (localStorage.getItem(doneKey(r, s))) return;
@@ -98,6 +103,7 @@
   }
   function warm(r, s, a) {
     if (a < 1 || a > AYAHS[s - 1]) return;
+    if (memo.has(mkey(r, s, a))) return;
     saveAyah(r, s, a).then(() => markSurahIfFull(r, s)).catch(() => {});
   }
   function pullSurah(r, s) {
@@ -106,44 +112,124 @@
     if (surahPull && surahPull.key === key) return;
     const job = { key };
     surahPull = job;
-    saveSurah(r, s, () => {}).then(() => { if (surahPull === job) surahPull = null; notify(); }).catch(() => { if (surahPull === job) surahPull = null; });
+    saveSurah(r, s, () => {}).then(() => {
+      if (surahPull === job) surahPull = null;
+      hydrateSurah(r, s);
+      notify();
+    }).catch(() => { if (surahPull === job) surahPull = null; });
+  }
+  // Load every ayah of this surah into RAM blob URLs once — then ayah switches are sync
+  async function hydrateSurah(r, s) {
+    const key = r.id + ":" + s, n = AYAHS[s - 1], prefix = key + ":";
+    hydrateJob = key;
+    for (const k of [...memo.keys()]) {
+      if (k.startsWith(prefix)) continue;
+      const u = memo.get(k);
+      try { URL.revokeObjectURL(u); } catch (e) {}
+      memo.delete(k);
+    }
+    try {
+      const c = await caches.open(CACHE);
+      for (let a = 1; a <= n; a++) {
+        if (hydrateJob !== key) return;
+        if (memo.has(mkey(r, s, a))) continue;
+        const h = await c.match(url(r, s, a));
+        if (h) memoPut(r, s, a, await h.arrayBuffer());
+        if (a % 10 === 0) await new Promise((res) => setTimeout(res, 0));
+      }
+    } catch (e) {}
+    if (hydrateJob === key && st.playing && st.s === s) armStandby(r, s, st.a);
   }
   async function resolveSrc(r, s, a) {
+    const k = mkey(r, s, a);
+    if (memo.has(k)) return memo.get(k);
     const hit = await cached(r, s, a);
-    return hit || url(r, s, a);
+    if (hit) return hit;
+    if (localStorage.getItem(doneKey(r, s))) localStorage.removeItem(doneKey(r, s));
+    return url(r, s, a);
   }
   function armStandby(r, s, a) {
     const n = a + 1;
     if (!st.cont || n > AYAHS[s - 1]) { nextReady = null; return; }
-    const token = { r: r.id, s, a: n, el: A[1 - curA] };
+    const stand = A[1 - curA];
+    const token = { r: r.id, s, a: n, el: stand };
     nextReady = token;
-    resolveSrc(r, s, n).then((src) => {
+    const apply = (src) => {
       if (nextReady !== token) return;
       token.src = src;
-      try { token.el.src = src; token.el.load(); } catch (e) {}
-    }).catch(() => {});
-    warm(r, s, n); warm(r, s, n + 1);
+      if (stand.src !== src) {
+        try { stand.pause(); stand.src = src; stand.load(); } catch (e) {}
+      }
+    };
+    const k = mkey(r, s, n);
+    if (memo.has(k)) apply(memo.get(k));
+    else resolveSrc(r, s, n).then(apply).catch(() => {});
+    // also prefetch n+1 into memo only (no second element)
+    if (n + 1 <= AYAHS[s - 1] && !memo.has(mkey(r, s, n + 1))) warm(r, s, n + 1);
+  }
+  // Instant handoff when next blob is already on the standby element
+  function advance() {
+    if (st.left > 0) { st.left--; play(st.s, st.a, true); return; }
+    if (!(st.cont && st.a < AYAHS[st.s - 1])) { st.playing = false; st.paused = false; notify(); return; }
+    const s = st.s, a = st.a + 1, r = rec();
+    const ready = nextReady && nextReady.r === r.id && nextReady.s === s && nextReady.a === a && nextReady.src;
+    if (ready) {
+      const gen = ++st.gen;
+      A[curA].pause();
+      curA = 1 - curA;
+      nextReady = null;
+      st.s = s; st.a = a; st.playing = true; st.paused = false;
+      kick(audio());
+      armStandby(r, s, a);
+      notify();
+      queueMicrotask(() => { if (st.gen === gen) window.QM_HL && window.QM_HL(s + ":" + a); });
+      setTimeout(() => { if (st.gen === gen && st.playing) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 150);
+      return;
+    }
+    // memo hit without standby — still sync-ish
+    const src = memo.get(mkey(r, s, a));
+    if (src) {
+      const gen = ++st.gen;
+      A[1 - curA].pause();
+      st.s = s; st.a = a; st.playing = true; st.paused = false;
+      try { audio().src = src; } catch (e) {}
+      kick(audio());
+      armStandby(r, s, a);
+      notify();
+      queueMicrotask(() => { if (st.gen === gen) window.QM_HL && window.QM_HL(s + ":" + a); });
+      setTimeout(() => { if (st.gen === gen && st.playing) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 150);
+      return;
+    }
+    play(s, a).then(() => setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 150));
   }
   async function play(s, a, rep) {
     const r = rec(); const gen = ++st.gen;
     if (st.s !== s || st.a !== a || !rep) st.left = reps() - 1;
     st.s = s; st.a = a; st.playing = true; st.paused = false; notify();
+    hydrateSurah(r, s);
     let src = null, useStandby = false;
     if (nextReady && nextReady.r === r.id && nextReady.s === s && nextReady.a === a && nextReady.src) {
       src = nextReady.src; useStandby = true;
     }
     nextReady = null;
-    if (!src) src = await resolveSrc(r, s, a);
+    if (!src) {
+      const k = mkey(r, s, a);
+      src = memo.has(k) ? memo.get(k) : await resolveSrc(r, s, a);
+    }
     if (gen !== st.gen) return;
-    if (useStandby) curA = 1 - curA;
-    else {
+    if (useStandby) {
+      A[curA].pause();
+      curA = 1 - curA;
+    } else {
       A[1 - curA].pause();
       try { audio().src = src; } catch (e) {}
     }
     const el = audio();
-    if (!src.startsWith("blob:") && navigator.onLine) warm(r, s, a);
-    if (st.cont) { pullSurah(r, s); armStandby(r, s, a); }
-    else if (navigator.onLine) warm(r, s, a + 1);
+    if (!String(src).startsWith("blob:") && navigator.onLine) warm(r, s, a);
+    if (st.cont) {
+      if (!localStorage.getItem(doneKey(r, s))) pullSurah(r, s);
+      armStandby(r, s, a);
+    } else if (navigator.onLine) warm(r, s, a + 1);
     try { await el.play(); } catch (e) {
       if (gen !== st.gen) return;
       st.playing = false; st.paused = false; notify();
@@ -162,23 +248,25 @@
     });
   }
   function stop() {
-    st.gen++; A.forEach((x) => { x.pause(); try { x.removeAttribute("src"); x.load(); } catch (e) {} });
+    st.gen++; hydrateJob = null;
+    A.forEach((x) => { x.pause(); try { x.removeAttribute("src"); x.load(); } catch (e) {} });
     st.playing = false; st.paused = false; nextReady = null; notify();
   }
-  function onEnded() {
-    if (st.left > 0) { st.left--; play(st.s, st.a, true); return; }
-    if (st.cont && st.a < AYAHS[st.s - 1]) {
-      const a = st.a + 1, s = st.s;
-      play(s, a);
-      setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 0);
-    } else { st.playing = false; st.paused = false; notify(); }
-  }
+  function onEnded() { advance(); }
   function onErr() {
     if (!st.playing) return;
+    // if continuous and next exists, skip the broken ayah instead of dying
+    if (st.cont && st.a < AYAHS[st.s - 1]) { advance(); return; }
     st.playing = false; st.paused = false; notify();
     window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin");
   }
-  A.forEach((x) => { x.addEventListener("ended", () => { if (x === audio()) onEnded(); }); x.addEventListener("error", () => { if (x === audio()) onErr(); }); });
+  A.forEach((x) => {
+    x.addEventListener("ended", () => { if (x === audio()) onEnded(); });
+    x.addEventListener("error", () => { if (x === audio()) onErr(); });
+    x.addEventListener("canplaythrough", () => {
+      if (nextReady && nextReady.el === x) nextReady.can = true;
+    });
+  });
 
   // listen mini-bar (style C): shows while an ayah plays
   const lb = el("div", "qlb"); lb.hidden = true;
@@ -208,7 +296,7 @@
     notify();
   };
   lbCont.onclick = () => setCont(!st.cont);
-  const go = (d) => { const a = st.a + d; if (!st.s || a < 1 || a > AYAHS[st.s - 1]) return; window.QM_GOTO && window.QM_GOTO(st.s + ":" + a); play(st.s, a); };
+  const go = (d) => { const a = st.a + d, s = st.s; if (!s || a < 1 || a > AYAHS[s - 1]) return; play(s, a); setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 150); };
   lbPrev.onclick = () => go(-1); lbNext.onclick = () => go(1); lbStop.onclick = stop;
   lbPause.onclick = () => { if (st.paused) resume(); else pause(); };
   const setRep = (d) => { const n = Math.min(9, Math.max(1, reps() + d)); localStorage.setItem("qm.audio.rep", n); st.left = Math.max(0, Math.min(st.left + d, n - 1)); paintBar(); };
@@ -227,6 +315,7 @@
     lbT.textContent = fmt(isFinite(d) ? d - c : 0);
     lbFill.style.width = isFinite(d) && d ? (c / d * 100) + "%" : "0";
     lbPrev.disabled = st.a <= 1; lbNext.disabled = !st.s || st.a >= AYAHS[st.s - 1];
+    if (st.cont && st.playing && !st.paused && isFinite(d) && d - c < 2.5) armStandby(rec(), st.s, st.a);
   }
   A.forEach((x) => { x.addEventListener("timeupdate", () => { if (x === audio()) paintBar(); }); x.addEventListener("loadedmetadata", () => { if (x === audio()) paintBar(); }); });
   (document.body ? Promise.resolve() : new Promise((r) => addEventListener("DOMContentLoaded", r))).then(() => document.body.append(lb));
@@ -250,7 +339,7 @@
       const r = rec();
       if (localStorage.getItem(doneKey(r, s))) return;
       ds.disabled = true;
-      try { await saveSurah(r, s, (d, n) => (msg.textContent = "Endirilir " + d + "/" + n)); msg.textContent = "✓ Surə cihazda (internetsiz)"; }
+      try { await saveSurah(r, s, (d, n) => (msg.textContent = "Endirilir " + d + "/" + n)); msg.textContent = "✓ Surə cihazda (internetsiz)"; hydrateSurah(r, s); }
       catch (e) { msg.textContent = navigator.onLine ? "Alınmadı: " + e.message : "İnternet yoxdur"; }
       ds.disabled = false; paint();
     };
