@@ -58,13 +58,16 @@
   }
 
   const audio = new Audio(); audio.preload = "auto";
-  let st = { s: 0, a: 0, cont: false, playing: false, left: 0 }, ui = null;
+  let st = { s: 0, a: 0, cont: false, playing: false, left: 0, gen: 0 }, ui = null;
+  let blobUrl = null, nextReady = null, surahPull = null;
   const listeners = new Set();
   const notify = () => { listeners.forEach((f) => f()); paintBar && paintBar(); };
   const reps = () => Math.min(9, Math.max(1, +localStorage.getItem("qm.audio.rep") || 1));
+  function dropBlob() { if (blobUrl) { try { URL.revokeObjectURL(blobUrl); } catch (e) {} blobUrl = null; } }
   function markSurahIfFull(r, s) {
     (async () => {
       try {
+        if (localStorage.getItem(doneKey(r, s))) return;
         const c = await caches.open(CACHE), n = AYAHS[s - 1];
         for (let a = 1; a <= n; a++) if (!(await c.match(url(r, s, a)))) return;
         localStorage.setItem(doneKey(r, s), "1");
@@ -76,20 +79,58 @@
     if (a < 1 || a > AYAHS[s - 1]) return;
     saveAyah(r, s, a).then(() => markSurahIfFull(r, s)).catch(() => {});
   }
-  async function play(s, a, rep) {
-    const r = rec(); if (st.s !== s || st.a !== a || !rep) st.left = reps() - 1; st.s = s; st.a = a; st.playing = true; notify();
-    const hit = await cached(r, s, a);
-    audio.src = hit || url(r, s, a);
-    if (!hit && navigator.onLine) warm(r, s, a); // listen once → keep for offline
-    if (st.cont && navigator.onLine) warm(r, s, a + 1); // prefetch next ayah while this one plays
-    try { await audio.play(); } catch (e) { st.playing = false; notify(); window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin"); }
-    window.QM_HL && window.QM_HL(s + ":" + a);
+  // whole surah → Cache Storage on the phone so continuous play does not stall on the network
+  function pullSurah(r, s) {
+    if (!navigator.onLine || localStorage.getItem(doneKey(r, s))) return;
+    const key = r.id + ":" + s;
+    if (surahPull && surahPull.key === key) return;
+    const job = { key, stop: false };
+    surahPull = job;
+    saveSurah(r, s, () => {}).then(() => { if (surahPull === job) surahPull = null; notify(); }).catch(() => { if (surahPull === job) surahPull = null; });
   }
-  function stop() { audio.pause(); st.playing = false; notify(); }
+  async function resolveSrc(r, s, a) {
+    const hit = await cached(r, s, a);
+    return hit || url(r, s, a);
+  }
+  function prepNext(r, s, a) {
+    const n = a + 1;
+    if (!st.cont || n > AYAHS[s - 1]) { nextReady = null; return; }
+    const token = { r: r.id, s, a: n };
+    nextReady = token;
+    resolveSrc(r, s, n).then((src) => { if (nextReady === token) token.src = src; }).catch(() => {});
+    warm(r, s, n);
+    warm(r, s, n + 1);
+  }
+  async function play(s, a, rep) {
+    const r = rec(); const gen = ++st.gen;
+    if (st.s !== s || st.a !== a || !rep) st.left = reps() - 1;
+    st.s = s; st.a = a; st.playing = true; notify();
+    let src = null;
+    if (nextReady && nextReady.r === r.id && nextReady.s === s && nextReady.a === a && nextReady.src) src = nextReady.src;
+    nextReady = null;
+    if (!src) src = await resolveSrc(r, s, a);
+    if (gen !== st.gen) return;
+    dropBlob();
+    if (src.startsWith("blob:")) blobUrl = src;
+    audio.src = src;
+    if (!src.startsWith("blob:") && navigator.onLine) warm(r, s, a);
+    if (st.cont) { pullSurah(r, s); prepNext(r, s, a); }
+    else if (navigator.onLine) warm(r, s, a + 1);
+    try { await audio.play(); } catch (e) {
+      if (gen !== st.gen) return;
+      st.playing = false; notify();
+      window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin");
+    }
+    if (gen === st.gen) window.QM_HL && window.QM_HL(s + ":" + a);
+  }
+  function stop() { st.gen++; audio.pause(); st.playing = false; nextReady = null; dropBlob(); notify(); }
   audio.onended = () => {
     if (st.left > 0) { st.left--; play(st.s, st.a, true); return; }
-    if (st.cont && st.a < AYAHS[st.s - 1]) { const a = st.a + 1; window.QM_GOTO ? window.QM_GOTO(st.s + ":" + a) : 0; play(st.s, a); }
-    else { st.playing = false; notify(); }
+    if (st.cont && st.a < AYAHS[st.s - 1]) {
+      const a = st.a + 1, s = st.s;
+      play(s, a); // start next audio first — page jump after, so it does not freeze the sound
+      setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 0);
+    } else { st.playing = false; notify(); }
   };
   audio.onerror = () => { if (!st.playing) return; st.playing = false; notify(); window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin"); };
 
@@ -112,7 +153,11 @@
     localStorage.setItem("qm.audio.cont", st.cont ? "1" : "");
     lbCont.classList.toggle("on", st.cont);
     lbCont.setAttribute("aria-pressed", st.cont ? "true" : "false");
-    if (st.cont && st.playing && navigator.onLine) warm(rec(), st.s, st.a + 1);
+    if (st.cont && st.playing) {
+      const r = rec();
+      pullSurah(r, st.s);
+      prepNext(r, st.s, st.a);
+    }
     notify();
   };
   lbCont.onclick = () => setCont(!st.cont);
