@@ -63,9 +63,26 @@
   const listeners = new Set();
   const notify = () => listeners.forEach((f) => f());
   const reps = () => Math.min(9, Math.max(1, +localStorage.getItem("qm.audio.rep") || 1));
+  function markSurahIfFull(r, s) {
+    (async () => {
+      try {
+        const c = await caches.open(CACHE), n = AYAHS[s - 1];
+        for (let a = 1; a <= n; a++) if (!(await c.match(url(r, s, a)))) return;
+        localStorage.setItem(doneKey(r, s), "1");
+        notify();
+      } catch (e) {}
+    })();
+  }
+  function warm(r, s, a) {
+    if (a < 1 || a > AYAHS[s - 1]) return;
+    saveAyah(r, s, a).then(() => markSurahIfFull(r, s)).catch(() => {});
+  }
   async function play(s, a, rep) {
     const r = rec(); if (st.s !== s || st.a !== a || !rep) st.left = reps() - 1; st.s = s; st.a = a; st.playing = true; notify();
-    audio.src = (await cached(r, s, a)) || url(r, s, a);
+    const hit = await cached(r, s, a);
+    audio.src = hit || url(r, s, a);
+    if (!hit && navigator.onLine) warm(r, s, a); // listen once → keep for offline
+    if (st.cont && navigator.onLine) warm(r, s, a + 1); // prefetch next ayah while this one plays
     try { await audio.play(); } catch (e) { st.playing = false; notify(); window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin"); }
     window.QM_HL && window.QM_HL(s + ":" + a);
   }
