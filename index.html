@@ -419,6 +419,14 @@
       .qm-step { border: 1px solid #c4a56e; border-radius: 999px; background: #1a3330; color: #f3e7d0; font: 600 0.82rem "Segoe UI", sans-serif; padding: 0.38rem 0.75rem; cursor: pointer; }
       .qm-step:disabled { opacity: 0.3; }
       .qm-ayah .qm-head h2 { font-size: 1.1rem; }
+      .qj{position:fixed;inset:0;z-index:36;background:rgba(16,34,32,.45);display:flex;align-items:flex-end;font-family:"Segoe UI",sans-serif}
+      .qj[hidden]{display:none}
+      .qj-box{width:100%;max-height:75vh;overflow:auto;background:#fffaf0;border-radius:20px 20px 0 0;box-shadow:0 -6px 24px #0004;padding:18px;color:#2b2b22}
+      .qj-in{width:100%;background:#efe6cc;border:0;border-radius:12px;padding:12px;font-size:1rem;outline:none}
+      .qj-h{color:#8a8168;font-size:.75rem;margin:12px 0 2px}
+      .qj-row{display:flex;width:100%;justify-content:space-between;align-items:center;gap:.5rem;padding:10px 0;border:0;border-bottom:1px solid #eadfc0;background:none;font:inherit;font-size:.9rem;text-align:start;color:inherit}
+      .qj-b{background:#3e4a2c;color:#fff;border-radius:10px;padding:3px 9px;font-size:.75rem;white-space:nowrap}
+      .qj-d{color:#8a8168;font-size:.75rem}
       .qm-menu { position: fixed; inset: 0; z-index: 35; display: flex; align-items: center; justify-content: center; background: rgba(16, 34, 32, 0.45); padding: 1rem; font-family: "Segoe UI", sans-serif; }
       .qm-menu[hidden] { display: none; }
       .qm-menu-box { width: min(100%, 20rem); background: #fffaf0; border: 1.5px solid #c4a56e; border-radius: 1.1rem; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); }
@@ -672,11 +680,13 @@
       <a href="#" id="back" aria-label="Geri">‹</a>
       <h1 id="sure">Fatihə surəsi</h1>
       <div class="hdr-acts">
+        <button type="button" class="gear" id="jump-btn" title="Axtarış" aria-label="Axtarış" onclick="QM_JUMPSHEET()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16.5 20 20.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
         <button type="button" class="gear" id="hifz-btn" title="Hifz" aria-label="Hifz" onclick="QM.openHifz()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
         <button type="button" class="gear" id="full-btn" aria-label="Tam ekran" title="Tam ekran" onclick="QM.openFullHere()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button type="button" class="gear" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.1v2.2M12 18.7v2.2M4.9 6.1l1.6 1.4M17.5 16.5l1.6 1.4M3.1 12h2.2M18.7 12h2.2M4.9 17.9l1.6-1.4M17.5 7.5l1.6-1.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
       </div>
     </header>
+    <div class="qj" id="qj" hidden><div class="qj-box"><input class="qj-in" id="qj-in" type="search" placeholder="🔍 Sürə, 2:255, Səh. 562" autocomplete="off"><div id="qj-res"></div><div class="qj-h" id="qj-rh">Son axtarışlar</div><div id="qj-rec"></div></div></div>
     <main class="page" id="page"></main>
     <div class="num" id="pos">1</div>
     <script>
@@ -1350,6 +1360,40 @@
       window.QM_RECENT = () => { const pop = document.getElementById("recent-pop"); if (!pop.hidden) { pop.hidden = true; return; } let h = []; try { h = JSON.parse(localStorage.getItem("qm-recent") || "[]"); } catch (e) {} pop.replaceChildren(); if (!h.length) { const p = document.createElement("p"); p.textContent = "Hələ oxunan səhifə yoxdur"; pop.append(p); } for (const x of h) { const b = document.createElement("button"); b.type = "button"; b.append(x.t || "Səhifə"); const sp = document.createElement("span"); sp.textContent = "Səhifə " + x.p; b.append(sp); b.onclick = () => { pop.hidden = true; QM_OPENPAGE(x.p); }; pop.append(b); } pop.hidden = false; };
       window.QM_OPENPAGE = (n) => { hlKey = null; paintHl(null); gate.hidden = true; show(n); };
       window.QM_JUMP = (key) => { hlKey = key; gate.hidden = true; const n = pageOf(key); show(n); };
+      // ---- 4A: sürətli keçid sheet (sürə / sürə:ayə / səhifə) + son axtarışlar ----
+      (() => {
+        const qj = document.getElementById("qj"), inp = document.getElementById("qj-in"), res = document.getElementById("qj-res"), rec = document.getElementById("qj-rec"), rh = document.getElementById("qj-rh");
+        const RK = "qm-jump-recent";
+        const getR = () => { try { return JSON.parse(localStorage.getItem(RK) || "[]"); } catch (e) { return []; } };
+        const pushR = (t) => { const r = getR().filter((x) => x !== t); r.unshift(t); try { localStorage.setItem(RK, JSON.stringify(r.slice(0, 8))); } catch (e) {} };
+        function find(q) {
+          q = q.trim(); if (!q) return [];
+          let m = q.match(/^(?:səh(?:ifə)?\.?|s|p)\s*(\d{1,3})$/i);
+          if (m) { const n = +m[1]; return n >= 1 && n <= LAST ? [{ t: "Səhifə " + n, p: n, label: "Səh. " + n }] : []; }
+          m = q.match(/^(\d{1,3})\s*[:.\s]\s*(\d{1,3})$/);
+          if (m) { const s = +m[1], a = +m[2]; if (s < 1 || s > 114 || a < 1 || a > AYAHS[s - 1]) return []; const k = s + ":" + a; return [{ t: NAMES[s - 1] + " " + k, key: k, label: k }]; }
+          m = q.match(/^(\d{1,3})$/);
+          const out = [];
+          if (m && +m[1] >= 1 && +m[1] <= 114) { const s = +m[1]; out.push({ t: s + ". " + NAMES[s - 1], p: surahPage(s), label: NAMES[s - 1] }); }
+          const nq = fold(q); if (!nq || m) return out;
+          for (let i = 0; i < 114 && out.length < 6; i++) { const a = fold(NAMES[i]), b = fold(ARNAMES[i]); if (a.includes(nq) || b.includes(nq) || (nq.startsWith("al") && nq.length > 4 && a.includes(nq.slice(2)))) out.push({ t: (i + 1) + ". " + NAMES[i] + " · " + ARNAMES[i], p: surahPage(i + 1), label: NAMES[i] }); }
+          return out;
+        }
+        const pageFor = (it) => it.p || (ayahMap ? (() => { for (const [p, l] of Object.entries(ayahMap)) if (l.some((r) => r[0] === it.key)) return +p; return 0; })() : 0);
+        function go(it) { pushR(it.label); qj.hidden = true; if (it.key) QM_JUMP(it.key); else QM_OPENPAGE(it.p); }
+        function row(main, side, fn) { const b = document.createElement("button"); b.type = "button"; b.className = "qj-row"; const a = document.createElement("span"); a.textContent = main; const c = document.createElement("span"); c.className = side.cls; c.textContent = side.t; b.append(a, c); b.onclick = fn; return b; }
+        function paint() {
+          const its = find(inp.value); res.replaceChildren();
+          if (inp.value.trim()) { const h = document.createElement("div"); h.className = "qj-h"; h.textContent = its.length ? "Nəticə" : "Nəticə yoxdur"; res.append(h); }
+          for (const it of its) { const pg = pageFor(it); res.append(row(it.t, { cls: "qj-b", t: pg ? "Səh. " + pg : "→" }, () => go(it))); }
+          const r = getR(); rec.replaceChildren(); rh.hidden = !r.length;
+          for (const t of r) rec.append(row(t, { cls: "qj-d", t: "↗" }, () => { const f = find(t)[0]; if (f) go(f); else { inp.value = t; paint(); } }));
+        }
+        inp.addEventListener("input", paint);
+        inp.addEventListener("keydown", (e) => { if (e.key === "Enter") { const f = find(inp.value)[0]; if (f) go(f); } else if (e.key === "Escape") qj.hidden = true; });
+        qj.addEventListener("click", (e) => { if (e.target === qj) qj.hidden = true; });
+        window.QM_JUMPSHEET = () => { inp.value = ""; paint(); qj.hidden = false; setTimeout(() => inp.focus(), 30); };
+      })();
       window.QM_AYAHS = AYAHS;
       window.QM_NAMES = NAMES;
       fetch("./yazi-ayahs.json").then((r) => r.json()).then((j) => { ayahMap = j; if (pages && !gate.hidden === false) show(pageNo); });
