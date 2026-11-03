@@ -453,6 +453,9 @@
       .qm-cmp-rail { flex: 1; min-height: 0; display: flex; gap: 0.7rem; padding: 0.7rem 0.8rem; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding-inline: 0.8rem; overscroll-behavior-x: contain; touch-action: pan-x pan-y; scrollbar-width: none; direction: ltr; }
       .qm-cmp-rail::-webkit-scrollbar { display: none; }
       .qm-cmp-card { flex: 0 0 84%; scroll-snap-align: start; display: flex; flex-direction: column; min-height: 0; background: #fffaf0; border: 1px solid rgba(196, 165, 110, 0.6); border-radius: 1.1rem; padding: 0.85rem 0.9rem; }
+      .qm-cmp-card { cursor: zoom-in; }
+      .qm-cmp-fs { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; background: #f6f1e4; }
+      .qm-cmp-fs-b { flex: 1; overflow: auto; padding: 0.9rem 1.1rem 2rem; background: #fffaf0; }
       .qm-cmp-card:only-child { flex-basis: 100%; }
       .qm-cmp-card h4 { margin: 0 0 0.5rem; display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.82rem; color: #1a3330; }
       .qm-cmp-card h4 small { color: #8a6a2e; font-weight: 650; flex: none; }
@@ -1429,7 +1432,7 @@
       fetch("./yazi-ayahs.json").then((r) => r.json()).then((j) => { ayahMap = j; if (pages && !gate.hidden === false) show(pageNo); });
       Promise.all([fetch("./yazi-pages.json").then((r) => r.json()), fetch("./yazi-words.json").then((r) => r.json()).catch(() => null)]).then(([json, wb]) => { words = wb; pages = json; loadNames(); });
     </script>
-    <script src="./lib.js?v=14"></script>
+    <script src="./lib.js?v=15"></script>
     <script src="./audio.js?v=5"></script>
   </body>
 </html>

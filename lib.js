@@ -1340,6 +1340,18 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
   const cmpSources = (have) => { const p = prefs(); if (!Array.isArray(p.cmp)) return have; const by = new Map(have.map((r) => [r.id, r])); return p.cmp.map((id) => by.get(id)).filter(Boolean); };
   const srcLabel = (r) => (r.k === "tr" ? r.by + " · " + r.name : r.k === "wb" ? T("Söz mənaları") + " · " + wbShort(r) : r.name);
   const wbShort = (r) => (r.id === "seraj" ? T("Sirac") : r.id === "ibnqutaybah" ? T("İbn Qutəybə") : r.name);
+  // tap a compare card -> fullscreen for that source; back returns to the same card/scroll
+  function cmpZoom(card, body, label) {
+    const fz = el("div", "qm-cmp-fs"); fz.dir = cmpEl.dir;
+    const h = el("div", "qm-cmp-h"); const back = icon("close", T("Bağla"));
+    const ttl = el("div", "qm-full-t"); const nm = el("b", "", label); nm.dir = "auto"; ttl.append(el("small", "", T("Müqayisə")), nm);
+    h.append(back, ttl); const sc = el("div", "qm-cmp-fs-b"); fz.append(h, sc);
+    const ph = document.createComment("b"); body.replaceWith(ph); sc.append(body); cmpEl.append(fz);
+    const close = () => { ph.replaceWith(body); fz.remove(); window.removeEventListener("popstate", onPop); };
+    const onPop = () => close();
+    history.pushState({ qmCmpFs: 1 }, ""); window.addEventListener("popstate", onPop);
+    back.onclick = () => history.back();
+  }
   async function openCompare(s, a) {
     if (!LIST.length) LIST = await (await fetch("./lib-list.json")).json();
     cmpCur = { s, a }; quranFont();
@@ -1383,7 +1395,9 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
         if (txt.includes("[[")) renderNoted(body, txt); else for (const para of txt.split(/\n{2,}/)) body.append(el("p", "", para));
         if (fns[i]) body.append(el("p", "qm-fn", plain(fns[i])));
       }
-      c.append(body); rail.append(c); return c;
+      c.append(body); rail.append(c);
+      c.onclick = (ev) => { if (ev.target.closest("button,a,input,.qm-wpop") || (window.getSelection && String(window.getSelection()))) return; cmpZoom(c, body, srcLabel(r)); };
+      return c;
     });
     cmpEl.append(tabs, rail);
     if (list.length < 2) { const h = el("button", "qm-cmp-hint", T("Müqayisə üçün Ayarlardan daha bir mənbə endirin") + " ›"); h.onclick = () => { cmpEl.hidden = true; openSettings(); }; cmpEl.append(h); }
