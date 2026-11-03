@@ -50,6 +50,7 @@
         flex: 1;
         min-height: 0;
         margin: 0;
+        padding-bottom: 0.55rem; /* A: cüzi alt boşluq */
         background: #fffaf0;
         border: none;
         border-radius: 0;
@@ -118,8 +119,8 @@
       .line.stack .basmala { font-size: 0.72em; }
       @media (orientation: portrait) and (max-width: 520px) {
         .page:not(.mid) { justify-content: center; }
-        .page:not(.mid) .line { flex: 0 1 calc(100% / 16.7); }
-        .page:not(.mid) .line.stack { flex: 0 1 calc(175% / 16.7); }
+        .page:not(.mid) .line { flex: 0 1 calc(100% / 17.2); } /* A: cüzi qısaltma */
+        .page:not(.mid) .line.stack { flex: 0 1 calc(175% / 17.2); }
       }
       @media (orientation: landscape) and (max-height: 520px) {
         header { display: none; }
