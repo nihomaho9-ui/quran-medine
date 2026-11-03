@@ -18,8 +18,27 @@
   const doneKey = (r, s) => "qm.audio." + r.id + "." + s;
   const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
 
-  async function cached(r, s, a) { try { const c = await caches.open(CACHE); const h = await c.match(url(r, s, a)); return h ? URL.createObjectURL(await h.blob()) : null; } catch (e) { return null; } }
-  async function putMp3(c, r, s, a, buf) { await c.put(url(r, s, a), new Response(buf, { headers: { "Content-Type": "audio/mpeg" } })); }
+  const memo = new Map(); // "rec:s:a" → blob: URL kept for the session so Cache API is not hit between ayahs
+  const mkey = (r, s, a) => r.id + ":" + s + ":" + a;
+  function memoPut(r, s, a, buf) {
+    const k = mkey(r, s, a);
+    const prev = memo.get(k); if (prev) { try { URL.revokeObjectURL(prev); } catch (e) {} }
+    const u = URL.createObjectURL(new Blob([buf], { type: "audio/mpeg" }));
+    memo.set(k, u); return u;
+  }
+  async function cached(r, s, a) {
+    const k = mkey(r, s, a); if (memo.has(k)) return memo.get(k);
+    try {
+      const c = await caches.open(CACHE); const h = await c.match(url(r, s, a));
+      if (!h) return null;
+      const buf = await h.arrayBuffer();
+      return memoPut(r, s, a, buf);
+    } catch (e) { return null; }
+  }
+  async function putMp3(c, r, s, a, buf) {
+    await c.put(url(r, s, a), new Response(buf, { headers: { "Content-Type": "audio/mpeg" } }));
+    memoPut(r, s, a, buf);
+  }
 
   // the release zips are "stored" (no compression): read entries straight from the local headers
   function unzipStored(buf) {
@@ -57,13 +76,15 @@
     localStorage.setItem(doneKey(r, s), "1");
   }
 
-  const audio = new Audio(); audio.preload = "auto";
-  let st = { s: 0, a: 0, cont: false, playing: false, left: 0, gen: 0 }, ui = null;
-  let blobUrl = null, nextReady = null, surahPull = null;
+  const A = [new Audio(), new Audio()];
+  A.forEach((x) => { x.preload = "auto"; });
+  let curA = 0;
+  const audio = () => A[curA]; // active element (for timeupdate / paint)
+  let st = { s: 0, a: 0, cont: false, playing: false, paused: false, left: 0, gen: 0 }, ui = null;
+  let nextReady = null, surahPull = null;
   const listeners = new Set();
   const notify = () => { listeners.forEach((f) => f()); paintBar && paintBar(); };
   const reps = () => Math.min(9, Math.max(1, +localStorage.getItem("qm.audio.rep") || 1));
-  function dropBlob() { if (blobUrl) { try { URL.revokeObjectURL(blobUrl); } catch (e) {} blobUrl = null; } }
   function markSurahIfFull(r, s) {
     (async () => {
       try {
@@ -79,12 +100,11 @@
     if (a < 1 || a > AYAHS[s - 1]) return;
     saveAyah(r, s, a).then(() => markSurahIfFull(r, s)).catch(() => {});
   }
-  // whole surah → Cache Storage on the phone so continuous play does not stall on the network
   function pullSurah(r, s) {
     if (!navigator.onLine || localStorage.getItem(doneKey(r, s))) return;
     const key = r.id + ":" + s;
     if (surahPull && surahPull.key === key) return;
-    const job = { key, stop: false };
+    const job = { key };
     surahPull = job;
     saveSurah(r, s, () => {}).then(() => { if (surahPull === job) surahPull = null; notify(); }).catch(() => { if (surahPull === job) surahPull = null; });
   }
@@ -92,60 +112,87 @@
     const hit = await cached(r, s, a);
     return hit || url(r, s, a);
   }
-  function prepNext(r, s, a) {
+  function armStandby(r, s, a) {
     const n = a + 1;
     if (!st.cont || n > AYAHS[s - 1]) { nextReady = null; return; }
-    const token = { r: r.id, s, a: n };
+    const token = { r: r.id, s, a: n, el: A[1 - curA] };
     nextReady = token;
-    resolveSrc(r, s, n).then((src) => { if (nextReady === token) token.src = src; }).catch(() => {});
-    warm(r, s, n);
-    warm(r, s, n + 1);
+    resolveSrc(r, s, n).then((src) => {
+      if (nextReady !== token) return;
+      token.src = src;
+      try { token.el.src = src; token.el.load(); } catch (e) {}
+    }).catch(() => {});
+    warm(r, s, n); warm(r, s, n + 1);
   }
   async function play(s, a, rep) {
     const r = rec(); const gen = ++st.gen;
     if (st.s !== s || st.a !== a || !rep) st.left = reps() - 1;
-    st.s = s; st.a = a; st.playing = true; notify();
-    let src = null;
-    if (nextReady && nextReady.r === r.id && nextReady.s === s && nextReady.a === a && nextReady.src) src = nextReady.src;
+    st.s = s; st.a = a; st.playing = true; st.paused = false; notify();
+    let src = null, useStandby = false;
+    if (nextReady && nextReady.r === r.id && nextReady.s === s && nextReady.a === a && nextReady.src) {
+      src = nextReady.src; useStandby = true;
+    }
     nextReady = null;
     if (!src) src = await resolveSrc(r, s, a);
     if (gen !== st.gen) return;
-    dropBlob();
-    if (src.startsWith("blob:")) blobUrl = src;
-    audio.src = src;
+    if (useStandby) curA = 1 - curA;
+    else {
+      A[1 - curA].pause();
+      try { audio().src = src; } catch (e) {}
+    }
+    const el = audio();
     if (!src.startsWith("blob:") && navigator.onLine) warm(r, s, a);
-    if (st.cont) { pullSurah(r, s); prepNext(r, s, a); }
+    if (st.cont) { pullSurah(r, s); armStandby(r, s, a); }
     else if (navigator.onLine) warm(r, s, a + 1);
-    try { await audio.play(); } catch (e) {
+    try { await el.play(); } catch (e) {
       if (gen !== st.gen) return;
-      st.playing = false; notify();
+      st.playing = false; st.paused = false; notify();
       window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin");
     }
     if (gen === st.gen) window.QM_HL && window.QM_HL(s + ":" + a);
   }
-  function stop() { st.gen++; audio.pause(); st.playing = false; nextReady = null; dropBlob(); notify(); }
-  audio.onended = () => {
+  function pause() {
+    if (!st.playing || st.paused) return;
+    audio().pause(); st.paused = true; notify();
+  }
+  function resume() {
+    if (!st.playing || !st.paused) return;
+    audio().play().then(() => { st.paused = false; notify(); }).catch(() => {
+      st.playing = false; st.paused = false; notify();
+    });
+  }
+  function stop() {
+    st.gen++; A.forEach((x) => { x.pause(); try { x.removeAttribute("src"); x.load(); } catch (e) {} });
+    st.playing = false; st.paused = false; nextReady = null; notify();
+  }
+  function onEnded() {
     if (st.left > 0) { st.left--; play(st.s, st.a, true); return; }
     if (st.cont && st.a < AYAHS[st.s - 1]) {
       const a = st.a + 1, s = st.s;
-      play(s, a); // start next audio first — page jump after, so it does not freeze the sound
+      play(s, a);
       setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 0);
-    } else { st.playing = false; notify(); }
-  };
-  audio.onerror = () => { if (!st.playing) return; st.playing = false; notify(); window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin"); };
-
+    } else { st.playing = false; st.paused = false; notify(); }
+  }
+  function onErr() {
+    if (!st.playing) return;
+    st.playing = false; st.paused = false; notify();
+    window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin");
+  }
+  A.forEach((x) => { x.addEventListener("ended", () => { if (x === audio()) onEnded(); }); x.addEventListener("error", () => { if (x === audio()) onErr(); }); });
 
   // listen mini-bar (style C): shows while an ayah plays
   const lb = el("div", "qlb"); lb.hidden = true;
   const lbLine = el("div", "qlb-line"), lbFill = el("i"); lbLine.append(lbFill);
   const lbT = el("span", "qlb-t", "0:00");
-  const lbPrev = el("button", "qlb-n", "⏮"), lbStop = el("button", "qlb-stop"), lbNext = el("button", "qlb-n", "⏭");
-  lbStop.append(el("i")); lbStop.title = "Dayandır"; lbPrev.title = "Əvvəlki ayə"; lbNext.title = "Növbəti ayə";
+  const lbPrev = el("button", "qlb-n", "⏮"), lbPause = el("button", "qlb-pause"), lbStop = el("button", "qlb-stop"), lbNext = el("button", "qlb-n", "⏭");
+  lbPause.append(el("i")); lbStop.append(el("i"));
+  lbStop.title = "Dayandır"; lbPause.title = "Pauza"; lbPrev.title = "Əvvəlki ayə"; lbNext.title = "Növbəti ayə";
+  lbPause.setAttribute("aria-label", "Pauza");
   const lbCont = el("button", "qlb-cont", "»"); lbCont.title = "Davam et — ayələri ard-arda oxu";
   lbCont.setAttribute("aria-label", "Davam et"); lbCont.setAttribute("aria-pressed", "false");
   const lbRep = el("div", "qlb-rep"), lbM = el("button", "", "−"), lbN = el("b", "", "1×"), lbP = el("button", "", "+");
   lbRep.append(lbM, lbN, lbP);
-  const lbMid = el("div", "qlb-mid"); lbMid.append(lbPrev, lbStop, lbNext);
+  const lbMid = el("div", "qlb-mid"); lbMid.append(lbPrev, lbPause, lbStop, lbNext);
   lb.append(lbLine, lbT, lbMid, lbCont, lbRep);
   st.cont = localStorage.getItem("qm.audio.cont") === "1";
   const setCont = (on) => {
@@ -156,13 +203,14 @@
     if (st.cont && st.playing) {
       const r = rec();
       pullSurah(r, st.s);
-      prepNext(r, st.s, st.a);
+      armStandby(r, st.s, st.a);
     }
     notify();
   };
   lbCont.onclick = () => setCont(!st.cont);
   const go = (d) => { const a = st.a + d; if (!st.s || a < 1 || a > AYAHS[st.s - 1]) return; window.QM_GOTO && window.QM_GOTO(st.s + ":" + a); play(st.s, a); };
   lbPrev.onclick = () => go(-1); lbNext.onclick = () => go(1); lbStop.onclick = stop;
+  lbPause.onclick = () => { if (st.paused) resume(); else pause(); };
   const setRep = (d) => { const n = Math.min(9, Math.max(1, reps() + d)); localStorage.setItem("qm.audio.rep", n); st.left = Math.max(0, Math.min(st.left + d, n - 1)); paintBar(); };
   lbM.onclick = () => setRep(-1); lbP.onclick = () => setRep(1);
   const fmt = (x) => { x = Math.max(0, Math.floor(x || 0)); return Math.floor(x / 60) + ":" + String(x % 60).padStart(2, "0"); };
@@ -171,12 +219,16 @@
     lbN.textContent = reps() + "×";
     lbCont.classList.toggle("on", !!st.cont);
     lbCont.setAttribute("aria-pressed", st.cont ? "true" : "false");
-    const d = audio.duration, c = audio.currentTime;
+    lbPause.classList.toggle("paused", !!st.paused);
+    lbPause.title = st.paused ? "Davam et" : "Pauza";
+    lbPause.setAttribute("aria-label", st.paused ? "Davam et" : "Pauza");
+    const el = audio();
+    const d = el.duration, c = el.currentTime;
     lbT.textContent = fmt(isFinite(d) ? d - c : 0);
     lbFill.style.width = isFinite(d) && d ? (c / d * 100) + "%" : "0";
     lbPrev.disabled = st.a <= 1; lbNext.disabled = !st.s || st.a >= AYAHS[st.s - 1];
   }
-  audio.addEventListener("timeupdate", paintBar); audio.addEventListener("loadedmetadata", paintBar);
+  A.forEach((x) => { x.addEventListener("timeupdate", () => { if (x === audio()) paintBar(); }); x.addEventListener("loadedmetadata", () => { if (x === audio()) paintBar(); }); });
   (document.body ? Promise.resolve() : new Promise((r) => addEventListener("DOMContentLoaded", r))).then(() => document.body.append(lb));
 
   // panel for the ayah sheet
@@ -187,7 +239,7 @@
     pick.value = rec().id; pick.onchange = () => { localStorage.setItem("qm.reciter", pick.value); if (st.playing) play(st.s, st.a); paint(); };
     const pb = el("button", "qa-b main"); const cont = el("label", "qa-cont"); const cb = el("input"); cb.type = "checkbox"; cb.checked = !!st.cont; cont.append(cb, el("span", "", " Davamlı"));
     cb.onchange = () => setCont(cb.checked);
-    pb.onclick = () => { if (st.playing && st.s === s) return stop(); window.QM_CLOSEAYAH && window.QM_CLOSEAYAH(); play(s, a); };
+    pb.onclick = () => { if (st.playing && st.s === s) { if (st.paused) resume(); else pause(); return; } window.QM_CLOSEAYAH && window.QM_CLOSEAYAH(); play(s, a); };
     const rp = el("select", "qa-pick qa-rep"); for (let i = 1; i <= 9; i++) { const o = el("option", "", "×" + i); o.value = i; rp.append(o); }
     rp.title = "Təkrar"; rp.value = reps(); rp.onchange = () => { localStorage.setItem("qm.audio.rep", rp.value); };
     row.append(pb, pick, rp, cont);
@@ -204,12 +256,12 @@
     };
     row2.append(da, ds, msg);
     box.append(row, row2);
-    function paint() { pb.textContent = st.playing && st.s === s ? "⏸ Dayandır" : "▶ Dinlə"; const done = !!localStorage.getItem(doneKey(rec(), s)); ds.textContent = done ? "✓ Surə cihazda" : "⬇ Tam surə"; ds.disabled = done; }
+    function paint() { pb.textContent = st.playing && st.s === s ? (st.paused ? "▶ Davam" : "⏸ Pauza") : "▶ Dinlə"; pb.onclick = () => { if (st.playing && st.s === s) { if (st.paused) resume(); else pause(); return; } window.QM_CLOSEAYAH && window.QM_CLOSEAYAH(); play(s, a); }; const done = !!localStorage.getItem(doneKey(rec(), s)); ds.textContent = done ? "✓ Surə cihazda" : "⬇ Tam surə"; ds.disabled = done; }
     paint(); listeners.clear(); listeners.add(paint);
     box.hidden = true;
     return box;
   }
-  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-rep{flex:0 0 auto;min-width:3.4rem}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}.qlb[hidden]{display:none}.qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.6rem + env(safe-area-inset-bottom));width:min(94vw,640px);z-index:60;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem .7rem .35rem;background:#fbf6ec;color:#1a3330;font-size:.8rem}.qlb-line{position:absolute;left:0;right:0;top:0;height:1.5px;background:rgba(196,165,110,.45)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}.qlb-t{min-width:2.8rem;color:#a8893f;font-weight:600;font-variant-numeric:tabular-nums}.qlb-mid{display:flex;align-items:center;gap:1.4rem}.qlb-n{border:0;background:none;font-size:1.25rem;color:#2c3a2a;cursor:pointer;padding:.2rem}.qlb-n:disabled{opacity:.3}.qlb-stop{width:44px;height:44px;border-radius:50%;border:0;background:#5f6b2f;display:grid;place-items:center;cursor:pointer}.qlb-stop i{width:14px;height:14px;border-radius:3px;background:#fbf6ec}.qlb-rep{display:flex;align-items:center;gap:.55rem;border:1px solid #c4a56e;border-radius:999px;padding:.12rem .55rem}.qlb-rep button{border:0;background:none;color:#1a3330;font-size:.95rem;cursor:pointer;padding:0 .1rem}.qlb-rep b{min-width:1.6rem;text-align:center}.qlb-cont{border:1px solid #c4a56e;border-radius:999px;background:transparent;color:#1a3330;font:inherit;font-size:1.05rem;font-weight:700;letter-spacing:-.05em;padding:.18rem .55rem;cursor:pointer;line-height:1}.qlb-cont.on{background:#1a3330;color:#fbf6ec;border-color:#1a3330}";
+  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-rep{flex:0 0 auto;min-width:3.4rem}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}.qlb[hidden]{display:none}.qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.6rem + env(safe-area-inset-bottom));width:min(94vw,640px);z-index:60;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem .7rem .35rem;background:#fbf6ec;color:#1a3330;font-size:.8rem}.qlb-line{position:absolute;left:0;right:0;top:0;height:1.5px;background:rgba(196,165,110,.45)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}.qlb-t{min-width:2.8rem;color:#a8893f;font-weight:600;font-variant-numeric:tabular-nums}.qlb-mid{display:flex;align-items:center;gap:1.4rem}.qlb-n{border:0;background:none;font-size:1.25rem;color:#2c3a2a;cursor:pointer;padding:.2rem}.qlb-n:disabled{opacity:.3}.qlb-stop,.qlb-pause{width:40px;height:40px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer}.qlb-stop{background:#5f6b2f}.qlb-pause{background:#1a3330}.qlb-stop i{width:12px;height:12px;border-radius:2px;background:#fbf6ec}.qlb-pause i{width:0;height:0;border-style:solid;border-width:7px 0 7px 12px;border-color:transparent transparent transparent #fbf6ec;background:none;border-radius:0}.qlb-pause:not(.paused) i{width:10px;height:12px;border:0;background:transparent;box-shadow:inset 3px 0 0 #fbf6ec, inset -3px 0 0 #fbf6ec;border-radius:0}.qlb-rep{display:flex;align-items:center;gap:.55rem;border:1px solid #c4a56e;border-radius:999px;padding:.12rem .55rem}.qlb-rep button{border:0;background:none;color:#1a3330;font-size:.95rem;cursor:pointer;padding:0 .1rem}.qlb-rep b{min-width:1.6rem;text-align:center}.qlb-cont{border:1px solid #c4a56e;border-radius:999px;background:transparent;color:#1a3330;font:inherit;font-size:1.05rem;font-weight:700;letter-spacing:-.05em;padding:.18rem .55rem;cursor:pointer;line-height:1}.qlb-cont.on{background:#1a3330;color:#fbf6ec;border-color:#1a3330}";
   document.head.append(css);
   window.QA = { panel, play, stop, RECITERS };
 })();
