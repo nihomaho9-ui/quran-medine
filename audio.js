@@ -56,7 +56,6 @@
     }
     localStorage.setItem(doneKey(r, s), "1");
   }
-  async function delSurah(r, s) { const c = await caches.open(CACHE); for (let a = 1; a <= AYAHS[s - 1]; a++) await c.delete(url(r, s, a)); localStorage.removeItem(doneKey(r, s)); }
 
   const audio = new Audio(); audio.preload = "auto";
   let st = { s: 0, a: 0, cont: false, playing: false, left: 0 }, ui = null;
@@ -139,7 +138,7 @@
     da.onclick = async () => { msg.textContent = "Endirilir…"; try { await saveAyah(rec(), s, a); msg.textContent = "✓ Ayə cihazda"; } catch (e) { msg.textContent = navigator.onLine ? "Alınmadı" : "İnternet yoxdur"; } };
     ds.onclick = async () => {
       const r = rec();
-      if (localStorage.getItem(doneKey(r, s))) { await delSurah(r, s); msg.textContent = "Silindi"; paint(); return; }
+      if (localStorage.getItem(doneKey(r, s))) return;
       ds.disabled = true;
       try { await saveSurah(r, s, (d, n) => (msg.textContent = "Endirilir " + d + "/" + n)); msg.textContent = "✓ Surə cihazda (internetsiz)"; }
       catch (e) { msg.textContent = navigator.onLine ? "Alınmadı: " + e.message : "İnternet yoxdur"; }
@@ -147,7 +146,7 @@
     };
     row2.append(da, ds, msg);
     box.append(row, row2);
-    function paint() { pb.textContent = st.playing && st.s === s ? "⏸ Dayandır" : "▶ Dinlə"; ds.textContent = localStorage.getItem(doneKey(rec(), s)) ? "🗑 Surəni sil" : "⬇ Tam surə"; }
+    function paint() { pb.textContent = st.playing && st.s === s ? "⏸ Dayandır" : "▶ Dinlə"; const done = !!localStorage.getItem(doneKey(rec(), s)); ds.textContent = done ? "✓ Surə cihazda" : "⬇ Tam surə"; ds.disabled = done; }
     paint(); listeners.clear(); listeners.add(paint);
     box.hidden = true;
     return box;
