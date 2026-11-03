@@ -100,10 +100,22 @@
   const lbT = el("span", "qlb-t", "0:00");
   const lbPrev = el("button", "qlb-n", "⏮"), lbStop = el("button", "qlb-stop"), lbNext = el("button", "qlb-n", "⏭");
   lbStop.append(el("i")); lbStop.title = "Dayandır"; lbPrev.title = "Əvvəlki ayə"; lbNext.title = "Növbəti ayə";
+  const lbCont = el("button", "qlb-cont", "»"); lbCont.title = "Davam et — ayələri ard-arda oxu";
+  lbCont.setAttribute("aria-label", "Davam et"); lbCont.setAttribute("aria-pressed", "false");
   const lbRep = el("div", "qlb-rep"), lbM = el("button", "", "−"), lbN = el("b", "", "1×"), lbP = el("button", "", "+");
   lbRep.append(lbM, lbN, lbP);
   const lbMid = el("div", "qlb-mid"); lbMid.append(lbPrev, lbStop, lbNext);
-  lb.append(lbLine, lbT, lbMid, lbRep);
+  lb.append(lbLine, lbT, lbMid, lbCont, lbRep);
+  st.cont = localStorage.getItem("qm.audio.cont") === "1";
+  const setCont = (on) => {
+    st.cont = !!on;
+    localStorage.setItem("qm.audio.cont", st.cont ? "1" : "");
+    lbCont.classList.toggle("on", st.cont);
+    lbCont.setAttribute("aria-pressed", st.cont ? "true" : "false");
+    if (st.cont && st.playing && navigator.onLine) warm(rec(), st.s, st.a + 1);
+    notify();
+  };
+  lbCont.onclick = () => setCont(!st.cont);
   const go = (d) => { const a = st.a + d; if (!st.s || a < 1 || a > AYAHS[st.s - 1]) return; window.QM_GOTO && window.QM_GOTO(st.s + ":" + a); play(st.s, a); };
   lbPrev.onclick = () => go(-1); lbNext.onclick = () => go(1); lbStop.onclick = stop;
   const setRep = (d) => { const n = Math.min(9, Math.max(1, reps() + d)); localStorage.setItem("qm.audio.rep", n); st.left = Math.max(0, Math.min(st.left + d, n - 1)); paintBar(); };
@@ -112,6 +124,8 @@
   function paintBar() {
     lb.hidden = !st.playing; document.body.classList.toggle("qlb-on", st.playing);
     lbN.textContent = reps() + "×";
+    lbCont.classList.toggle("on", !!st.cont);
+    lbCont.setAttribute("aria-pressed", st.cont ? "true" : "false");
     const d = audio.duration, c = audio.currentTime;
     lbT.textContent = fmt(isFinite(d) ? d - c : 0);
     lbFill.style.width = isFinite(d) && d ? (c / d * 100) + "%" : "0";
@@ -126,9 +140,8 @@
     const row = el("div", "qa-row");
     const pick = el("select", "qa-pick"); for (const r of RECITERS) { const o = el("option", "", r.name); o.value = r.id; pick.append(o); }
     pick.value = rec().id; pick.onchange = () => { localStorage.setItem("qm.reciter", pick.value); if (st.playing) play(st.s, st.a); paint(); };
-    const pb = el("button", "qa-b main"); const cont = el("label", "qa-cont"); const cb = el("input"); cb.type = "checkbox"; cb.checked = localStorage.getItem("qm.audio.cont") === "1"; cont.append(cb, el("span", "", " Davamlı"));
-    cb.onchange = () => { st.cont = cb.checked; localStorage.setItem("qm.audio.cont", cb.checked ? "1" : ""); };
-    st.cont = cb.checked;
+    const pb = el("button", "qa-b main"); const cont = el("label", "qa-cont"); const cb = el("input"); cb.type = "checkbox"; cb.checked = !!st.cont; cont.append(cb, el("span", "", " Davamlı"));
+    cb.onchange = () => setCont(cb.checked);
     pb.onclick = () => { if (st.playing && st.s === s) return stop(); window.QM_CLOSEAYAH && window.QM_CLOSEAYAH(); play(s, a); };
     const rp = el("select", "qa-pick qa-rep"); for (let i = 1; i <= 9; i++) { const o = el("option", "", "×" + i); o.value = i; rp.append(o); }
     rp.title = "Təkrar"; rp.value = reps(); rp.onchange = () => { localStorage.setItem("qm.audio.rep", rp.value); };
@@ -151,7 +164,7 @@
     box.hidden = true;
     return box;
   }
-  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-rep{flex:0 0 auto;min-width:3.4rem}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}.qlb[hidden]{display:none}.qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.6rem + env(safe-area-inset-bottom));width:min(94vw,640px);z-index:60;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem .7rem .35rem;background:#fbf6ec;color:#1a3330;font-size:.8rem}.qlb-line{position:absolute;left:0;right:0;top:0;height:1.5px;background:rgba(196,165,110,.45)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}.qlb-t{min-width:2.8rem;color:#a8893f;font-weight:600;font-variant-numeric:tabular-nums}.qlb-mid{display:flex;align-items:center;gap:1.4rem}.qlb-n{border:0;background:none;font-size:1.25rem;color:#2c3a2a;cursor:pointer;padding:.2rem}.qlb-n:disabled{opacity:.3}.qlb-stop{width:44px;height:44px;border-radius:50%;border:0;background:#5f6b2f;display:grid;place-items:center;cursor:pointer}.qlb-stop i{width:14px;height:14px;border-radius:3px;background:#fbf6ec}.qlb-rep{display:flex;align-items:center;gap:.55rem;border:1px solid #c4a56e;border-radius:999px;padding:.12rem .55rem}.qlb-rep button{border:0;background:none;color:#1a3330;font-size:.95rem;cursor:pointer;padding:0 .1rem}.qlb-rep b{min-width:1.6rem;text-align:center}";
+  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-rep{flex:0 0 auto;min-width:3.4rem}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}.qlb[hidden]{display:none}.qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.6rem + env(safe-area-inset-bottom));width:min(94vw,640px);z-index:60;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem .7rem .35rem;background:#fbf6ec;color:#1a3330;font-size:.8rem}.qlb-line{position:absolute;left:0;right:0;top:0;height:1.5px;background:rgba(196,165,110,.45)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}.qlb-t{min-width:2.8rem;color:#a8893f;font-weight:600;font-variant-numeric:tabular-nums}.qlb-mid{display:flex;align-items:center;gap:1.4rem}.qlb-n{border:0;background:none;font-size:1.25rem;color:#2c3a2a;cursor:pointer;padding:.2rem}.qlb-n:disabled{opacity:.3}.qlb-stop{width:44px;height:44px;border-radius:50%;border:0;background:#5f6b2f;display:grid;place-items:center;cursor:pointer}.qlb-stop i{width:14px;height:14px;border-radius:3px;background:#fbf6ec}.qlb-rep{display:flex;align-items:center;gap:.55rem;border:1px solid #c4a56e;border-radius:999px;padding:.12rem .55rem}.qlb-rep button{border:0;background:none;color:#1a3330;font-size:.95rem;cursor:pointer;padding:0 .1rem}.qlb-rep b{min-width:1.6rem;text-align:center}.qlb-cont{border:1px solid #c4a56e;border-radius:999px;background:transparent;color:#1a3330;font:inherit;font-size:1.05rem;font-weight:700;letter-spacing:-.05em;padding:.18rem .55rem;cursor:pointer;line-height:1}.qlb-cont.on{background:#1a3330;color:#fbf6ec;border-color:#1a3330}";
   document.head.append(css);
   window.QA = { panel, play, stop, RECITERS };
 })();
