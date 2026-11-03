@@ -37,7 +37,7 @@
         font-size: 1rem;
         line-height: 1;
       }
-      header h1 { margin: 0; font-size: 0.9rem; font-weight: 500; }
+      header h1 { margin: 0; font-size: 0.9rem; font-weight: 500; flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .num {
         text-align: center;
         color: #8a7d68;
@@ -292,8 +292,9 @@
       .w { margin-inline-start: var(--g); }
       .w.w0 { margin-inline-start: 0; }
       .ay.hl { background: rgba(196, 165, 110, 0.36); }
-      .gear { margin-inline-start: auto; background: none; border: 0; color: #8a7d68; padding: 0.15rem; line-height: 0; cursor: pointer; }
-      .gear2 { margin-inline-start: 0.35rem; }
+      .hdr-acts { margin-inline-start: auto; display: flex; align-items: center; gap: 0.35rem; flex: 0 0 auto; }
+      .gear { background: none; border: 0; color: #8a7d68; padding: 0.15rem; line-height: 0; cursor: pointer; }
+      .gear svg { width: 1.35rem; height: 1.35rem; display: block; }
       .gear svg { width: 1.15rem; height: 1.15rem; }
       .qm-back { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-end; justify-content: center; background: rgba(16, 34, 32, 0.4); font-family: "Segoe UI", sans-serif; }
       .qm-back[hidden] { display: none; }
@@ -670,9 +671,11 @@
     <header>
       <a href="#" id="back" aria-label="Geri">‹</a>
       <h1 id="sure">Fatihə surəsi</h1>
-      <button type="button" class="gear" id="hifz-btn" title="Hifz" aria-label="Hifz" onclick="QM.openHifz()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
-      <button type="button" class="gear gear2" id="full-btn" aria-label="Tam ekran" title="Tam ekran" onclick="QM.openFullHere()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <button type="button" class="gear gear2" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.1v2.2M12 18.7v2.2M4.9 6.1l1.6 1.4M17.5 16.5l1.6 1.4M3.1 12h2.2M18.7 12h2.2M4.9 17.9l1.6-1.4M17.5 7.5l1.6-1.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+      <div class="hdr-acts">
+        <button type="button" class="gear" id="hifz-btn" title="Hifz" aria-label="Hifz" onclick="QM.openHifz()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="gear" id="full-btn" aria-label="Tam ekran" title="Tam ekran" onclick="QM.openFullHere()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="gear" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.1v2.2M12 18.7v2.2M4.9 6.1l1.6 1.4M17.5 16.5l1.6 1.4M3.1 12h2.2M18.7 12h2.2M4.9 17.9l1.6-1.4M17.5 7.5l1.6-1.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+      </div>
     </header>
     <main class="page" id="page"></main>
     <div class="num" id="pos">1</div>

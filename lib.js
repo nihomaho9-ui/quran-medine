@@ -525,8 +525,17 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     return h;
   }
   function openHifz(s, a) {
-    const d = hload();
-    if (!s) { const L = d.last; if (L && L.s) { hz = { s: L.s, from: L.from, to: L.to, i: L.i || L.from, open: new Set() }; return paintHz(); } return hifzPick(1, 1); }
+    if (!s) {
+      // header button: start from the ayahs on the open mushaf page
+      const page = window.QM_PAGE && window.QM_PAGE();
+      if (page && page.keys && page.keys.length) {
+        const [ps, pa] = page.keys[0].split(":").map(Number);
+        if (ps >= 1 && pa >= 1) return hifzPick(ps, pa);
+      }
+      const d = hload(); const L = d.last;
+      if (L && L.s) { hz = { s: L.s, from: L.from, to: L.to, i: L.i || L.from, open: new Set() }; return paintHz(); }
+      return hifzPick(1, 1);
+    }
     hifzPick(s, a || 1);
   }
   function hzShow() { hzEl.hidden = false; hzEl.dir = uiLang() === "ar" ? "rtl" : "ltr"; }
