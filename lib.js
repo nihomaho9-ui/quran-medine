@@ -524,23 +524,37 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     h.append(bk, t, el("span", "qm-nl-sp"), ...(extra || []));
     return h;
   }
-  function openHifz(s, a) {
-    if (!s) {
-      // header button: start from the ayahs on the open mushaf page
+  function pageAyahRange() {
+    const keys = [];
+    for (const el of document.querySelectorAll("#page .ay[data-k]")) {
+      const k = el.dataset.k;
+      if (k && k.includes(":") && !keys.includes(k)) keys.push(k);
+    }
+    if (!keys.length) {
       const page = window.QM_PAGE && window.QM_PAGE();
-      if (page && page.keys && page.keys.length) {
-        const [ps, pa] = page.keys[0].split(":").map(Number);
-        if (ps >= 1 && pa >= 1) return hifzPick(ps, pa);
-      }
+      if (page && page.keys) for (const k of page.keys) if (k && !keys.includes(k)) keys.push(k);
+    }
+    if (!keys.length) return null;
+    const parts = keys.map((k) => k.split(":").map(Number)).filter((p) => p[0] >= 1 && p[1] >= 1);
+    if (!parts.length) return null;
+    const s = parts[0][0];
+    const same = parts.filter((p) => p[0] === s);
+    return { s, from: same[0][1], to: same[same.length - 1][1] };
+  }
+  function openHifz(s, a, toA) {
+    if (!s) {
+      // header: always the open mushaf page (DOM keys), never an old Fatihə last-session
+      const r = pageAyahRange();
+      if (r) return hifzPick(r.s, r.from, r.to);
       const d = hload(); const L = d.last;
       if (L && L.s) { hz = { s: L.s, from: L.from, to: L.to, i: L.i || L.from, open: new Set() }; return paintHz(); }
       return hifzPick(1, 1);
     }
-    hifzPick(s, a || 1);
+    hifzPick(s, a || 1, toA);
   }
   function hzShow() { hzEl.hidden = false; hzEl.dir = uiLang() === "ar" ? "rtl" : "ltr"; }
   // choose surah and ayah range
-  function hifzPick(s, a) {
+  function hifzPick(s, a, toA) {
     quranFont(); hzEl.replaceChildren(); hzShow();
     const prog = icon("hz", T("İrəliləyiş")); prog.onclick = hifzProgress;
     hzEl.append(hzHead(T("Hifz"), T("Aralıq seçin"), [prog]));
@@ -549,10 +563,10 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     const fr = el("input", "qm-np-in"), to = el("input", "qm-np-in"); for (const x of [fr, to]) { x.type = "number"; x.inputMode = "numeric"; x.min = 1; }
     const fix = () => { const max = AYAHS[sel.value - 1]; fr.max = to.max = max; let f = Math.min(Math.max(1, +fr.value || 1), max), t = Math.min(Math.max(f, +to.value || f), max); fr.value = f; to.value = t; info.textContent = (t - f + 1) + " " + T("ayə") + " · " + memCount(hload(), +sel.value) + "/" + max + " " + T("əzbərlənib"); };
     const info = el("p", "qm-wps-tip");
-    fr.value = a; to.value = Math.min(AYAHS[s - 1], a + 4);
+    fr.value = a; to.value = toA != null ? toA : Math.min(AYAHS[s - 1], a + 4);
     sel.onchange = () => { fr.value = 1; to.value = Math.min(AYAHS[sel.value - 1], 5); fix(); }; fr.onchange = to.onchange = fix;
     const row = el("div", "qm-np-fr"); const l1 = el("label", "qm-hz-lb", T("Ayədən")); const l2 = el("label", "qm-hz-lb", T("Ayəyə")); l1.append(fr); l2.append(to); row.append(l1, l2);
-    const go = el("button", "qm-rb main qm-hz-go", "▶ " + T("Başla")); go.onclick = () => { fix(); hz = { s: +sel.value, from: +fr.value, to: +to.value, i: +fr.value, open: new Set() }; paintHz(); };
+    const go = el("button", "qm-rb main qm-hz-go", "▶ " + T("Başla")); go.onclick = () => { fix(); const open = new Set(); const mode = hload().mode; if (mode !== "open") open.add(+fr.value); hz = { s: +sel.value, from: +fr.value, to: +to.value, i: +fr.value, open }; paintHz(); };
     b.append(el("p", "qm-np-l", T("Surə")), sel, row, info, go);
     hzEl.append(b); fix();
   }
@@ -574,7 +588,11 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
       const p = el("p", "qm-hz-ay" + (a === hz.i ? " cur" : "") + (hidden && d.mode === "blur" ? " blur" : "") + (d.mem[k] ? " mem" : ""));
       p.dir = "rtl"; p.lang = "ar"; p.dataset.a = a;
       p.textContent = (hidden && d.mode === "first" ? firstLetters(raw) : raw) + " " + AR_DIG(a);
-      p.onclick = () => { if (a !== hz.i) { hz.i = a; } else if (d.mode !== "open") { hz.open.has(a) ? hz.open.delete(a) : hz.open.add(a); } paintHz(); };
+      p.onclick = () => {
+        if (a !== hz.i) { hz.i = a; if (d.mode !== "open") hz.open.add(a); }
+        else if (d.mode !== "open") { hz.open.has(a) ? hz.open.delete(a) : hz.open.add(a); }
+        paintHz();
+      };
       list.append(p);
     }
     const tip = el("p", "qm-wps-tip qm-hz-tip", d.mode === "open" ? T("Ayəyə toxunub onu seçin") : T("Açmaq və ya yenidən gizlətmək üçün ayəyə toxunun"));
@@ -593,7 +611,7 @@ const RB = location.hostname.endsWith("github.io") ? "./" : "https://nihomaho9-u
     const memB = el("button", "qm-rb qm-hz-mem" + (d.mem[k] ? " on" : ""), d.mem[k] ? "✓ " + T("Əzbərlənib") : T("Əzbərlədim"));
     memB.onclick = () => { const dd = hload(); if (dd.mem[k]) delete dd.mem[k]; else dd.mem[k] = Date.now(); hsave(dd); paintHz(); };
     const nx = el("button", "qm-rb main qm-hz-next", T("Növbəti ayə")); nx.disabled = hz.i >= to;
-    nx.onclick = () => { if (hz.i < to) { hz.i++; hz.open.clear(); paintHz(); } };
+    nx.onclick = () => { if (hz.i < to) { hz.i++; hz.open.clear(); if (d.mode !== "open") hz.open.add(hz.i); paintHz(); } };
     const acts = el("div", "qm-np-row"); acts.append(memB, nx);
     b.append(list, tip, cnt, cap, tgr, acts); hzEl.append(b);
     const curEl = list.querySelector(".cur"); if (curEl) curEl.scrollIntoView({ block: "nearest" });
