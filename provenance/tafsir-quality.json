@@ -1,0 +1,29 @@
+{
+ "book": "uthaymeen",
+ "source": "https://github.com/nihomaho9-ui/mushafuk-tafsir (uthaymeen/31/7..10/index.html); same in https://github.com/spa5k/tafsir_api tafsir/tafsir-ibn-uthaymeen/31/7..10.json",
+ "quarantined": {
+  "31:7": {
+   "original": "3470",
+   "reason": "numeric-only placeholder ('3470'), not commentary; no verified replacement found upstream"
+  },
+  "31:8": {
+   "original": "3470",
+   "reason": "numeric-only placeholder ('3470'), not commentary; no verified replacement found upstream"
+  },
+  "31:9": {
+   "original": "3470",
+   "reason": "numeric-only placeholder ('3470'), not commentary; no verified replacement found upstream"
+  },
+  "31:10": {
+   "original": "3470",
+   "reason": "numeric-only placeholder ('3470'), not commentary; no verified replacement found upstream"
+  }
+ },
+ "flagged_not_changed": {
+  "36:1": "passage (shared with 36:2) opens with the end of the Fatir 35:45 lesson (~1100 chars) before the Ya-Sin lesson; identical upstream (spa5k 36/2). Text kept; app shows a warning.",
+  "36:2": "same passage as 36:1",
+  "4:1": "lesson transcript contains the start of the al-Ma'ida 5:1 lesson at char ~25392; identical upstream; not changed, not flagged in UI (boundary of lesson recording, not demonstrably wrong ayah)"
+ },
+ "abridgement_markers": "'[[اختُصِرَ كلام المؤلف لشدة طوله]]' kept as in source (uthaymeen 11, shinqiti 11, qasimi 2)",
+ "date": "2026-11-07"
+}

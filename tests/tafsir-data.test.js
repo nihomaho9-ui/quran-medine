@@ -5,7 +5,7 @@ const cnt={};for(const l of fs.readFileSync(path.join(R,'quran-uthmani.txt'),'ut
 ok(new Set(L.map(r=>r.id)).size===L.length,'no duplicate ids');
 const OLD=['saadi','muyassar','mukhtasar','ibnkathir','baghawi','samani','aysar','tabari'];ok(OLD.every(id=>L.find(r=>r.id===id&&r.k==='tf')),'eight existing tafsirs kept');
 ok(['irab_muyassar','irab_nahhas','irab_darwish','jadwal','seraj','ibnqutaybah'].every(id=>L.find(r=>r.id===id)),'erab and gharib entries kept');
-const NEW={shawkani:['فتح القدير','الشوكاني',false,6236],qasimi:['محاسن التأويل','جمال الدين القاسمي',false,6236],uthaymeen:['تفسير ابن عثيمين','ابن عثيمين',true,3456],shinqiti:['أضواء البيان','الشنقيطي',true,2320],qayyim:['تفسير ابن القيم','ابن قيم الجوزية',true,2064]};
+const NEW={shawkani:['فتح القدير','الشوكاني',false,6236],qasimi:['محاسن التأويل','جمال الدين القاسمي',false,6236],uthaymeen:['تفسير ابن عثيمين','ابن عثيمين',true,3452],shinqiti:['أضواء البيان','الشنقيطي',true,2320],qayyim:['تفسير ابن القيم','ابن قيم الجوزية',true,2064]};
 // app logic (lib.js entry): ex → own ayah only; otherwise an empty ayah shows the passage before it as a range
 const entry=(v,a,ex)=>{if(ex)return v[a-1]||'';let f=a;while(f>1&&!v[f-1])f--;return v[f-1]||''};
 for(const [id,[name,by,ex,filled]] of Object.entries(NEW)){
@@ -20,4 +20,9 @@ for(const [id,[name,by,ex,filled]] of Object.entries(NEW)){
   ok([v1,v18,v114].some(v=>v.some(x=>x.length>20)),id+' first/middle/last surahs have real text');
 }
 ok(!fs.readFileSync(path.join(R,'tf','shinqiti','2.json'),'utf8').includes('لا يوجد نص لهذه الآية'),'site placeholder text not imported');
+for(const r of L.filter(x=>x.k==='tf'))for(let s=1;s<=114;s++){const v=JSON.parse(fs.readFileSync(path.join(R,'tf',r.id,s+'.json'),'utf8'));v.forEach((x,i)=>assert(!x||!/^[\s\d\u0660-\u0669]+$/.test(x),r.id+' '+s+':'+(i+1)+' numeric-only text'))}
+ok(true,'no numeric-only entries in any of the 13 tafsirs');
+for(const r of L.filter(x=>x.k==='tf')){let c=0;for(let s=1;s<=114;s++){const v=JSON.parse(fs.readFileSync(path.join(R,'tf',r.id,s+'.json'),'utf8'));for(let a=1;a<=v.length;a++)if(entry(v,a,r.ex))c++}assert.strictEqual(r.cov||6236,c,r.id+' cov metadata')}
+ok(true,'cov metadata matches real coverage for all 13');
+const Q=JSON.parse(fs.readFileSync(path.join(R,'provenance','tafsir-quality.json'),'utf8'));ok(Object.keys(Q.quarantined).length===4&&Object.values(Q.quarantined).every(x=>x.original==='3470'),'quarantined originals preserved in provenance record');
 console.log('tafsir data tests:',n,'passed');
