@@ -1,6 +1,7 @@
 // Recitation (EveryAyah): stream an ayah, play on through the surah, download an ayah or a whole surah to the device.
 (function () {
   const AYAHS = window.QM_AYAHS;
+  const T = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
   const RECITERS = [
     { id: "maher", name: "Maher Al Muaiqly", ea: "MaherAlMuaiqly128kbps", rel: "maher-128kbps-v1" },
     { id: "husary", name: "Husary", ea: "Husary_128kbps", rel: "husary-128kbps-v1" },
@@ -204,7 +205,7 @@
     play(s, a).then(() => setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 150));
   }
   async function play(s, a, rep) {
-    const r = rec(); const gen = ++st.gen;
+    const r = rec(); const gen = ++st.gen; pendingRec = false;
     if (st.s !== s || st.a !== a || !rep) st.left = reps() - 1;
     st.s = s; st.a = a; st.playing = true; st.paused = false; notify();
     hydrateSurah(r, s);
@@ -231,11 +232,12 @@
       if (!localStorage.getItem(doneKey(r, s))) pullSurah(r, s);
       armStandby(r, s, a);
     } else if (navigator.onLine) warm(r, s, a + 1);
+    if (st.paused) { window.QM_HL && window.QM_HL(s + ":" + a); return; } // paused while loading: keep the source ready, stay silent
     try { await el.play(); } catch (e) {
       if (gen !== st.gen) return;
       if (st.paused || (e && e.name === "AbortError")) return; // user paused while loading — not a failure
       st.playing = false; st.paused = false; notify();
-      window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin");
+      window.QM_TOAST && window.QM_TOAST(T(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin"));
     }
     if (gen === st.gen) window.QM_HL && window.QM_HL(s + ":" + a);
   }
@@ -261,7 +263,7 @@
     // if continuous and next exists, skip the broken ayah instead of dying
     if (st.cont && st.a < AYAHS[st.s - 1]) { advance(); return; }
     finish();
-    window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin");
+    window.QM_TOAST && window.QM_TOAST(T(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin"));
   }
   // playback is over: forget the ayah so the next ▶ follows the open page (or the last long-pressed ayah there)
   function finish() { if (st.s) window.QM_CTX = st.s + ":" + st.a; st.s = 0; st.a = 0; st.playing = false; st.paused = false; pendingRec = false; notify(); }
@@ -277,7 +279,6 @@
   // Compact listen player: opened from the small headphones button at the top right of the reader.
   // Opening never starts audio. Thin progress line, elapsed time, qari, ⏮ ▶/⏸ ⏹ ⏭, continuous, speed − 1× +,
   // and a "⋯" row with repeat count and offline downloads.
-  const T = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
   const RATES = [0.5, 0.75, 1, 1.25, 1.5, 2];
   const rate = () => { const v = +localStorage.getItem("qm.audio.rate"); return RATES.includes(v) ? v : 1; };
   const applyRate = () => A.forEach((x) => { try { x.defaultPlaybackRate = rate(); x.playbackRate = rate(); } catch (e) {} });
@@ -323,7 +324,12 @@
   const go = (d) => {
     const [s0, a0] = ctx(); const a = a0 + d, s = s0;
     if (!s || a < 1 || a > AYAHS[s - 1]) return;
-    if (!st.playing) { window.QM_CTX = s + ":" + a; window.QM_HL && window.QM_HL(s + ":" + a); paintBar(); return; }
+    if (!st.playing) { // stopped: move the selection; turn the page when it leaves the visible one
+      const k = s + ":" + a, pg = window.QM_PAGE ? window.QM_PAGE() : null;
+      window.QM_CTX = k;
+      if (pg && !pg.keys.includes(k) && window.QM_GOTO) window.QM_GOTO(k); else window.QM_HL && window.QM_HL(k);
+      paintBar(); return;
+    }
     play(s, a); setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 150);
   };
   lbPrev.onclick = () => go(-1); lbNext.onclick = () => go(1);
@@ -384,7 +390,7 @@
     if (st.cont && st.playing && !st.paused && isFinite(d) && d - c < 2.5) armStandby(rec(), st.s, st.a);
   }
   // full-screen layers that the bottom player must never sit on top of
-  const LAYERS = ".qm-back, .qm-hz, .qm-full, .qm-cmp, .qm-selbar, .qj, .qm-wps, .qm-menu";
+  const LAYERS = ".qm-back, .qm-hz, .qm-full, .qm-cmp, .qm-selbar, .qj, .qm-wps, .qm-menu, .qm-wpop, .qm-pop";
   function covered() { for (const x of document.querySelectorAll(LAYERS)) if (!x.hidden && !x.closest("[hidden]")) return true; return false; }
   function inReader() { const g = document.getElementById("gate"); return !g || g.hidden; }
   function toggle(on) { open = on == null ? !open : !!on; if (!open) { lbAdv.hidden = true; lbMore.setAttribute("aria-expanded", "false"); } paintBar(); if (open) setTimeout(() => lbPause.focus({ preventScroll: true }), 0); }
@@ -421,7 +427,7 @@
     ".qlb-adv{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.35rem;padding-top:.35rem;border-top:1px solid rgba(196,165,110,.25)}",
     ".qlb-repsel{flex:0 0 auto}.qlb-b{border:1px solid rgba(196,165,110,.55);background:transparent;border-radius:999px;padding:.2rem .6rem;font-size:.74rem}",
     ".qlb-msg{font-size:.7rem;opacity:.7}.qlb-msg:empty{display:none}",
-    "@media (max-width:400px){.qlb{font-size:.74rem;padding:.38rem .4rem .28rem}.qlb-row{flex-wrap:wrap;row-gap:.2rem;gap:.3rem}.qlb-mid{order:9;flex:1 0 100%;justify-content:center;gap:.6rem}.qlb-pick{flex:1 1 4rem}.qlb-t{min-width:2rem}}",
+    "@media (max-width:480px){.qlb{font-size:.74rem;padding:.38rem .4rem .28rem}.qlb-row{flex-wrap:wrap;row-gap:.2rem;gap:.3rem}.qlb-mid{order:9;flex:1 0 100%;justify-content:center;gap:.6rem}.qlb-pick{flex:1 1 4rem}.qlb-t{min-width:2rem}}",
   ].join("");
   document.head.append(css);
   // kept for compatibility; the ayah sheet no longer embeds a player
