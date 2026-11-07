@@ -296,6 +296,7 @@
       .gear { background: none; border: 0; color: #8a7d68; padding: 0.15rem; line-height: 0; cursor: pointer; }
       .gear svg { width: 1.35rem; height: 1.35rem; display: block; }
       .gear svg { width: 1.15rem; height: 1.15rem; }
+      .gear.on { color: #1a3330; }
       .qm-back { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-end; justify-content: center; background: rgba(16, 34, 32, 0.4); font-family: "Segoe UI", sans-serif; }
       .qm-back[hidden] { display: none; }
       .qm-sheet { width: min(100%, 34rem); max-height: 88%; display: flex; flex-direction: column; background: #f6f1e4; color: #161310; border: 1.5px solid #c4a56e; border-bottom: 0; border-radius: 1.3rem 1.3rem 0 0; padding: 0.8rem 0.85rem calc(0.8rem + env(safe-area-inset-bottom)); }
@@ -696,9 +697,9 @@
       <a href="#" id="back" aria-label="Geri">‹</a>
       <h1 id="sure">Fatihə surəsi</h1>
       <div class="hdr-acts">
-        <button type="button" class="gear" id="hifz-btn" title="Hifz" aria-label="Hifz" onclick="QM.openHifz()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5zM12 6v13.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
         <button type="button" class="gear" id="full-btn" aria-label="Tam ekran" title="Tam ekran" onclick="QM.openFullHere()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <button type="button" class="gear" aria-label="Ayarlar" onclick="QM.openSettings()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3.1v2.2M12 18.7v2.2M4.9 6.1l1.6 1.4M17.5 16.5l1.6 1.4M3.1 12h2.2M18.7 12h2.2M4.9 17.9l1.6-1.4M17.5 7.5l1.6-1.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+        <button type="button" class="gear" id="listen-btn" title="Dinlə" aria-label="Dinlə" aria-expanded="false" onclick="window.QA && QA.toggle()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="3.5" y="13.5" width="4" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="16.5" y="13.5" width="4" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/></svg></button>
       </div>
     </header>
     <div class="qj" id="qj" hidden><div class="qj-box"><input class="qj-in" id="qj-in" type="search" placeholder="🔍 Sürə, 2:255, Səh. 562" autocomplete="off"><div id="qj-res"></div><div class="qj-h" id="qj-rh">Son axtarışlar</div><div id="qj-rec"></div></div></div>
@@ -1362,7 +1363,7 @@
         const t = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
         qInput.placeholder = t("Surə və ya ərəbcə söz…");
         searchBtn.setAttribute("aria-label", t("Axtarış"));
-        document.getElementById("hifz-btn").setAttribute("aria-label", t("Hifz"));
+        const lsb = document.getElementById("listen-btn"); lsb.setAttribute("aria-label", t("Dinlə")); lsb.title = t("Dinlə");
         document.getElementById("notes-btn").setAttribute("aria-label", t("Qeydlər və əlfəcinlər"));
         emptyEl.textContent = t("Tapılmadı");
         paintTabs(); if (!snav.hidden && sIdx >= 0) paintNav(); paintJuz(); htabs.children[0].textContent = t("Surələr"); htabs.children[1].textContent = t("Cüzlər");

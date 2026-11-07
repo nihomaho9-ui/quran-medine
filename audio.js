@@ -268,89 +268,145 @@
     });
   });
 
-  // listen mini-bar (style C): shows while an ayah plays
-  const lb = el("div", "qlb"); lb.hidden = true;
-  const lbLine = el("div", "qlb-line"), lbFill = el("i"); lbLine.append(lbFill);
-  const lbT = el("span", "qlb-t", "0:00");
-  const lbPrev = el("button", "qlb-n", "⏮"), lbPause = el("button", "qlb-pause"), lbStop = el("button", "qlb-stop"), lbNext = el("button", "qlb-n", "⏭");
+
+  // Compact listen player: opened from the small headphones button at the top right of the reader.
+  // Opening never starts audio. Thin progress line, elapsed time, qari, ⏮ ▶/⏸ ⏹ ⏭, continuous, speed − 1× +,
+  // and a "⋯" row with repeat count and offline downloads.
+  const T = (k) => (window.QM && window.QM.t ? window.QM.t(k) : k);
+  const RATES = [0.5, 0.75, 1, 1.25, 1.5, 2];
+  const rate = () => { const v = +localStorage.getItem("qm.audio.rate"); return RATES.includes(v) ? v : 1; };
+  const applyRate = () => A.forEach((x) => { try { x.defaultPlaybackRate = rate(); x.playbackRate = rate(); } catch (e) {} });
+  applyRate();
+  A.forEach((x) => x.addEventListener("play", () => { if (x.playbackRate !== rate()) x.playbackRate = rate(); }));
+  let open = false;
+  const btn = (c, label, txt) => { const b = el("button", c, txt); b.type = "button"; b.title = label; b.setAttribute("aria-label", label); return b; };
+  const lb = el("div", "qlb"); lb.hidden = true; lb.setAttribute("role", "region");
+  const lbLine = el("div", "qlb-line"), lbFill = el("i"); lbLine.append(lbFill); lbLine.setAttribute("aria-hidden", "true");
+  const lbT = el("span", "qlb-t", "0:00"); lbT.setAttribute("aria-live", "off");
+  const lbPick = el("select", "qlb-pick"); for (const r of RECITERS) { const o = el("option", "", r.name); o.value = r.id; lbPick.append(o); }
+  const lbPrev = btn("qlb-n", "Əvvəlki ayə", "⏮"), lbPause = btn("qlb-pause", "Dinlə"), lbStop = btn("qlb-stop", "Dayandır"), lbNext = btn("qlb-n", "Növbəti ayə", "⏭");
   lbPause.append(el("i")); lbStop.append(el("i"));
-  lbStop.title = "Dayandır"; lbPause.title = "Pauza"; lbPrev.title = "Əvvəlki ayə"; lbNext.title = "Növbəti ayə";
-  lbPause.setAttribute("aria-label", "Pauza");
-  const lbCont = el("button", "qlb-cont", "»"); lbCont.title = "Davam et — ayələri ard-arda oxu";
-  lbCont.setAttribute("aria-label", "Davam et"); lbCont.setAttribute("aria-pressed", "false");
-  const lbRep = el("div", "qlb-rep"), lbM = el("button", "", "−"), lbN = el("b", "", "1×"), lbP = el("button", "", "+");
-  lbRep.append(lbM, lbN, lbP);
+  lbPause.classList.add("paused");
+  const lbCont = btn("qlb-cont", "Davamlı — ayələri ard-arda oxu", "»"); lbCont.setAttribute("aria-pressed", "false");
+  const lbSpd = el("div", "qlb-rep"), lbM = btn("", "Yavaş", "−"), lbN = el("b", "", "1×"), lbP = btn("", "Sürətli", "+");
+  lbSpd.append(lbM, lbN, lbP);
+  const lbMore = btn("qlb-more", "Daha çox", "⋯"); lbMore.setAttribute("aria-expanded", "false");
   const lbMid = el("div", "qlb-mid"); lbMid.append(lbPrev, lbPause, lbStop, lbNext);
-  lb.append(lbLine, lbT, lbMid, lbCont, lbRep);
+  const lbRow = el("div", "qlb-row"); lbRow.append(lbT, lbPick, lbMid, lbCont, lbSpd, lbMore);
+  const lbAdv = el("div", "qlb-adv"); lbAdv.hidden = true;
+  const rp = el("select", "qlb-pick qlb-repsel"); for (let i = 1; i <= 9; i++) { const o = el("option", "", "×" + i); o.value = i; rp.append(o); }
+  const da = btn("qlb-b", "Bu ayəni endir", "⬇ Bu ayə"), ds = btn("qlb-b", "Tam surəni endir"), msg = el("span", "qlb-msg"); msg.setAttribute("aria-live", "polite");
+  lbAdv.append(rp, da, ds, msg);
+  lb.append(lbLine, lbRow, lbAdv);
   st.cont = localStorage.getItem("qm.audio.cont") === "1";
+  // ayah the player acts on: what is playing, else the last long-pressed ayah on this page, else the page's first ayah
+  function ctx() {
+    if (st.s) return [st.s, st.a];
+    const pg = window.QM_PAGE ? window.QM_PAGE() : null;
+    const last = window.QM_CTX;
+    if (last && (!pg || pg.keys.includes(last))) return last.split(":").map(Number);
+    if (pg && pg.keys.length) return pg.keys[0].split(":").map(Number);
+    return [1, 1];
+  }
   const setCont = (on) => {
     st.cont = !!on;
     localStorage.setItem("qm.audio.cont", st.cont ? "1" : "");
-    lbCont.classList.toggle("on", st.cont);
-    lbCont.setAttribute("aria-pressed", st.cont ? "true" : "false");
-    if (st.cont && st.playing) {
-      const r = rec();
-      pullSurah(r, st.s);
-      armStandby(r, st.s, st.a);
-    }
+    if (st.cont && st.playing) { const r = rec(); pullSurah(r, st.s); armStandby(r, st.s, st.a); }
     notify();
   };
   lbCont.onclick = () => setCont(!st.cont);
-  const go = (d) => { const a = st.a + d, s = st.s; if (!s || a < 1 || a > AYAHS[s - 1]) return; play(s, a); setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 150); };
-  lbPrev.onclick = () => go(-1); lbNext.onclick = () => go(1); lbStop.onclick = stop;
-  lbPause.onclick = () => { if (st.paused) resume(); else pause(); };
-  const setRep = (d) => { const n = Math.min(9, Math.max(1, reps() + d)); localStorage.setItem("qm.audio.rep", n); st.left = Math.max(0, Math.min(st.left + d, n - 1)); paintBar(); };
-  lbM.onclick = () => setRep(-1); lbP.onclick = () => setRep(1);
+  const go = (d) => {
+    const [s0, a0] = ctx(); const a = a0 + d, s = s0;
+    if (!s || a < 1 || a > AYAHS[s - 1]) return;
+    if (!st.playing) { window.QM_CTX = s + ":" + a; window.QM_HL && window.QM_HL(s + ":" + a); paintBar(); return; }
+    play(s, a); setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 150);
+  };
+  lbPrev.onclick = () => go(-1); lbNext.onclick = () => go(1);
+  lbStop.onclick = () => { const s = st.s, a = st.a; stop(); if (s) window.QM_CTX = s + ":" + a; st.s = 0; st.a = 0; paintBar(); };
+  lbPause.onclick = () => {
+    if (st.playing) { if (st.paused) resume(); else pause(); return; }
+    const [s, a] = ctx(); window.QM_CLOSEAYAH && window.QM_CLOSEAYAH(); play(s, a);
+  };
+  lbPick.onchange = () => { localStorage.setItem("qm.reciter", lbPick.value); if (st.playing) play(st.s, st.a); paintBar(); };
+  const setRate = (d) => { const i = Math.min(RATES.length - 1, Math.max(0, RATES.indexOf(rate()) + d)); localStorage.setItem("qm.audio.rate", RATES[i]); applyRate(); paintBar(); };
+  lbM.onclick = () => setRate(-1); lbP.onclick = () => setRate(1);
+  lbMore.onclick = () => { lbAdv.hidden = !lbAdv.hidden; lbMore.setAttribute("aria-expanded", String(!lbAdv.hidden)); msg.textContent = ""; paintBar(); };
+  rp.onchange = () => { localStorage.setItem("qm.audio.rep", rp.value); st.left = Math.min(st.left, rp.value - 1); };
+  da.onclick = async () => { const [s, a] = ctx(); msg.textContent = T("Endirilir…") ; try { await saveAyah(rec(), s, a); msg.textContent = "✓ " + s + ":" + a; } catch (e) { msg.textContent = navigator.onLine ? T("Alınmadı") : "İnternet yoxdur"; } };
+  ds.onclick = async () => {
+    const r = rec(), [s] = ctx();
+    if (localStorage.getItem(doneKey(r, s))) return;
+    ds.disabled = true;
+    try { await saveSurah(r, s, (d, n) => (msg.textContent = d + "/" + n)); msg.textContent = "✓ Surə cihazda (internetsiz)"; hydrateSurah(r, s); }
+    catch (e) { msg.textContent = navigator.onLine ? T("Alınmadı") + ": " + e.message : "İnternet yoxdur"; }
+    ds.disabled = false; paintBar();
+  };
   const fmt = (x) => { x = Math.max(0, Math.floor(x || 0)); return Math.floor(x / 60) + ":" + String(x % 60).padStart(2, "0"); };
+  const lab = (b, k) => { const t = T(k); b.title = t; b.setAttribute("aria-label", t); };
   function paintBar() {
-    lb.hidden = !st.playing; document.body.classList.toggle("qlb-on", st.playing);
-    lbN.textContent = reps() + "×";
+    const show = open || st.playing;
+    lb.hidden = !show; document.body.classList.toggle("qlb-on", show);
+    const tb = document.getElementById("listen-btn");
+    if (tb) { tb.classList.toggle("on", show); tb.setAttribute("aria-expanded", String(show)); }
+    lb.dir = document.documentElement.dir || (localStorage.getItem("qm.lang") === "ar" ? "rtl" : "ltr");
+    lb.setAttribute("aria-label", T("Dinlə"));
+    lbN.textContent = rate() + "×"; lbM.disabled = rate() <= RATES[0]; lbP.disabled = rate() >= RATES[RATES.length - 1];
+    if (lbPick.value !== rec().id) lbPick.value = rec().id;
+    lbPick.setAttribute("aria-label", "Qari"); lbPick.title = "Qari";
+    rp.value = reps(); rp.title = "Təkrar"; rp.setAttribute("aria-label", "Təkrar");
     lbCont.classList.toggle("on", !!st.cont);
     lbCont.setAttribute("aria-pressed", st.cont ? "true" : "false");
-    lbPause.classList.toggle("paused", !!st.paused);
-    lbPause.title = st.paused ? "Davam et" : "Pauza";
-    lbPause.setAttribute("aria-label", st.paused ? "Davam et" : "Pauza");
-    const el = audio();
-    const d = el.duration, c = el.currentTime;
-    lbT.textContent = fmt(isFinite(d) ? d - c : 0);
+    const idle = !st.playing || st.paused;
+    lbPause.classList.toggle("paused", idle);
+    lab(lbPause, !st.playing ? "Dinlə" : st.paused ? "Davam et" : "Pauza");
+    lab(lbStop, "Dayandır"); lab(lbPrev, "Əvvəlki"); lab(lbNext, "Növbəti"); lab(lbMore, "Daha çox");
+    lbStop.disabled = !st.playing;
+    const e = audio(), d = st.playing ? e.duration : NaN, c = st.playing ? e.currentTime : 0;
+    lbT.textContent = fmt(c);
     lbFill.style.width = isFinite(d) && d ? (c / d * 100) + "%" : "0";
-    lbPrev.disabled = st.a <= 1; lbNext.disabled = !st.s || st.a >= AYAHS[st.s - 1];
+    const [s, a] = ctx();
+    lbPrev.disabled = a <= 1; lbNext.disabled = !s || a >= AYAHS[s - 1];
+    const done = !!localStorage.getItem(doneKey(rec(), s));
+    ds.textContent = done ? "✓ Surə cihazda" : "⬇ Tam surə"; if (!ds.disabled || done) ds.disabled = done;
+    if (show) document.documentElement.style.setProperty("--qlb-h", lb.offsetHeight + "px");
     if (st.cont && st.playing && !st.paused && isFinite(d) && d - c < 2.5) armStandby(rec(), st.s, st.a);
   }
+  function toggle(on) { open = on == null ? !open : !!on; if (!open && !st.playing) { lbAdv.hidden = true; lbMore.setAttribute("aria-expanded", "false"); } paintBar(); if (open) setTimeout(() => lbPause.focus({ preventScroll: true }), 0); }
   A.forEach((x) => { x.addEventListener("timeupdate", () => { if (x === audio()) paintBar(); }); x.addEventListener("loadedmetadata", () => { if (x === audio()) paintBar(); }); });
+  addEventListener("resize", () => { if (!lb.hidden) paintBar(); });
+  addEventListener("qm-ui", () => paintBar());
   (document.body ? Promise.resolve() : new Promise((r) => addEventListener("DOMContentLoaded", r))).then(() => document.body.append(lb));
 
-  // panel for the ayah sheet
-  function panel(s, a) {
-    const box = el("div", "qa-box");
-    const row = el("div", "qa-row");
-    const pick = el("select", "qa-pick"); for (const r of RECITERS) { const o = el("option", "", r.name); o.value = r.id; pick.append(o); }
-    pick.value = rec().id; pick.onchange = () => { localStorage.setItem("qm.reciter", pick.value); if (st.playing) play(st.s, st.a); paint(); };
-    const pb = el("button", "qa-b main"); const cont = el("label", "qa-cont"); const cb = el("input"); cb.type = "checkbox"; cb.checked = !!st.cont; cont.append(cb, el("span", "", " Davamlı"));
-    cb.onchange = () => setCont(cb.checked);
-    pb.onclick = () => { if (st.playing && st.s === s) { if (st.paused) resume(); else pause(); return; } window.QM_CLOSEAYAH && window.QM_CLOSEAYAH(); play(s, a); };
-    const rp = el("select", "qa-pick qa-rep"); for (let i = 1; i <= 9; i++) { const o = el("option", "", "×" + i); o.value = i; rp.append(o); }
-    rp.title = "Təkrar"; rp.value = reps(); rp.onchange = () => { localStorage.setItem("qm.audio.rep", rp.value); };
-    row.append(pb, pick, rp, cont);
-    const row2 = el("div", "qa-row");
-    const da = el("button", "qa-b", "⬇ Bu ayə"), ds = el("button", "qa-b"), msg = el("span", "qa-msg");
-    da.onclick = async () => { msg.textContent = "Endirilir…"; try { await saveAyah(rec(), s, a); msg.textContent = "✓ Ayə cihazda"; } catch (e) { msg.textContent = navigator.onLine ? "Alınmadı" : "İnternet yoxdur"; } };
-    ds.onclick = async () => {
-      const r = rec();
-      if (localStorage.getItem(doneKey(r, s))) return;
-      ds.disabled = true;
-      try { await saveSurah(r, s, (d, n) => (msg.textContent = "Endirilir " + d + "/" + n)); msg.textContent = "✓ Surə cihazda (internetsiz)"; hydrateSurah(r, s); }
-      catch (e) { msg.textContent = navigator.onLine ? "Alınmadı: " + e.message : "İnternet yoxdur"; }
-      ds.disabled = false; paint();
-    };
-    row2.append(da, ds, msg);
-    box.append(row, row2);
-    function paint() { pb.textContent = st.playing && st.s === s ? (st.paused ? "▶ Davam" : "⏸ Pauza") : "▶ Dinlə"; pb.onclick = () => { if (st.playing && st.s === s) { if (st.paused) resume(); else pause(); return; } window.QM_CLOSEAYAH && window.QM_CLOSEAYAH(); play(s, a); }; const done = !!localStorage.getItem(doneKey(rec(), s)); ds.textContent = done ? "✓ Surə cihazda" : "⬇ Tam surə"; ds.disabled = done; }
-    paint(); listeners.clear(); listeners.add(paint);
-    box.hidden = true;
-    return box;
-  }
-  const css = el("style"); css.textContent = ".qa-box[hidden]{display:none}.qa-box{margin:0 0 .5rem;padding:.55rem .6rem;border:1px solid rgba(196,165,110,.35);border-radius:12px;background:#fdfaf3;display:flex;flex-direction:column;gap:.4rem;font-size:.82rem;color:#1a3330}.qa-row{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}.qa-row+.qa-row{padding-top:.4rem;border-top:1px solid rgba(196,165,110,.22)}.qa-b{border:1px solid rgba(196,165,110,.5);background:transparent;color:#1a3330;border-radius:999px;padding:.28rem .7rem;font:inherit;font-size:.78rem;letter-spacing:.01em;cursor:pointer}.qa-b:disabled{opacity:.5}.qa-b.main{background:#1a3330;color:#fbf6ec;border-color:#1a3330;font-weight:600;padding:.32rem .85rem}.qa-pick{flex:1;min-width:7rem;font:inherit;font-size:.8rem;padding:.28rem .5rem;border:1px solid rgba(196,165,110,.5);border-radius:999px;background:#fff;color:#1a3330}.qa-rep{flex:0 0 auto;min-width:3.4rem}.qa-cont{display:flex;align-items:center;gap:.2rem;font-size:.78rem;opacity:.85}.qa-cont input{accent-color:#1a3330;margin:0}.qa-msg{flex-basis:100%;font-size:.72rem;opacity:.65}.qa-msg:empty{display:none}.qlb[hidden]{display:none}.qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.6rem + env(safe-area-inset-bottom));width:min(94vw,640px);z-index:60;display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem .7rem .35rem;background:#fbf6ec;color:#1a3330;font-size:.8rem}.qlb-line{position:absolute;left:0;right:0;top:0;height:1.5px;background:rgba(196,165,110,.45)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}.qlb-t{min-width:2.8rem;color:#a8893f;font-weight:600;font-variant-numeric:tabular-nums}.qlb-mid{display:flex;align-items:center;gap:1.4rem}.qlb-n{border:0;background:none;font-size:1.25rem;color:#2c3a2a;cursor:pointer;padding:.2rem}.qlb-n:disabled{opacity:.3}.qlb-stop,.qlb-pause{width:40px;height:40px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer}.qlb-stop{background:#5f6b2f}.qlb-pause{background:#1a3330}.qlb-stop i{width:12px;height:12px;border-radius:2px;background:#fbf6ec}.qlb-pause i{width:0;height:0;border-style:solid;border-width:7px 0 7px 12px;border-color:transparent transparent transparent #fbf6ec;background:none;border-radius:0}.qlb-pause:not(.paused) i{width:10px;height:12px;border:0;background:transparent;box-shadow:inset 3px 0 0 #fbf6ec, inset -3px 0 0 #fbf6ec;border-radius:0}.qlb-rep{display:flex;align-items:center;gap:.55rem;border:1px solid #c4a56e;border-radius:999px;padding:.12rem .55rem}.qlb-rep button{border:0;background:none;color:#1a3330;font-size:.95rem;cursor:pointer;padding:0 .1rem}.qlb-rep b{min-width:1.6rem;text-align:center}.qlb-cont{border:1px solid #c4a56e;border-radius:999px;background:transparent;color:#1a3330;font:inherit;font-size:1.05rem;font-weight:700;letter-spacing:-.05em;padding:.18rem .55rem;cursor:pointer;line-height:1}.qlb-cont.on{background:#1a3330;color:#fbf6ec;border-color:#1a3330}";
+  const css = el("style"); css.textContent = [
+    ".qlb[hidden],.qlb-adv[hidden]{display:none}",
+    ".qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.05rem + env(safe-area-inset-bottom));width:min(100vw,640px);box-sizing:border-box;z-index:60;padding:.4rem .55rem .3rem;background:#fbf6ec;color:#1a3330;font-size:.8rem;box-shadow:0 -1px 0 rgba(196,165,110,.25)}",
+    "body.qlb-on .num{padding-top:calc(var(--qlb-h,3.2rem) + .1rem)}",
+    ".qlb-line{position:absolute;left:0;right:0;top:0;height:2px;background:rgba(196,165,110,.4)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}",
+    "[dir=rtl] .qlb-line i{margin-inline-start:auto}",
+    ".qlb-row{display:flex;align-items:center;justify-content:space-between;gap:.35rem}",
+    ".qlb-t{min-width:2.4rem;color:#a8893f;font-weight:600;font-variant-numeric:tabular-nums}",
+    ".qlb-pick{min-width:0;flex:0 1 7.5rem;font:inherit;font-size:.74rem;padding:.2rem .3rem;border:1px solid rgba(196,165,110,.55);border-radius:999px;background:transparent;color:inherit}",
+    ".qlb-mid{display:flex;align-items:center;gap:.5rem}",
+    ".qlb button{cursor:pointer;font:inherit;color:inherit}.qlb button:disabled{opacity:.35;cursor:default}",
+    ".qlb button:focus-visible,.qlb select:focus-visible{outline:2px solid #c4a56e;outline-offset:2px}",
+    ".qlb-n{border:0;background:none;font-size:1.05rem;padding:.25rem;min-width:28px;min-height:32px}",
+    ".qlb-stop,.qlb-pause{width:36px;height:36px;border-radius:50%;border:0;display:grid;place-items:center;flex:0 0 auto}",
+    ".qlb-stop{background:#5f6b2f;width:30px;height:30px}.qlb-pause{background:#1a3330}",
+    ".qlb-stop i{width:10px;height:10px;border-radius:2px;background:#fbf6ec}",
+    ".qlb-pause i{width:10px;height:12px;background:transparent;box-shadow:inset 3px 0 0 #fbf6ec,inset -3px 0 0 #fbf6ec}",
+    ".qlb-pause.paused i{width:0;height:0;box-shadow:none;border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent #fbf6ec;margin-left:3px}",
+    ".qlb-rep{display:flex;align-items:center;gap:.3rem;border:1px solid #c4a56e;border-radius:999px;padding:.08rem .4rem;flex:0 0 auto}",
+    ".qlb-rep button{border:0;background:none;font-size:.95rem;padding:0 .15rem;min-height:26px}.qlb-rep b{min-width:2.1rem;text-align:center;font-variant-numeric:tabular-nums}",
+    ".qlb-cont,.qlb-more{border:1px solid #c4a56e;border-radius:999px;background:transparent;font-size:1rem;font-weight:700;padding:.12rem .45rem;line-height:1.2;flex:0 0 auto}",
+    ".qlb-cont.on{background:#1a3330;color:#fbf6ec;border-color:#1a3330}",
+    ".qlb-adv{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.35rem;padding-top:.35rem;border-top:1px solid rgba(196,165,110,.25)}",
+    ".qlb-repsel{flex:0 0 auto}.qlb-b{border:1px solid rgba(196,165,110,.55);background:transparent;border-radius:999px;padding:.2rem .6rem;font-size:.74rem}",
+    ".qlb-msg{font-size:.7rem;opacity:.7}.qlb-msg:empty{display:none}",
+    "@media (max-width:400px){.qlb{font-size:.74rem;padding:.38rem .35rem .28rem}.qlb-row{gap:.2rem}.qlb-mid{gap:.25rem}.qlb-pick{flex-basis:4.6rem}.qlb-t{min-width:2rem}.qlb-rep{gap:.1rem;padding:.05rem .25rem}.qlb-rep b{min-width:1.7rem}.qlb-pause{width:32px;height:32px}.qlb-stop{width:26px;height:26px}.qlb-n{min-width:22px;padding:.15rem}}",
+    "@media (max-width:340px){.qlb-t{display:none}}",
+  ].join("");
   document.head.append(css);
-  window.QA = { panel, play, stop, RECITERS };
+  // kept for compatibility; the ayah sheet no longer embeds a player
+  function panel() { return null; }
+  window.QA = { panel, play, stop, toggle, RECITERS, isOpen: () => open || st.playing };
 })();
