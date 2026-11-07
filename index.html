@@ -341,7 +341,7 @@
       .qm-tab.on { background: #1a3330; color: #e4c98a; }
       .qm-pick { margin: 0 0.3rem 0.5rem; padding: 0.4rem 0.6rem; border: 1px solid rgba(26, 51, 48, 0.25); border-radius: 0.6rem; background: #fbf6ec; font: inherit; }
       .qm-body { line-height: 1.7; }
-      .qm-body[lang="ar"] { font-family: "Amiri", "Noto Naskh Arabic", serif; line-height: 1.9; }
+      .qm-body[lang="ar"] { font-family: Kitab, "Noto Naskh Arabic", Amiri, "Scheherazade New", "Traditional Arabic", serif; line-height: 2.25; }
       .qm-body p { margin: 0 0 0.6rem; white-space: pre-line; }
       .qm-src { display: block; font-size: 0.8rem; color: #5c675f; font-family: "Segoe UI", sans-serif; margin-bottom: 0.3rem; }
       .qm-fn { font-size: 0.82em; color: #5c675f; border-top: 1px solid rgba(26, 51, 48, 0.12); padding-top: 0.4rem; }
@@ -468,7 +468,7 @@
       .qm-cmp-card h4 small { color: #8a6a2e; font-weight: 650; flex: none; }
       .qm-cmp-tx { flex: 1; overflow-y: auto; line-height: 1.6; }
       .qm-cmp-tx p { margin: 0 0 0.6rem; }
-      .qm-cmp-tx[lang="ar"] { line-height: 1.9; }
+      .qm-cmp-tx[lang="ar"] { font-family: Kitab, "Noto Naskh Arabic", Amiri, "Scheherazade New", "Traditional Arabic", serif; line-height: 2.25; }
       .qm-cmp-h .qm-full-t { flex: 1; min-width: 0; }
       .qm-cmp-h .qm-full-t b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .qm-cmp-hint { margin: 0 0.8rem 0.4rem; border: 1px dashed #c4a56e; background: #fffaf0; color: #8a6a2e; border-radius: 0.8rem; padding: 0.45rem 0.6rem; font: inherit; font-size: 0.78rem; font-weight: 650; }
@@ -658,11 +658,14 @@
       .qm-blk-s { margin: 0 0 0.5rem; text-align: center; color: #8a6a2e; font-size: 0.85rem; letter-spacing: 0.05em; }
       .qm-ar { margin: 0 0 0.5rem; font-family: QMHafs, "Amiri", serif; line-height: 2; text-align: right; color: #1a1612; }
       .qm-tx2 { line-height: 1.7; color: #2c332f; }
-      .qm-tx2[lang="ar"] { font-family: "Amiri", "Noto Naskh Arabic", serif; line-height: 1.9; }
+      .qm-tx2[lang="ar"] { font-family: Kitab, "Noto Naskh Arabic", Amiri, "Scheherazade New", "Traditional Arabic", serif; line-height: 2.25; }
       .qm-tx2 p { margin: 0 0 0.45rem; white-space: pre-line; }
       .qm-range { display: inline-block; font-size: 0.72rem; color: #8a6a2e; background: #f3e7d0; border-radius: 999px; padding: 0.05rem 0.5rem; margin-bottom: 0.3rem; }
       .qm-full-nav { display: flex; justify-content: space-between; gap: 0.5rem; padding-top: 1rem; }
       .qm-empty { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; padding: 0.8rem 0; color: #5c675f; }
+      /* Arabic tafsir body text: Kitab, same files as tafsir.mushafuk.online (SIL OFL 1.1, yazi-fonts/OFL-Kitab.txt) */
+      @font-face { font-family: Kitab; src: url(./yazi-fonts/Kitab-Regular.ttf) format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+      @font-face { font-family: Kitab; src: url(./yazi-fonts/Kitab-Bold.ttf) format("truetype"); font-weight: 700; font-style: normal; font-display: swap; }
       @font-face { font-family: QMJuz; src: url(./yazi-fonts/uthmanic-hafs.woff2) format("woff2"); font-display: swap; }
       .htabs { display: flex; background: #12352c; }
       .htabs button { flex: 1; border: 0; background: none; color: #c9bf9f; font: 700 0.92rem "Segoe UI", sans-serif; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.5rem 0; border-bottom: 3px solid transparent; cursor: pointer; }
