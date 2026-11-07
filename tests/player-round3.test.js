@@ -30,7 +30,7 @@ $('.qlb-stop').click();await tick();
 $('.qm-wpop').hidden=false;await tick();ok(lb.hidden,'hidden under word balloon');$('.qm-wpop').hidden=true;await tick();
 $('.qm-pop').hidden=false;await tick();ok(lb.hidden,'hidden under pop-up');$('.qm-pop').hidden=true;await tick();ok(!lb.hidden,'back after pop-ups close');
 failNext=Object.assign(new Error('x'),{name:'NotSupportedError'});$('.qlb-pause').click();await tick();ok(toasts.at(-1)==='Audio could not play','engine error translated');
-const css=[...w.document.querySelectorAll('style')].map(s=>s.textContent).join('');ok(/@media \(max-width:480px\)\{.*?\.qlb-row\{flex-wrap:wrap/.test(css),'wrap breakpoint covers 401–480px');
+const css=[...w.document.querySelectorAll('style')].map(s=>s.textContent).join('');const m480=css.match(/@media \(max-width:480px\)\{.*?\}\}/);ok(m480&&!/flex-wrap/.test(m480[0])&&/\.qlb-t\{display:none/.test(m480[0]),'phones up to 480px: single compact row (no wrap)');
 const D=eval('('+fs.readFileSync(path.join(ROOT,'lib.js'),'utf8').match(/const DICT = (\{.*?\});\n/s)[1]+')');
 ok(['Səs açılmadı','İnternet yoxdur — surəni əvvəlcə endirin'].every(k=>D[k]&&D[k].length===4),'both engine errors in 5 languages');
 console.log('round3 tests:',n,'passed');})().catch(e=>{console.error('FAIL',e.message);process.exit(1)});

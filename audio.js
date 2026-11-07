@@ -284,7 +284,7 @@
   const applyRate = () => A.forEach((x) => { try { x.defaultPlaybackRate = rate(); x.playbackRate = rate(); } catch (e) {} });
   applyRate();
   A.forEach((x) => x.addEventListener("play", () => { if (x.playbackRate !== rate()) x.playbackRate = rate(); }));
-  let open = false, lastShow = false, lastH = 0;
+  let open = false;
   const btn = (c, label, txt) => { const b = el("button", c, txt); b.type = "button"; b.title = label; b.setAttribute("aria-label", label); return b; };
   const lb = el("div", "qlb"); lb.hidden = true; lb.setAttribute("role", "region");
   const lbLine = el("div", "qlb-line"), lbFill = el("i"); lbLine.append(lbFill); lbLine.setAttribute("aria-hidden", "true");
@@ -383,10 +383,8 @@
     lbPrev.disabled = a <= 1; lbNext.disabled = !s || a >= AYAHS[s - 1];
     const done = !!localStorage.getItem(doneKey(rec(), s));
     ds.textContent = done ? "✓ " + T("Surə cihazda") : "⬇ " + T("Tam surə"); if (!ds.disabled || done) ds.disabled = done;
-    const h = show ? lb.offsetHeight : 0;
-    if (show) document.documentElement.style.setProperty("--qlb-h", h + "px");
-    // the mushaf page is sized by the reader's resize handler: re-fit when the space under it changes
-    if (show !== lastShow || h !== lastH) { lastShow = show; lastH = h; requestAnimationFrame(() => dispatchEvent(new Event("resize"))); }
+    // The player floats over the blank strip under the page: it never changes the reader's size, so the
+    // mushaf text keeps exactly the same font size and line breaks whether the player is open or closed.
     if (st.cont && st.playing && !st.paused && isFinite(d) && d - c < 2.5) armStandby(rec(), st.s, st.a);
   }
   // full-screen layers that the bottom player must never sit on top of
@@ -404,7 +402,6 @@
   const css = el("style"); css.textContent = [
     ".qlb[hidden],.qlb-adv[hidden]{display:none}",
     ".qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.05rem + env(safe-area-inset-bottom));width:min(100vw,640px);box-sizing:border-box;z-index:60;padding:.4rem .55rem .3rem;background:#fbf6ec;color:#1a3330;font-size:.8rem;box-shadow:0 -1px 0 rgba(196,165,110,.25)}",
-    "body.qlb-on .page{margin-bottom:var(--qlb-h,3.2rem)}",
     "@media (orientation:landscape){.qlb{bottom:env(safe-area-inset-bottom)}}",
     ".qlb-line{position:absolute;left:0;right:0;top:0;height:2px;background:rgba(196,165,110,.4)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}",
     "[dir=rtl] .qlb-line i{margin-inline-start:auto}",
@@ -427,7 +424,9 @@
     ".qlb-adv{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.35rem;padding-top:.35rem;border-top:1px solid rgba(196,165,110,.25)}",
     ".qlb-repsel{flex:0 0 auto}.qlb-b{border:1px solid rgba(196,165,110,.55);background:transparent;border-radius:999px;padding:.2rem .6rem;font-size:.74rem}",
     ".qlb-msg{font-size:.7rem;opacity:.7}.qlb-msg:empty{display:none}",
-    "@media (max-width:480px){.qlb{font-size:.74rem;padding:.38rem .4rem .28rem}.qlb-row{flex-wrap:wrap;row-gap:.2rem;gap:.3rem}.qlb-mid{order:9;flex:1 0 100%;justify-content:center;gap:.6rem}.qlb-pick{flex:1 1 4rem}.qlb-t{min-width:2rem}}",
+    // phones: one compact row (about 40px tall) so it fits the blank strip above the page number
+    "@media (max-width:480px){.qlb{font-size:.72rem;padding:.3rem .3rem .22rem}.qlb-row{gap:.15rem}.qlb-t{display:none}.qlb-pick{flex:0 1 4.2rem;font-size:.68rem;padding:.15rem .2rem}.qlb-mid{gap:.1rem}.qlb-n{min-width:28px;min-height:32px;padding:.1rem;font-size:.95rem}.qlb-pause{width:32px;height:32px}.qlb-stop{width:28px;height:28px}.qlb-rep{gap:0;padding:0 .15rem}.qlb-rep button{min-width:24px;min-height:30px;padding:0}.qlb-rep b{min-width:1.8rem}.qlb-cont,.qlb-more{min-width:30px;min-height:30px;padding:.05rem .3rem;font-size:.9rem}}",
+    "@media (min-width:380px) and (max-width:480px){.qlb-t{display:inline;min-width:2rem}}",
   ].join("");
   document.head.append(css);
   // kept for compatibility; the ayah sheet no longer embeds a player

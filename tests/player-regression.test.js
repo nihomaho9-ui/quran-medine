@@ -30,7 +30,7 @@ w.QA.toggle();await tick();failNext=Object.assign(new Error('x'),{name:'AbortErr
 ok(toasts.length===0,'loading interrupted (AbortError) shows no false error');
 failNext=Object.assign(new Error('x'),{name:'NotSupportedError'});$('.qlb-stop').click();$('.qlb-pause').click();await tick();ok(toasts.length===1,'real failure still reported');
 const css=[...w.document.querySelectorAll('style')].map(s=>s.textContent).join('');
-ok(/body\.qlb-on \.page\{margin-bottom/.test(css)&&!/\.num\{padding-top/.test(css),'7 text padding independent of .num');
+ok(!/\.page\b|\.num\b|#page|--qlb-h/.test(css),'7 player CSS never touches reader/page-number layout');
 const ix=fs.readFileSync(''+require('path').join(__dirname,'..')+'/index.html','utf8');ok(/id="listen-fab"/.test(ix)&&/max-height: 520px\) \{ \.listen-fab \{ display: grid/.test(ix)&&/min-height: 521px\) \{ \.listen-fab \{ display: grid/.test(ix),'7 landscape listen button in both landscape modes');
 ok(/qlb-n\{[^}]*min-width:40px;min-height:40px/.test(css)&&/qlb-stop\{[^}]*width:36px/.test(css),'touch targets >=36-40px');
 console.log('regression tests:',pass,'passed');})().catch(e=>{console.error('FAIL',e.message);process.exit(1)});
