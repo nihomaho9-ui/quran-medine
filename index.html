@@ -297,6 +297,12 @@
       .gear svg { width: 1.35rem; height: 1.35rem; display: block; }
       .gear svg { width: 1.15rem; height: 1.15rem; }
       .gear.on { color: #1a3330; }
+      /* landscape hides the header: keep the listen control reachable (below the home gate, z 20) */
+      .listen-fab { display: none; position: fixed; top: calc(0.4rem + env(safe-area-inset-top)); right: calc(0.4rem + env(safe-area-inset-right)); z-index: 19; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(196,165,110,.6); background: rgba(255,250,240,.92); color: #8a7d68; padding: 0; place-items: center; cursor: pointer; }
+      .listen-fab svg { width: 1.2rem; height: 1.2rem; }
+      .listen-fab.on { color: #1a3330; border-color: #1a3330; }
+      @media (orientation: landscape) and (max-height: 520px) { .listen-fab { display: grid; } }
+      @media (orientation: landscape) and (min-height: 521px) { .listen-fab { display: grid; } }
       .qm-back { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-end; justify-content: center; background: rgba(16, 34, 32, 0.4); font-family: "Segoe UI", sans-serif; }
       .qm-back[hidden] { display: none; }
       .qm-sheet { width: min(100%, 34rem); max-height: 88%; display: flex; flex-direction: column; background: #f6f1e4; color: #161310; border: 1.5px solid #c4a56e; border-bottom: 0; border-radius: 1.3rem 1.3rem 0 0; padding: 0.8rem 0.85rem calc(0.8rem + env(safe-area-inset-bottom)); }
@@ -703,6 +709,7 @@
       </div>
     </header>
     <div class="qj" id="qj" hidden><div class="qj-box"><input class="qj-in" id="qj-in" type="search" placeholder="🔍 Sürə, 2:255, Səh. 562" autocomplete="off"><div id="qj-res"></div><div class="qj-h" id="qj-rh">Son axtarışlar</div><div id="qj-rec"></div></div></div>
+    <button type="button" class="listen-fab" id="listen-fab" title="Dinlə" aria-label="Dinlə" aria-expanded="false" onclick="window.QA && QA.toggle()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="3.5" y="13.5" width="4" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="16.5" y="13.5" width="4" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/></svg></button>
     <main class="page" id="page"></main>
     <div class="num" id="pos">1</div>
     <script>

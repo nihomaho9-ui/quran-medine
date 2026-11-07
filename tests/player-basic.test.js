@@ -1,0 +1,30 @@
+const {JSDOM}=require('jsdom');const fs=require('fs');const assert=require('assert');
+const R=require('path').join(__dirname,'..')+'/';
+const dom=new JSDOM('<!doctype html><html><head></head><body><button id="listen-btn"></button></body></html>',{runScripts:'outside-only',url:'http://localhost/',pretendToBeVisual:true});
+const w=dom.window;let plays=0;
+class FA{constructor(){this.paused=true;this.currentTime=0;this.duration=NaN;this.playbackRate=1;this.defaultPlaybackRate=1;this.l={};this.src=''}
+ addEventListener(e,f){(this.l[e]=this.l[e]||[]).push(f)} play(){plays++;this.paused=false;return Promise.resolve()} pause(){this.paused=true} load(){} removeAttribute(){}}
+w.Audio=FA;w.QM_AYAHS=Array(114).fill(7);w.caches={open:async()=>({match:async()=>null,put:async()=>{}})};
+const hl=[];w.QM_HL=k=>hl.push(k);w.QM_PAGE=()=>({n:2,keys:['2:1','2:2','2:3']});
+w.eval(fs.readFileSync(R+'audio.js','utf8'));
+(async()=>{await new Promise(r=>setTimeout(r,10));
+const lb=w.document.querySelector('.qlb');assert(lb&&lb.hidden,'hidden initially');
+w.QA.toggle();assert(!lb.hidden,'opens');assert.strictEqual(plays,0,'no autoplay on open');
+assert(w.document.getElementById('listen-btn').classList.contains('on'));
+const sp=lb.querySelector('.qlb-rep b');assert.strictEqual(sp.textContent,'1×');
+lb.querySelectorAll('.qlb-rep button')[1].click();assert.strictEqual(sp.textContent,'1.25×');assert.strictEqual(w.localStorage.getItem('qm.audio.rate'),'1.25');
+lb.querySelectorAll('.qlb-rep button')[0].click();lb.querySelectorAll('.qlb-rep button')[0].click();assert.strictEqual(sp.textContent,'0.75×');
+w.QM_CTX='2:3';lb.querySelector('.qlb-pause').click();await new Promise(r=>setTimeout(r,20));
+assert.strictEqual(plays,1,'play once on click');assert(hl.includes('2:3'),'selected ayah played: '+hl);
+lb.querySelector('.qlb-stop').click();assert.strictEqual(w.QM_CTX,'2:3','stop remembers ayah');w.QM_CTX='9:1';
+lb.querySelector('.qlb-pause').click();await new Promise(r=>setTimeout(r,20));assert(hl.at(-1)==='2:1','fallback page first ayah: '+hl.at(-1));
+lb.querySelector('.qlb-more').click();assert(!lb.querySelector('.qlb-adv').hidden,'advanced opens');
+assert.strictEqual(w.QA.panel(),null);console.log('audio DOM tests: PASS');
+const lib=fs.readFileSync(R+'lib.js','utf8'),ix=fs.readFileSync(R+'index.html','utf8');
+assert(!/hifz-btn/.test(ix),'top hifz removed');assert(/id="listen-btn"/.test(ix));
+const card=lib.slice(lib.indexOf('const bar = el("div", "qm-icons")'),lib.indexOf('sheet.append(bar)'));
+for(const k of ['"hifz"','"fsearch"','"listen"','QA.panel'])assert(!card.includes(k),'ayah card still has '+k);
+assert(card.includes('bar.append(shareB, copyB, markB, cmpB, closeB)'));
+assert(/card\("hifz", T\("Hifz"\)[^\n]*openHifz\(\)/.test(lib),'settings hifz entry');
+assert(/search-btn/.test(ix)&&/function openAyahSearch/.test(lib),'global search kept');
+console.log('static checks: PASS');})().catch(e=>{console.error('FAIL',e.message);process.exit(1)});

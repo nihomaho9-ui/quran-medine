@@ -83,6 +83,7 @@
   let curA = 0;
   const audio = () => A[curA];
   let st = { s: 0, a: 0, cont: false, playing: false, paused: false, left: 0, gen: 0 }, ui = null;
+  let pendingRec = false; // qari changed while paused: reload on resume
   let nextReady = null, surahPull = null, hydrateJob = null;
   const listeners = new Set();
   const notify = () => { listeners.forEach((f) => f()); paintBar && paintBar(); };
@@ -170,7 +171,7 @@
   // Instant handoff when next blob is already on the standby element
   function advance() {
     if (st.left > 0) { st.left--; play(st.s, st.a, true); return; }
-    if (!(st.cont && st.a < AYAHS[st.s - 1])) { st.playing = false; st.paused = false; notify(); return; }
+    if (!(st.cont && st.a < AYAHS[st.s - 1])) { finish(); return; }
     const s = st.s, a = st.a + 1, r = rec();
     const ready = nextReady && nextReady.r === r.id && nextReady.s === s && nextReady.a === a && nextReady.src;
     if (ready) {
@@ -232,6 +233,7 @@
     } else if (navigator.onLine) warm(r, s, a + 1);
     try { await el.play(); } catch (e) {
       if (gen !== st.gen) return;
+      if (st.paused || (e && e.name === "AbortError")) return; // user paused while loading — not a failure
       st.playing = false; st.paused = false; notify();
       window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin");
     }
@@ -243,6 +245,7 @@
   }
   function resume() {
     if (!st.playing || !st.paused) return;
+    if (pendingRec) { pendingRec = false; play(st.s, st.a, true); return; }
     audio().play().then(() => { st.paused = false; notify(); }).catch(() => {
       st.playing = false; st.paused = false; notify();
     });
@@ -257,9 +260,11 @@
     if (!st.playing) return;
     // if continuous and next exists, skip the broken ayah instead of dying
     if (st.cont && st.a < AYAHS[st.s - 1]) { advance(); return; }
-    st.playing = false; st.paused = false; notify();
+    finish();
     window.QM_TOAST && window.QM_TOAST(navigator.onLine ? "Səs açılmadı" : "İnternet yoxdur — surəni əvvəlcə endirin");
   }
+  // playback is over: forget the ayah so the next ▶ follows the open page (or the last long-pressed ayah there)
+  function finish() { if (st.s) window.QM_CTX = st.s + ":" + st.a; st.s = 0; st.a = 0; st.playing = false; st.paused = false; pendingRec = false; notify(); }
   A.forEach((x) => {
     x.addEventListener("ended", () => { if (x === audio()) onEnded(); });
     x.addEventListener("error", () => { if (x === audio()) onErr(); });
@@ -278,7 +283,7 @@
   const applyRate = () => A.forEach((x) => { try { x.defaultPlaybackRate = rate(); x.playbackRate = rate(); } catch (e) {} });
   applyRate();
   A.forEach((x) => x.addEventListener("play", () => { if (x.playbackRate !== rate()) x.playbackRate = rate(); }));
-  let open = false;
+  let open = false, lastShow = false, lastH = 0;
   const btn = (c, label, txt) => { const b = el("button", c, txt); b.type = "button"; b.title = label; b.setAttribute("aria-label", label); return b; };
   const lb = el("div", "qlb"); lb.hidden = true; lb.setAttribute("role", "region");
   const lbLine = el("div", "qlb-line"), lbFill = el("i"); lbLine.append(lbFill); lbLine.setAttribute("aria-hidden", "true");
@@ -322,38 +327,42 @@
     play(s, a); setTimeout(() => { if (st.playing && st.s === s && st.a === a) window.QM_GOTO && window.QM_GOTO(s + ":" + a); }, 150);
   };
   lbPrev.onclick = () => go(-1); lbNext.onclick = () => go(1);
-  lbStop.onclick = () => { const s = st.s, a = st.a; stop(); if (s) window.QM_CTX = s + ":" + a; st.s = 0; st.a = 0; paintBar(); };
+  lbStop.onclick = () => { stop(); finish(); };
   lbPause.onclick = () => {
     if (st.playing) { if (st.paused) resume(); else pause(); return; }
     const [s, a] = ctx(); window.QM_CLOSEAYAH && window.QM_CLOSEAYAH(); play(s, a);
   };
-  lbPick.onchange = () => { localStorage.setItem("qm.reciter", lbPick.value); if (st.playing) play(st.s, st.a); paintBar(); };
+  lbPick.onchange = () => { localStorage.setItem("qm.reciter", lbPick.value); if (st.playing && st.paused) pendingRec = true; else if (st.playing) play(st.s, st.a, true); paintBar(); };
   const setRate = (d) => { const i = Math.min(RATES.length - 1, Math.max(0, RATES.indexOf(rate()) + d)); localStorage.setItem("qm.audio.rate", RATES[i]); applyRate(); paintBar(); };
   lbM.onclick = () => setRate(-1); lbP.onclick = () => setRate(1);
   lbMore.onclick = () => { lbAdv.hidden = !lbAdv.hidden; lbMore.setAttribute("aria-expanded", String(!lbAdv.hidden)); msg.textContent = ""; paintBar(); };
   rp.onchange = () => { localStorage.setItem("qm.audio.rep", rp.value); st.left = Math.min(st.left, rp.value - 1); };
-  da.onclick = async () => { const [s, a] = ctx(); msg.textContent = T("Endirilir…") ; try { await saveAyah(rec(), s, a); msg.textContent = "✓ " + s + ":" + a; } catch (e) { msg.textContent = navigator.onLine ? T("Alınmadı") : "İnternet yoxdur"; } };
+  da.onclick = async () => { const [s, a] = ctx(); msg.textContent = T("Endirilir…") ; try { await saveAyah(rec(), s, a); msg.textContent = "✓ " + s + ":" + a; } catch (e) { msg.textContent = navigator.onLine ? T("Alınmadı") : T("İnternet yoxdur"); } };
   ds.onclick = async () => {
     const r = rec(), [s] = ctx();
     if (localStorage.getItem(doneKey(r, s))) return;
     ds.disabled = true;
-    try { await saveSurah(r, s, (d, n) => (msg.textContent = d + "/" + n)); msg.textContent = "✓ Surə cihazda (internetsiz)"; hydrateSurah(r, s); }
-    catch (e) { msg.textContent = navigator.onLine ? T("Alınmadı") + ": " + e.message : "İnternet yoxdur"; }
+    try { await saveSurah(r, s, (d, n) => (msg.textContent = d + "/" + n)); msg.textContent = "✓ " + T("Surə cihazda"); hydrateSurah(r, s); }
+    catch (e) { msg.textContent = navigator.onLine ? T("Alınmadı") + ": " + e.message : T("İnternet yoxdur"); }
     ds.disabled = false; paintBar();
   };
   const fmt = (x) => { x = Math.max(0, Math.floor(x || 0)); return Math.floor(x / 60) + ":" + String(x % 60).padStart(2, "0"); };
   const lab = (b, k) => { const t = T(k); b.title = t; b.setAttribute("aria-label", t); };
   function paintBar() {
-    const show = open || st.playing;
-    lb.hidden = !show; document.body.classList.toggle("qlb-on", show);
-    const tb = document.getElementById("listen-btn");
-    if (tb) { tb.classList.toggle("on", show); tb.setAttribute("aria-expanded", String(show)); }
+    if (open && !inReader()) open = false; // left the reader: close the panel (audio may continue; reopen from the reader)
+    const show = open && !covered();
+    if (lb.hidden === show) lb.hidden = !show;
+    document.body.classList.toggle("qlb-on", show);
+    for (const tb of document.querySelectorAll("#listen-btn, #listen-fab")) {
+      tb.classList.toggle("on", open || st.playing); tb.setAttribute("aria-expanded", String(open));
+      const t = T("Dinlə"); tb.title = t; tb.setAttribute("aria-label", t);
+    }
     lb.dir = document.documentElement.dir || (localStorage.getItem("qm.lang") === "ar" ? "rtl" : "ltr");
     lb.setAttribute("aria-label", T("Dinlə"));
     lbN.textContent = rate() + "×"; lbM.disabled = rate() <= RATES[0]; lbP.disabled = rate() >= RATES[RATES.length - 1];
     if (lbPick.value !== rec().id) lbPick.value = rec().id;
-    lbPick.setAttribute("aria-label", "Qari"); lbPick.title = "Qari";
-    rp.value = reps(); rp.title = "Təkrar"; rp.setAttribute("aria-label", "Təkrar");
+    lab(lbPick, "Qari"); rp.value = reps(); lab(rp, "Təkrar"); lab(lbM, "Yavaş"); lab(lbP, "Sürətli");
+    lab(lbCont, "Davamlı — ayələri ard-arda oxu"); lab(da, "Bu ayəni endir"); lab(ds, "Tam surəni endir"); da.textContent = "⬇ " + T("Bu ayə");
     lbCont.classList.toggle("on", !!st.cont);
     lbCont.setAttribute("aria-pressed", st.cont ? "true" : "false");
     const idle = !st.playing || st.paused;
@@ -367,20 +376,30 @@
     const [s, a] = ctx();
     lbPrev.disabled = a <= 1; lbNext.disabled = !s || a >= AYAHS[s - 1];
     const done = !!localStorage.getItem(doneKey(rec(), s));
-    ds.textContent = done ? "✓ Surə cihazda" : "⬇ Tam surə"; if (!ds.disabled || done) ds.disabled = done;
-    if (show) document.documentElement.style.setProperty("--qlb-h", lb.offsetHeight + "px");
+    ds.textContent = done ? "✓ " + T("Surə cihazda") : "⬇ " + T("Tam surə"); if (!ds.disabled || done) ds.disabled = done;
+    const h = show ? lb.offsetHeight : 0;
+    if (show) document.documentElement.style.setProperty("--qlb-h", h + "px");
+    // the mushaf page is sized by the reader's resize handler: re-fit when the space under it changes
+    if (show !== lastShow || h !== lastH) { lastShow = show; lastH = h; requestAnimationFrame(() => dispatchEvent(new Event("resize"))); }
     if (st.cont && st.playing && !st.paused && isFinite(d) && d - c < 2.5) armStandby(rec(), st.s, st.a);
   }
-  function toggle(on) { open = on == null ? !open : !!on; if (!open && !st.playing) { lbAdv.hidden = true; lbMore.setAttribute("aria-expanded", "false"); } paintBar(); if (open) setTimeout(() => lbPause.focus({ preventScroll: true }), 0); }
+  // full-screen layers that the bottom player must never sit on top of
+  const LAYERS = ".qm-back, .qm-hz, .qm-full, .qm-cmp, .qm-selbar, .qj, .qm-wps, .qm-menu";
+  function covered() { for (const x of document.querySelectorAll(LAYERS)) if (!x.hidden && !x.closest("[hidden]")) return true; return false; }
+  function inReader() { const g = document.getElementById("gate"); return !g || g.hidden; }
+  function toggle(on) { open = on == null ? !open : !!on; if (!open) { lbAdv.hidden = true; lbMore.setAttribute("aria-expanded", "false"); } paintBar(); if (open) setTimeout(() => lbPause.focus({ preventScroll: true }), 0); }
   A.forEach((x) => { x.addEventListener("timeupdate", () => { if (x === audio()) paintBar(); }); x.addEventListener("loadedmetadata", () => { if (x === audio()) paintBar(); }); });
   addEventListener("resize", () => { if (!lb.hidden) paintBar(); });
   addEventListener("qm-ui", () => paintBar());
-  (document.body ? Promise.resolve() : new Promise((r) => addEventListener("DOMContentLoaded", r))).then(() => document.body.append(lb));
+  let rafQ = 0;
+  const watch = new MutationObserver((recs) => { if (rafQ || recs.every((r) => lb.contains(r.target))) return; rafQ = requestAnimationFrame(() => { rafQ = 0; paintBar(); }); });
+  (document.body ? Promise.resolve() : new Promise((r) => addEventListener("DOMContentLoaded", r))).then(() => { document.body.append(lb); watch.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["hidden"] }); paintBar(); });
 
   const css = el("style"); css.textContent = [
     ".qlb[hidden],.qlb-adv[hidden]{display:none}",
     ".qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.05rem + env(safe-area-inset-bottom));width:min(100vw,640px);box-sizing:border-box;z-index:60;padding:.4rem .55rem .3rem;background:#fbf6ec;color:#1a3330;font-size:.8rem;box-shadow:0 -1px 0 rgba(196,165,110,.25)}",
-    "body.qlb-on .num{padding-top:calc(var(--qlb-h,3.2rem) + .1rem)}",
+    "body.qlb-on .page{margin-bottom:var(--qlb-h,3.2rem)}",
+    "@media (orientation:landscape){.qlb{bottom:env(safe-area-inset-bottom)}}",
     ".qlb-line{position:absolute;left:0;right:0;top:0;height:2px;background:rgba(196,165,110,.4)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}",
     "[dir=rtl] .qlb-line i{margin-inline-start:auto}",
     ".qlb-row{display:flex;align-items:center;justify-content:space-between;gap:.35rem}",
@@ -389,21 +408,20 @@
     ".qlb-mid{display:flex;align-items:center;gap:.5rem}",
     ".qlb button{cursor:pointer;font:inherit;color:inherit}.qlb button:disabled{opacity:.35;cursor:default}",
     ".qlb button:focus-visible,.qlb select:focus-visible{outline:2px solid #c4a56e;outline-offset:2px}",
-    ".qlb-n{border:0;background:none;font-size:1.05rem;padding:.25rem;min-width:28px;min-height:32px}",
+    ".qlb-n{border:0;background:none;font-size:1.05rem;padding:.25rem;min-width:40px;min-height:40px}",
     ".qlb-stop,.qlb-pause{width:36px;height:36px;border-radius:50%;border:0;display:grid;place-items:center;flex:0 0 auto}",
-    ".qlb-stop{background:#5f6b2f;width:30px;height:30px}.qlb-pause{background:#1a3330}",
+    ".qlb-stop{background:#5f6b2f;width:36px;height:36px}.qlb-pause{background:#1a3330}",
     ".qlb-stop i{width:10px;height:10px;border-radius:2px;background:#fbf6ec}",
     ".qlb-pause i{width:10px;height:12px;background:transparent;box-shadow:inset 3px 0 0 #fbf6ec,inset -3px 0 0 #fbf6ec}",
     ".qlb-pause.paused i{width:0;height:0;box-shadow:none;border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent #fbf6ec;margin-left:3px}",
     ".qlb-rep{display:flex;align-items:center;gap:.3rem;border:1px solid #c4a56e;border-radius:999px;padding:.08rem .4rem;flex:0 0 auto}",
-    ".qlb-rep button{border:0;background:none;font-size:.95rem;padding:0 .15rem;min-height:26px}.qlb-rep b{min-width:2.1rem;text-align:center;font-variant-numeric:tabular-nums}",
-    ".qlb-cont,.qlb-more{border:1px solid #c4a56e;border-radius:999px;background:transparent;font-size:1rem;font-weight:700;padding:.12rem .45rem;line-height:1.2;flex:0 0 auto}",
+    ".qlb-rep button{border:0;background:none;font-size:.95rem;padding:0 .3rem;min-width:32px;min-height:36px}.qlb-rep b{min-width:2.1rem;text-align:center;font-variant-numeric:tabular-nums}",
+    ".qlb-cont,.qlb-more{border:1px solid #c4a56e;border-radius:999px;background:transparent;font-size:1rem;font-weight:700;padding:.12rem .45rem;line-height:1.2;flex:0 0 auto;min-width:40px;min-height:36px}",
     ".qlb-cont.on{background:#1a3330;color:#fbf6ec;border-color:#1a3330}",
     ".qlb-adv{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.35rem;padding-top:.35rem;border-top:1px solid rgba(196,165,110,.25)}",
     ".qlb-repsel{flex:0 0 auto}.qlb-b{border:1px solid rgba(196,165,110,.55);background:transparent;border-radius:999px;padding:.2rem .6rem;font-size:.74rem}",
     ".qlb-msg{font-size:.7rem;opacity:.7}.qlb-msg:empty{display:none}",
-    "@media (max-width:400px){.qlb{font-size:.74rem;padding:.38rem .35rem .28rem}.qlb-row{gap:.2rem}.qlb-mid{gap:.25rem}.qlb-pick{flex-basis:4.6rem}.qlb-t{min-width:2rem}.qlb-rep{gap:.1rem;padding:.05rem .25rem}.qlb-rep b{min-width:1.7rem}.qlb-pause{width:32px;height:32px}.qlb-stop{width:26px;height:26px}.qlb-n{min-width:22px;padding:.15rem}}",
-    "@media (max-width:340px){.qlb-t{display:none}}",
+    "@media (max-width:400px){.qlb{font-size:.74rem;padding:.38rem .4rem .28rem}.qlb-row{flex-wrap:wrap;row-gap:.2rem;gap:.3rem}.qlb-mid{order:9;flex:1 0 100%;justify-content:center;gap:.6rem}.qlb-pick{flex:1 1 4rem}.qlb-t{min-width:2rem}}",
   ].join("");
   document.head.append(css);
   // kept for compatibility; the ayah sheet no longer embeds a player
