@@ -284,7 +284,7 @@
   const applyRate = () => A.forEach((x) => { try { x.defaultPlaybackRate = rate(); x.playbackRate = rate(); } catch (e) {} });
   applyRate();
   A.forEach((x) => x.addEventListener("play", () => { if (x.playbackRate !== rate()) x.playbackRate = rate(); }));
-  let open = false, lastShow = false, lastH = 0;
+  let open = false;
   const btn = (c, label, txt) => { const b = el("button", c, txt); b.type = "button"; b.title = label; b.setAttribute("aria-label", label); return b; };
   const lb = el("div", "qlb"); lb.hidden = true; lb.setAttribute("role", "region");
   const lbLine = el("div", "qlb-line"), lbFill = el("i"); lbLine.append(lbFill); lbLine.setAttribute("aria-hidden", "true");
@@ -298,11 +298,11 @@
   lbSpd.append(lbM, lbN, lbP);
   const lbMore = btn("qlb-more", "Daha çox", "⋯"); lbMore.setAttribute("aria-expanded", "false");
   const lbMid = el("div", "qlb-mid"); lbMid.append(lbPrev, lbPause, lbStop, lbNext);
-  const lbRow = el("div", "qlb-row"); lbRow.append(lbT, lbPick, lbMid, lbCont, lbSpd, lbMore);
+  const lbRow = el("div", "qlb-row"); lbRow.append(lbT, lbPick, lbMid, lbMore);
   const lbAdv = el("div", "qlb-adv"); lbAdv.hidden = true;
   const rp = el("select", "qlb-pick qlb-repsel"); for (let i = 1; i <= 9; i++) { const o = el("option", "", "×" + i); o.value = i; rp.append(o); }
   const da = btn("qlb-b", "Bu ayəni endir", "⬇ Bu ayə"), ds = btn("qlb-b", "Tam surəni endir"), msg = el("span", "qlb-msg"); msg.setAttribute("aria-live", "polite");
-  lbAdv.append(rp, da, ds, msg);
+  lbAdv.append(lbCont, lbSpd, rp, da, ds, msg);
   lb.append(lbLine, lbRow, lbAdv);
   st.cont = localStorage.getItem("qm.audio.cont") === "1";
   // ayah the player acts on: what is playing, else the last long-pressed ayah on this page, else the page's first ayah
@@ -356,7 +356,7 @@
   const lab = (b, k) => { const t = T(k); b.title = t; b.setAttribute("aria-label", t); };
   function paintBar() {
     if (open && !inReader()) open = false; // left the reader: close the panel (audio may continue; reopen from the reader)
-    const show = open && !covered();
+    const show = open && !covered() && !noRoomNow();
     if (lb.hidden === show) lb.hidden = !show;
     document.body.classList.toggle("qlb-on", show);
     for (const tb of document.querySelectorAll("#listen-btn, #listen-fab")) {
@@ -383,54 +383,136 @@
     lbPrev.disabled = a <= 1; lbNext.disabled = !s || a >= AYAHS[s - 1];
     const done = !!localStorage.getItem(doneKey(rec(), s));
     ds.textContent = done ? "✓ " + T("Surə cihazda") : "⬇ " + T("Tam surə"); if (!ds.disabled || done) ds.disabled = done;
-    const h = show ? lb.offsetHeight : 0;
-    if (show) document.documentElement.style.setProperty("--qlb-h", h + "px");
-    // the mushaf page is sized by the reader's resize handler: re-fit when the space under it changes
-    if (show !== lastShow || h !== lastH) { lastShow = show; lastH = h; requestAnimationFrame(() => dispatchEvent(new Event("resize"))); }
+    // Fixed overlay placed by measurement into blank space only: it never changes the reader's size.
+    if (show) place();
     if (st.cont && st.playing && !st.paused && isFinite(d) && d - c < 2.5) armStandby(rec(), st.s, st.a);
+  }
+  // ---- measured placement: the card only goes where no verse, header, page number or fab is ----
+  const GAP = 4, BAR_H = 34, NEED = { full: 248, mini: 172, dot: 76 }, COL = { w: 38, h: 172 };
+  let noRoom = false;
+  const probe = el("div"); probe.setAttribute("aria-hidden", "true");
+  probe.style.cssText = "position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)";
+  function rectOf(e) {
+    if (!e || e.hidden || e.closest("[hidden]")) return null;
+    const r = e.getBoundingClientRect();
+    return r.width > 0 && r.height > 0 ? { l: r.left, t: r.top, r: r.right, b: r.bottom } : null;
+  }
+  // free rectangles of the viewport = viewport (minus safe areas) minus verse area minus UI obstacles
+  function freeRects() {
+    const cs = probe.isConnected ? getComputedStyle(probe) : null, px = (k) => (cs && parseFloat(cs[k])) || 0;
+    const vp = { l: px("paddingLeft"), t: px("paddingTop"), r: innerWidth - px("paddingRight"), b: innerHeight - px("paddingBottom") };
+    let v = null;
+    for (const x of document.querySelectorAll("#page .line")) {
+      const r = rectOf(x); if (!r) continue;
+      v = v ? { l: Math.min(v.l, r.l), t: Math.min(v.t, r.t), r: Math.max(v.r, r.r), b: Math.max(v.b, r.b) } : r;
+    }
+    const obs = [...document.querySelectorAll("header, #pos, #listen-fab")].map(rectOf).filter(Boolean);
+    if (v) obs.unshift(v);
+    let free = [vp];
+    for (const o0 of obs) {
+      const o = { l: o0.l - GAP, t: o0.t - GAP, r: o0.r + GAP, b: o0.b + GAP }, next = [];
+      for (const f of free) {
+        if (o.r <= f.l || o.l >= f.r || o.b <= f.t || o.t >= f.b) { next.push(f); continue; }
+        if (o.t > f.t) next.push({ l: f.l, t: f.t, r: f.r, b: o.t });
+        if (o.b < f.b) next.push({ l: f.l, t: o.b, r: f.r, b: f.b });
+        if (o.l > f.l) next.push({ l: f.l, t: f.t, r: o.l, b: f.b });
+        if (o.r < f.r) next.push({ l: o.r, t: f.t, r: f.r, b: f.b });
+      }
+      free = next.filter((f) => f.r - f.l > 1 && f.b - f.t > 1);
+    }
+    return { free, verse: v };
+  }
+  // chooses mode + box; prefers the strip under the verses, then above, then the sides
+  function layout() {
+    const { free, verse } = freeRects();
+    const w = (f) => f.r - f.l, h = (f) => f.b - f.t;
+    const below = (f) => (verse && f.t >= verse.b ? 0 : verse && f.b <= verse.t ? 1 : 2);
+    free.sort((a, b) => below(a) - below(b) || w(b) * h(b) - w(a) * h(a));
+    const fitRow = (m) => free.find((f) => w(f) >= NEED[m] && h(f) >= BAR_H);
+    for (const m of ["full", "mini"]) {
+      const f = fitRow(m); if (!f) continue;
+      const bw = m === "full" ? Math.min(w(f), 420) : NEED[m];
+      return { mode: m, l: f.l + (w(f) - bw) / 2, t: f.t + (h(f) - BAR_H) / 2, w: bw, h: BAR_H, free };
+    }
+    const c = free.find((f) => w(f) >= COL.w && h(f) >= COL.h);
+    if (c) return { mode: "col", l: c.l + (w(c) - COL.w) / 2, t: c.t + (h(c) - COL.h) / 2, w: COL.w, h: COL.h, free };
+    const d = fitRow("dot");
+    if (d) return { mode: "dot", l: d.l + (w(d) - NEED.dot) / 2, t: d.t + (h(d) - BAR_H) / 2, w: NEED.dot, h: BAR_H, free };
+    return { mode: "none", free };
+  }
+  function place() {
+    const L = layout();
+    noRoom = L.mode === "none";
+    lb.dataset.mode = L.mode;
+    if (noRoom) { lb.hidden = true; return L; }
+    // qari select only fits in the full row; elsewhere it lives in the ⋯ panel
+    if (L.mode === "full") { if (lbPick.parentNode !== lbRow) lbRow.insertBefore(lbPick, lbMid); }
+    else if (lbPick.parentNode !== lbAdv) lbAdv.prepend(lbPick);
+    lbT.hidden = !(L.mode === "full" && L.w >= 300);
+    Object.assign(lb.style, { left: L.l + "px", top: L.t + "px", width: L.w + "px", height: L.h + "px" });
+    if (!lbAdv.hidden) placeAdv(L);
+    return L;
+  }
+  // ⋯ panel: put it in a free rectangle; only if none can hold it does it open as a temporary menu next to the card
+  function placeAdv(L) {
+    const aw = Math.min(300, innerWidth - 2 * GAP), ah = lbAdv.offsetHeight || 96;
+    const f = L.free.find((x) => x.r - x.l >= aw && x.b - x.t >= ah && !(x.l < L.l + L.w && x.r > L.l && x.t < L.t + L.h && x.b > L.t));
+    lbAdv.classList.toggle("qlb-adv-over", !f);
+    const l = f ? f.l + (f.r - f.l - aw) / 2 : Math.max(GAP, Math.min(innerWidth - aw - GAP, L.l + L.w / 2 - aw / 2));
+    const t = f ? f.t + (f.b - f.t - ah) / 2 : (L.t > innerHeight / 2 ? L.t - ah - GAP : L.t + L.h + GAP);
+    Object.assign(lbAdv.style, { left: l + "px", top: t + "px", width: aw + "px" });
   }
   // full-screen layers that the bottom player must never sit on top of
   const LAYERS = ".qm-back, .qm-hz, .qm-full, .qm-cmp, .qm-selbar, .qj, .qm-wps, .qm-menu, .qm-wpop, .qm-pop";
+  function noRoomNow() { if (!open || covered()) return false; return layout().mode === "none" ? ((noRoom = true), (lb.dataset.mode = "none"), true) : ((noRoom = false), false); }
   function covered() { for (const x of document.querySelectorAll(LAYERS)) if (!x.hidden && !x.closest("[hidden]")) return true; return false; }
   function inReader() { const g = document.getElementById("gate"); return !g || g.hidden; }
-  function toggle(on) { open = on == null ? !open : !!on; if (!open) { lbAdv.hidden = true; lbMore.setAttribute("aria-expanded", "false"); } paintBar(); if (open) setTimeout(() => lbPause.focus({ preventScroll: true }), 0); }
+  function toggle(on) {
+    // no blank space for any card size: the headphones button itself becomes pause/resume instead of covering verses
+    if (on == null && open && noRoom) { if (st.playing) { if (st.paused) resume(); else pause(); } else { open = false; paintBar(); } return; }
+    open = on == null ? !open : !!on; if (!open) { lbAdv.hidden = true; lbMore.setAttribute("aria-expanded", "false"); } paintBar(); if (open && noRoom) window.QM_TOAST && window.QM_TOAST(T("Oynatıcı üçün boş yer yoxdur")); else if (open) setTimeout(() => lbPause.focus({ preventScroll: true }), 0); }
   A.forEach((x) => { x.addEventListener("timeupdate", () => { if (x === audio()) paintBar(); }); x.addEventListener("loadedmetadata", () => { if (x === audio()) paintBar(); }); });
-  addEventListener("resize", () => { if (!lb.hidden) paintBar(); });
+  let rafR = 0; addEventListener("resize", () => { if (open && !rafR) rafR = requestAnimationFrame(() => { rafR = 0; paintBar(); }); }); // after the reader's own fit()
   addEventListener("qm-ui", () => paintBar());
   let rafQ = 0;
   const watch = new MutationObserver((recs) => { if (rafQ || recs.every((r) => lb.contains(r.target))) return; rafQ = requestAnimationFrame(() => { rafQ = 0; paintBar(); }); });
-  (document.body ? Promise.resolve() : new Promise((r) => addEventListener("DOMContentLoaded", r))).then(() => { document.body.append(lb); watch.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["hidden"] }); paintBar(); });
+  (document.body ? Promise.resolve() : new Promise((r) => addEventListener("DOMContentLoaded", r))).then(() => { document.body.append(lb, probe); watch.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["hidden"] }); paintBar(); });
 
   const css = el("style"); css.textContent = [
-    ".qlb[hidden],.qlb-adv[hidden]{display:none}",
-    ".qlb{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.05rem + env(safe-area-inset-bottom));width:min(100vw,640px);box-sizing:border-box;z-index:60;padding:.4rem .55rem .3rem;background:#fbf6ec;color:#1a3330;font-size:.8rem;box-shadow:0 -1px 0 rgba(196,165,110,.25)}",
-    "body.qlb-on .page{margin-bottom:var(--qlb-h,3.2rem)}",
-    "@media (orientation:landscape){.qlb{bottom:env(safe-area-inset-bottom)}}",
-    ".qlb-line{position:absolute;left:0;right:0;top:0;height:2px;background:rgba(196,165,110,.4)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}",
+    ".qlb[hidden],.qlb-adv[hidden],.qlb-t[hidden]{display:none}",
+    // slim fixed card: 34px tall, position/size set by place(); never part of the reader's flow
+    ".qlb{position:fixed;left:0;top:0;height:34px;box-sizing:border-box;z-index:60;padding:0 6px;background:#fbf6ec;color:#1a3330;font-size:.74rem;border:1px solid rgba(196,165,110,.45);border-radius:17px;box-shadow:0 1px 6px rgba(26,51,48,.12);display:flex;align-items:center;overflow:visible}",
+    ".qlb-line{position:absolute;left:12px;right:12px;bottom:0;height:2px;background:rgba(196,165,110,.3)}.qlb-line i{display:block;height:100%;width:0;background:#c4a56e}",
     "[dir=rtl] .qlb-line i{margin-inline-start:auto}",
-    ".qlb-row{display:flex;align-items:center;justify-content:space-between;gap:.35rem}",
-    ".qlb-t{min-width:2.4rem;color:#a8893f;font-weight:600;font-variant-numeric:tabular-nums}",
-    ".qlb-pick{min-width:0;flex:0 1 7.5rem;font:inherit;font-size:.74rem;padding:.2rem .3rem;border:1px solid rgba(196,165,110,.55);border-radius:999px;background:transparent;color:inherit}",
-    ".qlb-mid{display:flex;align-items:center;gap:.5rem}",
+    ".qlb-row{display:flex;align-items:center;justify-content:space-between;gap:4px;width:100%}",
+    ".qlb-t{min-width:30px;color:#a8893f;font-weight:600;font-variant-numeric:tabular-nums}",
+    ".qlb-pick{min-width:0;flex:0 1 72px;font:inherit;font-size:.7rem;height:26px;padding:0 4px;border:1px solid rgba(196,165,110,.55);border-radius:13px;background:transparent;color:inherit}",
+    ".qlb-mid{display:flex;align-items:center;gap:2px}",
     ".qlb button{cursor:pointer;font:inherit;color:inherit}.qlb button:disabled{opacity:.35;cursor:default}",
-    ".qlb button:focus-visible,.qlb select:focus-visible{outline:2px solid #c4a56e;outline-offset:2px}",
-    ".qlb-n{border:0;background:none;font-size:1.05rem;padding:.25rem;min-width:40px;min-height:40px}",
-    ".qlb-stop,.qlb-pause{width:36px;height:36px;border-radius:50%;border:0;display:grid;place-items:center;flex:0 0 auto}",
-    ".qlb-stop{background:#5f6b2f;width:36px;height:36px}.qlb-pause{background:#1a3330}",
-    ".qlb-stop i{width:10px;height:10px;border-radius:2px;background:#fbf6ec}",
-    ".qlb-pause i{width:10px;height:12px;background:transparent;box-shadow:inset 3px 0 0 #fbf6ec,inset -3px 0 0 #fbf6ec}",
-    ".qlb-pause.paused i{width:0;height:0;box-shadow:none;border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent #fbf6ec;margin-left:3px}",
-    ".qlb-rep{display:flex;align-items:center;gap:.3rem;border:1px solid #c4a56e;border-radius:999px;padding:.08rem .4rem;flex:0 0 auto}",
-    ".qlb-rep button{border:0;background:none;font-size:.95rem;padding:0 .3rem;min-width:32px;min-height:36px}.qlb-rep b{min-width:2.1rem;text-align:center;font-variant-numeric:tabular-nums}",
-    ".qlb-cont,.qlb-more{border:1px solid #c4a56e;border-radius:999px;background:transparent;font-size:1rem;font-weight:700;padding:.12rem .45rem;line-height:1.2;flex:0 0 auto;min-width:40px;min-height:36px}",
+    ".qlb button:focus-visible,.qlb select:focus-visible{outline:2px solid #c4a56e;outline-offset:1px}",
+    ".qlb-n{border:0;background:none;font-size:.95rem;padding:0;width:30px;height:30px}",
+    ".qlb-stop,.qlb-pause{width:30px;height:30px;border-radius:50%;border:0;display:grid;place-items:center;flex:0 0 auto}",
+    ".qlb-stop{background:#5f6b2f;transform:scale(.86)}.qlb-pause{background:#1a3330}",
+    ".qlb-stop i{width:9px;height:9px;border-radius:2px;background:#fbf6ec}",
+    ".qlb-pause i{width:9px;height:11px;background:transparent;box-shadow:inset 3px 0 0 #fbf6ec,inset -3px 0 0 #fbf6ec}",
+    ".qlb-pause.paused i{width:0;height:0;box-shadow:none;border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent #fbf6ec;margin-left:3px}",
+    ".qlb-more{border:0;background:none;font-size:1rem;font-weight:700;width:30px;height:30px;padding:0;flex:0 0 auto}",
+    // modes chosen by measurement
+    ".qlb[data-mode=mini] .qlb-row{justify-content:center}",
+    ".qlb[data-mode=dot] .qlb-n,.qlb[data-mode=dot] .qlb-stop{display:none}.qlb[data-mode=dot] .qlb-row{justify-content:center}",
+    ".qlb[data-mode=col]{padding:4px 0;border-radius:19px}.qlb[data-mode=col] .qlb-row,.qlb[data-mode=col] .qlb-mid{flex-direction:column;gap:2px}.qlb[data-mode=col] .qlb-line{display:none}",
+    // ⋯ panel (speed, continuous, repeat, downloads, and the qari when the row is compact)
+    ".qlb-adv{position:fixed;box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px;background:#fbf6ec;border:1px solid rgba(196,165,110,.45);border-radius:12px;box-shadow:0 2px 10px rgba(26,51,48,.18);z-index:61}",
+    ".qlb-adv .qlb-pick{flex:1 1 100%;height:30px}",
+    ".qlb-rep{display:flex;align-items:center;gap:2px;border:1px solid #c4a56e;border-radius:999px;padding:0 4px;flex:0 0 auto}",
+    ".qlb-rep button{border:0;background:none;font-size:.95rem;padding:0;min-width:30px;min-height:32px}.qlb-rep b{min-width:2rem;text-align:center;font-variant-numeric:tabular-nums}",
+    ".qlb-cont{border:1px solid #c4a56e;border-radius:999px;background:transparent;font-size:1rem;font-weight:700;padding:0 .5rem;min-width:36px;min-height:32px;flex:0 0 auto}",
     ".qlb-cont.on{background:#1a3330;color:#fbf6ec;border-color:#1a3330}",
-    ".qlb-adv{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.35rem;padding-top:.35rem;border-top:1px solid rgba(196,165,110,.25)}",
-    ".qlb-repsel{flex:0 0 auto}.qlb-b{border:1px solid rgba(196,165,110,.55);background:transparent;border-radius:999px;padding:.2rem .6rem;font-size:.74rem}",
+    ".qlb-repsel{flex:0 0 auto}.qlb-b{border:1px solid rgba(196,165,110,.55);background:transparent;border-radius:999px;padding:.2rem .6rem;font-size:.74rem;min-height:30px}",
     ".qlb-msg{font-size:.7rem;opacity:.7}.qlb-msg:empty{display:none}",
-    "@media (max-width:480px){.qlb{font-size:.74rem;padding:.38rem .4rem .28rem}.qlb-row{flex-wrap:wrap;row-gap:.2rem;gap:.3rem}.qlb-mid{order:9;flex:1 0 100%;justify-content:center;gap:.6rem}.qlb-pick{flex:1 1 4rem}.qlb-t{min-width:2rem}}",
   ].join("");
   document.head.append(css);
   // kept for compatibility; the ayah sheet no longer embeds a player
   function panel() { return null; }
-  window.QA = { panel, play, stop, toggle, RECITERS, isOpen: () => open || st.playing };
+  window.QA = { panel, play, stop, toggle, RECITERS, _layout: layout, _place: place, isOpen: () => open || st.playing };
 })();
